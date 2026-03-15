@@ -276,8 +276,9 @@ def cart_view():
         FROM cart c JOIN products p ON c.product_id=p.id WHERE c.sid=?''', (sid,)).fetchall()
     s = get_all_settings(); con.close()
     sub = sum(i['price']*i['quantity'] for i in items)
-    tax = round(sub*0.14,2); ship = 0 if sub>=500 else 50; total = sub+tax+ship
-    return render_template('cart.html', items=items, sub=sub, tax=tax, ship=ship, total=total, s=s, lang=lang)
+    tr,sc,ft = float(s.get('tax_rate') or 14)/100, float(s.get('shipping_cost') or 50), float(s.get('free_shipping_threshold') or 500)
+    tax = round(sub*tr,2); ship = 0 if sub>=ft else sc; total = sub+tax+ship
+    return render_template('cart.html', items=items, sub=sub, tax=tax, ship=ship, total=total, tax_rate=int(s.get('tax_rate') or 14), ship_cost=sc, free_thresh=ft, s=s, lang=lang)
 
 @app.route('/cart/update', methods=['POST'])
 def cart_update():
@@ -301,8 +302,9 @@ def checkout():
     s = get_all_settings(); con.close()
     if not items: return redirect(url_for('cart_view'))
     sub = sum(i['price']*i['quantity'] for i in items)
-    tax = round(sub*0.14,2); ship = 0 if sub>=500 else 50; total = sub+tax+ship
-    return render_template('checkout.html', items=items, sub=sub, tax=tax, ship=ship, total=total, s=s, lang=lang)
+    tr,sc,ft = float(s.get('tax_rate') or 14)/100, float(s.get('shipping_cost') or 50), float(s.get('free_shipping_threshold') or 500)
+    tax = round(sub*tr,2); ship = 0 if sub>=ft else sc; total = sub+tax+ship
+    return render_template('checkout.html', items=items, sub=sub, tax=tax, ship=ship, total=total, tax_rate=int(s.get('tax_rate') or 14), ship_cost=sc, free_thresh=ft, s=s, lang=lang)
 
 @app.route('/pay', methods=['POST'])
 def pay():
@@ -313,7 +315,8 @@ def pay():
         FROM cart c JOIN products p ON c.product_id=p.id WHERE c.sid=?''', (sid,)).fetchall()
     if not items: return redirect(url_for('cart_view'))
     sub = sum(i['price']*i['quantity'] for i in items)
-    tax = round(sub*0.14,2); ship = 0 if sub>=500 else 50; grand = sub+tax+ship
+    s2=get_all_settings(); tr,sc,ft = float(s2.get('tax_rate') or 14)/100, float(s2.get('shipping_cost') or 50), float(s2.get('free_shipping_threshold') or 500)
+    tax = round(sub*tr,2); ship = 0 if sub>=ft else sc; grand = sub+tax+ship
     last4 = None
     if payment_method == 'card':
         card = request.form.get('card_number','').replace(' ','')

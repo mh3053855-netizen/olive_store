@@ -1,0 +1,34 @@
+account for //https://www.pythonanywhere.com/login/
+
+
+user:MMohamed12
+
+
+pass:Admin123@
+
+
+
+
+
+add to githup  //فى حاله لورفعت قبل كدا 
+
+PS D:\app\app\olive_store> git add .
+PS D:\app\app\olive_store> git commit -m"modify" // اى اسم ممكن اضعه
+PS D:\app\app\olive_store> git push -u origin main
+PS D:\app\app\olive_store>
+
+
+
+add to githup  // اول مره 
+1-new repository
+2- repo name
+3-واكمل 
+
+
+
+
+
+add to server online 
+1-cd ~/olive_store
+
+2-git pull -u origin main
