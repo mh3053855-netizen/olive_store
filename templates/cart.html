@@ -79,15 +79,15 @@
   <div class="sum-box">
     <h3>ملخص الطلب</h3>
     <div class="sr"><span>المجموع</span><span>{{ sub }} جنيه</span></div>
-    <div class="sr"><span>ضريبة {{ tax_rate }}%</span><span>{{ tax }} جنيه</span></div>
+    <div class="sr"><span>ضريبة {{ tax_rate|default(14) }}%</span><span>{{ tax }} جنيه</span></div>
     <div class="sr">
       <span>الشحن</span>
-      <span class="{% if sub >= free_thresh %}free{% endif %}">
-        {% if sub >= free_thresh %}مجانى {% else %}{{ ship_cost|int }} جنيه{% endif %}
+      <span class="{% if sub >= (free_thresh|default(500)) %}free{% endif %}">
+        {% if sub >= (free_thresh|default(500)) %}مجانى {% else %}{{ (ship_cost|default(50))|int }} جنيه{% endif %}
       </span>
     </div>
-    {% if sub < free_thresh %}
-    <p style="font-size:.77rem;color:var(--muted)">أضف {{ (free_thresh - sub)|int }} جنيه للشحن المجانى</p>
+    {% if sub < (free_thresh|default(500)) %}
+    <p style="font-size:.77rem;color:var(--muted)">أضف {{ ((free_thresh|default(500)) - sub)|int }} جنيه للشحن المجانى</p>
     {% endif %}
     <div class="sr tot"><span>الإجمالى</span><span>{{ total }} جنيه</span></div>
     <a href="{{ url_for('checkout') }}" class="btn btn-gold" style="display:flex;justify-content:center;width:100%;margin-top:1.2rem;font-size:1rem">
