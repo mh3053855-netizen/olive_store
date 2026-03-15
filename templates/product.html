@@ -48,8 +48,6 @@
       {% if p['photo'] %}
          <img src="{{ p['photo'] }}" alt="{{ p['name_ar'] }}"
             style="width:100%;height:100%;object-fit:cover;border-radius:var(--r-lg)">
-      {% else %}
-        {{ p['image'] or '🫒' }}
       {% endif %}
     </div>
     <div>
@@ -107,7 +105,15 @@
     <div class="rel-grid">
       {% for r in rel %}
       <div class="card">
-        <a href="{{ url_for('product', pid=r['id']) }}"><div class="card-img">{{ r['image'] or '🫒' }}</div></a>
+        <a href="{{ url_for('product', pid=r['id']) }}">
+          <div class="card-img">
+            {% if r['photo'] %}
+              <img src="{{ r['photo'] }}" alt="{{ r['name_ar'] }}"
+                   style="width:100%;height:100%;object-fit:cover;border-radius:inherit"
+                   onerror="this.parentElement.style.background='#f0f4f0';this.remove()">
+            {% endif %}
+          </div>
+        </a>
         <div class="card-body">
           <div class="card-name">{{ r['name_ar'] }}</div>
           <div class="card-foot" style="margin-top:.75rem">

@@ -110,7 +110,7 @@ button,input,select,textarea{font-family:inherit}
 <body>
 
 <div class="topbar">
-  <p>🚚 <em>توصيل مجانى</em> على الطلبات فوق 500 جنيه · 🔒 دفع آمن بـ<em>Visa</em></p>
+  <p>{{ s.topbar_text or '🚚 توصيل مجانى على الطلبات فوق 500 جنيه · 🔒 دفع آمن بـ Visa' }}</p>
 </div>
 
 <nav class="nav">
@@ -175,7 +175,7 @@ button,input,select,textarea{font-family:inherit}
     <div class="f-col">
       <h5>تواصل</h5>
       <a href="tel:{{ s.phone }}">📞 {{ s.phone }}</a>
-      <a href="mailto:{{ s.email }}">✉️ {{ s.email }}</a>
+      <a href="/cdn-cgi/l/email-protection#f58e8ed586db9098949c99d58888">✉️ {{ s.email }}</a>
       <a href="#">📍 {{ s.address_ar }}</a>
       {% if s.whatsapp %}<a href="https://wa.me/{{ s.whatsapp }}" target="_blank">💬 WhatsApp</a>{% endif %}
     </div>
@@ -191,7 +191,7 @@ button,input,select,textarea{font-family:inherit}
 </footer>
 
 <div id="toast"></div>
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 function toast(msg){
   const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2800);
@@ -209,12 +209,4 @@ document.querySelectorAll('.js-add').forEach(btn=>{
         if(d.count>0&&!document.querySelector('.cart-badge')){location.reload();}
         const orig=this.textContent;
         this.textContent='✓ تمت الإضافة';
-        setTimeout(()=>this.textContent=orig,1800);
-      }
-    }).catch(()=>toast('❌ حدث خطأ'));
-  });
-});
-</script>
-{% block extra_js %}{% endblock %}
-</body>
-</html>
+        setTimeout(()=>this.textC

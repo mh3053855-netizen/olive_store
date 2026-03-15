@@ -1,6 +1,6 @@
 {% extends "admin/base.html" %}
 {% block title %}{{ 'تعديل منتج' if action=='edit' else 'إضافة منتج' }} | أدمن سلافة{% endblock %}
-{% block page_title %}{{ '✏️ تعديل منتج' if action=='edit' else '➕ إضافة منتج جديد' }}{% endblock %}
+{% block page_title %}{{ '️ تعديل منتج' if action=='edit' else ' إضافة منتج جديد' }}{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -98,7 +98,7 @@
 
 {% block content %}
 <form method="POST" enctype="multipart/form-data" id="productForm">
-<input type="hidden" name="image" value="{{ product['image'] if product else '🫒' }}"
+<input type="hidden" name="image" value="{{ product['image'] if product else '' }}"
 
 <div class="pf-grid">
 
@@ -108,9 +108,9 @@
     <!-- Photo Upload Card -->
     <div class="a-card">
       <div class="a-card-head">
-        <h3>🖼️ صورة المنتج</h3>
+        <h3>️ صورة المنتج</h3>
         {% if product and product['photo'] %}
-          <span style="font-size:.72rem;color:#22c55e;font-weight:700">✅ مرفوعة</span>
+          <span style="font-size:.72rem;color:#22c55e;font-weight:700"> مرفوعة</span>
         {% else %}
           <span style="font-size:.72rem;color:var(--muted)">اختيارية</span>
         {% endif %}
@@ -124,7 +124,7 @@
           <img src="{{ product['photo'] }}" alt="صورة المنتج" class="current-photo-img" id="currentPhotoImg">
           <label class="remove-toggle" id="removeToggleLabel">
             <input type="checkbox" name="remove_photo" id="removePhotoCheck" onchange="handleRemoveToggle(this)">
-            <span id="removeToggleText">🗑️ حذف الصورة الحالية</span>
+            <span id="removeToggleText">️ حذف الصورة الحالية</span>
           </label>
         </div>
         {% endif %}
@@ -134,7 +134,7 @@
           <input type="file" name="photo" id="photoInput"
                  accept="image/png,image/jpeg,image/jpg,image/webp,image/gif"
                  onchange="handlePhotoSelect(this)">
-          <span class="photo-upload-icon">📸</span>
+          <span class="photo-upload-icon"></span>
           <div class="photo-upload-label">
             <strong>اضغط لرفع صورة</strong>
             أو اسحب وأفلت الصورة هنا<br>
@@ -153,7 +153,7 @@
           <img src="" alt="معاينة" class="photo-preview-img" id="previewImg">
           <div class="photo-preview-actions">
             <button type="button" class="btn btn-red btn-sm" onclick="clearPhotoSelection()" style="flex:1">
-              ✕ إلغاء الاختيار
+               إلغاء الاختيار
             </button>
           </div>
         </div>
@@ -166,20 +166,20 @@
 
     <!-- Status Card -->
     <div class="a-card">
-      <div class="a-card-head"><h3>⚙️ الحالة والإعدادات</h3></div>
+      <div class="a-card-head"><h3>️ الحالة والإعدادات</h3></div>
       <div class="a-card-body">
         <div class="fg">
           <label class="fg-check">
             <input type="checkbox" name="featured" id="featuredCheck"
                    {{ 'checked' if not product or product['featured'] }}>
-            ⭐ منتج مميز (يظهر فى الصفحة الرئيسية)
+             منتج مميز (يظهر فى الصفحة الرئيسية)
           </label>
         </div>
         <div class="fg">
           <label class="fg-check">
             <input type="checkbox" name="active" id="activeCheck"
                    {{ 'checked' if not product or product['active'] }}>
-            ✅ نشط (ظاهر للعملاء)
+             نشط (ظاهر للعملاء)
           </label>
         </div>
         <div class="fg">
@@ -197,7 +197,7 @@
 
     <!-- Names -->
     <div class="a-card">
-      <div class="a-card-head"><h3>📝 بيانات المنتج</h3></div>
+      <div class="a-card-head"><h3> بيانات المنتج</h3></div>
       <div class="a-card-body">
         <div class="fg-row">
           <div class="fg">
@@ -228,7 +228,7 @@
 
     <!-- Pricing -->
     <div class="a-card">
-      <div class="a-card-head"><h3>💰 السعر والمخزون</h3></div>
+      <div class="a-card-head"><h3> السعر والمخزون</h3></div>
       <div class="a-card-body">
         <div class="fg-row">
           <div class="fg">
@@ -254,7 +254,7 @@
 
     <!-- Details -->
     <div class="a-card">
-      <div class="a-card-head"><h3>📋 التفاصيل</h3></div>
+      <div class="a-card-head"><h3> التفاصيل</h3></div>
       <div class="a-card-body">
         <!-- ── Category Selector ── -->
         <div class="fg">
@@ -271,7 +271,7 @@
                 {{ c.ar }}{% if c.en and c.en != c.ar %} / {{ c.en }}{% endif %}
               </option>
               {% endfor %}
-              <option value="__new__">➕ إضافة صنف جديد...</option>
+              <option value="__new__"> إضافة صنف جديد...</option>
             </select>
           </div>
 
@@ -291,7 +291,7 @@
             </div>
           </div>
           <p style="font-size:.72rem;color:var(--muted);margin-top:.35rem">
-            💡 اختر من القائمة أو اكتب صنف جديد مباشرة
+             اختر من القائمة أو اكتب صنف جديد مباشرة
           </p>
         </div>
         <div class="fg-row">
@@ -322,7 +322,7 @@
     <!-- Actions -->
     <div style="display:flex;gap:.8rem;flex-wrap:wrap">
       <button type="submit" class="btn btn-gold" style="flex:1;padding:.8rem;font-size:.95rem">
-        {{ '💾 حفظ التعديلات' if action=='edit' else '✅ إضافة المنتج' }}
+        {{ ' حفظ التعديلات' if action=='edit' else ' إضافة المنتج' }}
       </button>
       <a href="{{ url_for('admin_products') }}" class="btn btn-secondary" style="flex:1;padding:.8rem;font-size:.95rem;text-align:center">
         ↩️ إلغاء
@@ -398,7 +398,7 @@ function handleRemoveToggle(cb) {
   } else {
     img.style.opacity = '';
     img.style.filter  = '';
-    if (label) label.textContent = '🗑️ حذف الصورة الحالية';
+    if (label) label.textContent = '️ حذف الصورة الحالية';
   }
 }
 

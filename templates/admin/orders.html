@@ -1,6 +1,6 @@
 {% extends "admin/base.html" %}
 {% block title %}الطلبات | أدمن سلافة{% endblock %}
-{% block page_title %}📦 إدارة الطلبات{% endblock %}
+{% block page_title %} إدارة الطلبات{% endblock %}
 {% block extra_css %}
 <style>
 .a-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:1.5rem}
@@ -48,34 +48,34 @@
           <td><strong style="color:var(--dk)">{{ o['grand_total']|int }} جنيه</strong></td>
           <td>
             {% if o['payment_method']=='cod' %}
-              <span class="pay-badge pay-cod">💵 كاش</span>
+              <span class="pay-badge pay-cod"> كاش</span>
             {% else %}
-              <span class="pay-badge pay-card">💳 ****{{ o['card_last4'] }}</span>
+              <span class="pay-badge pay-card"> ****{{ o['card_last4'] }}</span>
             {% endif %}
           </td>
           <td>{{ o['created_at'][:10] }}</td>
           <td>
             <span class="badge {% if o['status']=='confirmed' %}badge-green{% elif o['status']=='shipped' %}badge-gold{% elif o['status']=='pending' %}badge-gold{% else %}badge-red{% endif %}">
-              {% if o['status']=='confirmed' %}✅ مؤكد
-              {% elif o['status']=='pending' %}⏳ انتظار
-              {% elif o['status']=='shipped' %}🚚 مشحون
-              {% elif o['status']=='cancelled' %}❌ ملغى
+              {% if o['status']=='confirmed' %} مؤكد
+              {% elif o['status']=='pending' %} انتظار
+              {% elif o['status']=='shipped' %} مشحون
+              {% elif o['status']=='cancelled' %} ملغى
               {% else %}{{ o['status'] }}{% endif %}
             </span>
           </td>
           <td>
             <form action="{{ url_for('admin_order_status', oid=o['id']) }}" method="POST">
               <select name="status" class="status-sel" onchange="this.form.submit()">
-                <option value="confirmed" {% if o['status']=='confirmed' %}selected{% endif %}>✅ مؤكد</option>
-                <option value="pending"   {% if o['status']=='pending'   %}selected{% endif %}>⏳ انتظار</option>
-                <option value="shipped"   {% if o['status']=='shipped'   %}selected{% endif %}>🚚 مشحون</option>
-                <option value="cancelled" {% if o['status']=='cancelled' %}selected{% endif %}>❌ ملغى</option>
+                <option value="confirmed" {% if o['status']=='confirmed' %}selected{% endif %}> مؤكد</option>
+                <option value="pending"   {% if o['status']=='pending'   %}selected{% endif %}> انتظار</option>
+                <option value="shipped"   {% if o['status']=='shipped'   %}selected{% endif %}> مشحون</option>
+                <option value="cancelled" {% if o['status']=='cancelled' %}selected{% endif %}> ملغى</option>
               </select>
             </form>
           </td>
           <td>
             <a href="{{ url_for('admin_order_invoice', oid=o['id']) }}"
-               class="btn btn-gold btn-sm" target="_blank">🧾 فاتورة</a>
+               class="btn btn-gold btn-sm" target="_blank"> فاتورة</a>
           </td>
         </tr>
         {% else %}

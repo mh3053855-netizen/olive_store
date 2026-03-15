@@ -20,7 +20,67 @@
 .prods-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1.5rem}
 .empty{text-align:center;padding:5rem 2rem;color:var(--muted)}
 .empty .big{font-size:4rem;margin-bottom:1rem}
-@media(max-width:900px){.shop-wrap{grid-template-columns:1fr}.sidebar{position:static}}
+
+/* صورة الكارت - بدون أيقونة fallback خالص */
+.card-img{background:#f0f4f0;overflow:hidden}
+.card-img img{width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block}
+
+/* Highlight الكارت المختار */
+.card.active-preview{
+  outline:2.5px solid var(--dark-green);
+  outline-offset:2px;
+}
+
+/* Preview Panel */
+.preview-panel{
+  display:none;
+  background:#fff;
+  border:1.5px solid var(--border);
+  border-radius:var(--r-lg);
+  margin-top:1.5rem;
+  overflow:hidden;
+  position:relative;
+  animation:slideDown .22s ease;
+}
+@keyframes slideDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+.preview-panel.open{display:flex}
+.preview-panel-img{
+  width:300px;min-height:260px;flex-shrink:0;
+  background:#f0f4f0;overflow:hidden;
+}
+.preview-panel-img img{width:100%;height:100%;object-fit:cover;display:block}
+.preview-panel-body{padding:1.8rem;flex:1;display:flex;flex-direction:column;justify-content:space-between;gap:1rem}
+.pv-origin{font-size:.82rem;color:var(--muted)}
+.pv-name{font-size:1.35rem;font-weight:800;color:var(--dark-green);margin:.25rem 0}
+.pv-stars{color:#f5a623;font-size:1rem}
+.pv-prices{display:flex;align-items:baseline;gap:.5rem}
+.pv-price{font-size:1.55rem;font-weight:900;color:var(--dark-green)}
+.pv-old{font-size:.9rem;color:var(--muted);text-decoration:line-through}
+.pv-actions{display:flex;gap:.75rem;flex-wrap:wrap}
+.pv-actions a{
+  padding:9px 20px;border-radius:50px;font-size:.88rem;font-weight:700;
+  text-decoration:none;border:2px solid var(--dark-green);color:var(--dark-green);transition:.2s;
+}
+.pv-actions a:hover{background:var(--dark-green);color:#fff}
+.pv-actions .add-btn-pv{
+  padding:9px 20px;border-radius:50px;font-size:.88rem;font-weight:700;
+  background:var(--dark-green);color:#fff;border:none;cursor:pointer;transition:.2s;
+}
+.pv-actions .add-btn-pv:hover{opacity:.85}
+.pv-close{
+  position:absolute;top:10px;left:12px;
+  background:none;border:none;font-size:1.3rem;
+  cursor:pointer;color:var(--muted);line-height:1;
+  transition:.15s;
+}
+.pv-close:hover{color:#333}
+
+@media(max-width:900px){
+  .shop-wrap{grid-template-columns:1fr}
+  .sidebar{position:static}
+  .preview-panel{flex-direction:column}
+  .preview-panel-img{width:100%;min-height:200px}
+}
 </style>
 {% endblock %}
 
@@ -36,7 +96,7 @@
         <form action="{{ url_for('shop') }}" method="GET" class="search-wrap">
           {% if sel_cat %}<input type="hidden" name="cat" value="{{ sel_cat }}">{% endif %}
           <input type="text" name="q" placeholder="بحث..." value="{{ q or '' }}">
-          <span class="search-icon">🔍</span>
+          <span class="search-icon"></span>
         </form>
       </div>
       <div class="sb-box">
@@ -47,41 +107,52 @@
         {% endfor %}
       </div>
     </aside>
-    <div>
+
+    <div id="main-col">
       <div class="results-bar">
         <p><strong>{{ products|length }}</strong> منتج</p>
-        {% if sel_cat or q %}<a href="{{ url_for('shop') }}" class="clear-link">✕ إلغاء الفلتر</a>{% endif %}
+        {% if sel_cat or q %}<a href="{{ url_for('shop') }}" class="clear-link"> إلغاء الفلتر</a>{% endif %}
       </div>
+
       {% if products %}
-      <div class="prods-grid">
+      <div class="prods-grid" id="prods-grid">
         {% for p in products %}
-        <div class="card">
+        <div class="card" id="card-{{ p['id'] }}">
           {% if p['old_price'] %}<div class="card-discount">خصم</div>{% endif %}
-          <a href="{{ url_for('product', pid=p['id']) }}">
+
+          <!-- صورة الكارت - لو مفيش صورة مفيش أيقونة -->
+          <a href="{{ url_for('product', pid=p['id']) }}"
+             class="preview-trigger"
+             data-id="{{ p['id'] }}"
+             data-photo="{{ p['photo'] or '' }}"
+             data-name="{{ p['name_ar'] }}"
+             data-price="{{ p.price }}"
+             data-old="{{ p['old_price'] or '' }}"
+             data-origin="{{ p['origin_ar'] }}"
+             data-weight="{{ p['weight'] }}"
+             data-rating="{{ p['rating'] }}"
+             data-url="{{ url_for('product', pid=p['id']) }}"
+             onclick="return showPreview(event, this)">
             <div class="card-img">
               {% if p['photo'] %}
                 <img src="{{ p['photo'] }}" alt="{{ p['name_ar'] }}"
-                     style="width:100%;height:100%;object-fit:cover;border-radius:inherit"
-                     onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
-                <span style="display:none">{{ p['image'] or '🫒' }}</span>
-              {% else %}
-                {{ p['image'] or '🫒' }}
+                     onerror="this.parentElement.style.background='#e8ede8';this.remove()">
               {% endif %}
             </div>
           </a>
+
           <div class="card-body">
-            <div class="card-origin">🌍 {{ p['origin_ar'] }} · {{ p['weight'] }}</div>
+            <div class="card-origin"> {{ p['origin_ar'] }} · {{ p['weight'] }}</div>
             <a href="{{ url_for('product', pid=p['id']) }}">
               <div class="card-name">{{ p['name_ar'] }}</div>
             </a>
-            <div class="card-stars"><span class="stars">★★★★★</span><span class="stars-n">{{ p['rating'] }}</span></div>
+            <div class="card-stars"><span class="stars"></span><span class="stars-n">{{ p['rating'] }}</span></div>
             <div class="card-foot">
               <div>
                 <div class="price-now">{{ p.price }} جنيه</div>
                 {% if p['old_price'] %}<div class="price-old">{{ p['old_price'] }} جنيه</div>{% endif %}
               </div>
               <form action="{{ url_for('cart_add') }}" method="POST">
-                
                 <input type="hidden" name="pid" value="{{ p['id'] }}">
                 <input type="hidden" name="qty" value="1">
                 <button type="submit" class="add-btn js-add">أضف</button>
@@ -91,10 +162,127 @@
         </div>
         {% endfor %}
       </div>
+
+      <!-- Preview Panel -->
+      <div class="preview-panel" id="preview-panel">
+        <button class="pv-close" onclick="closePreview()"></button>
+        <div class="preview-panel-img" id="pv-img-wrap">
+          <img id="pv-img" src="" alt="">
+        </div>
+        <div class="preview-panel-body">
+          <div>
+            <div class="pv-origin" id="pv-origin"></div>
+            <div class="pv-name" id="pv-name"></div>
+            <div class="pv-stars" id="pv-stars"></div>
+            <div class="pv-prices">
+              <span class="pv-old" id="pv-old" style="display:none"></span>
+              <span class="pv-price" id="pv-price"></span>
+            </div>
+          </div>
+          <div class="pv-actions">
+            <a id="pv-link" href="#">عرض الصفحة الكاملة</a>
+            <form action="{{ url_for('cart_add') }}" method="POST">
+              <input type="hidden" name="pid" id="pv-pid" value="">
+              <input type="hidden" name="qty" value="1">
+              <button type="submit" class="add-btn-pv">أضف للسلة</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
       {% else %}
-      <div class="empty"><div class="big">🔍</div><h3>لا توجد نتائج</h3></div>
+      <div class="empty"><div class="big"></div><h3>لا توجد نتائج</h3></div>
       {% endif %}
     </div>
   </div>
 </div>
+
+<script>
+var activeId = null;
+
+function showPreview(e, el) {
+  e.preventDefault();
+
+  var id     = el.dataset.id;
+  var photo  = el.dataset.photo;
+  var name   = el.dataset.name;
+  var price  = el.dataset.price;
+  var old    = el.dataset.old;
+  var origin = el.dataset.origin;
+  var weight = el.dataset.weight;
+  var rating = parseFloat(el.dataset.rating) || 0;
+  var url    = el.dataset.url;
+
+  // نفس الكارت → أغلق
+  if (activeId === id) { closePreview(); return false; }
+
+  // شيل القديم
+  if (activeId) {
+    var prev = document.getElementById('card-' + activeId);
+    if (prev) prev.classList.remove('active-preview');
+  }
+  activeId = id;
+
+  var card = document.getElementById('card-' + id);
+  if (card) card.classList.add('active-preview');
+
+  // الصورة
+  var imgEl   = document.getElementById('pv-img');
+  var imgWrap = document.getElementById('pv-img-wrap');
+  if (photo) {
+    imgEl.src   = photo;
+    imgEl.alt   = name;
+    imgEl.style.display = 'block';
+    imgEl.onerror = function() {
+      this.style.display = 'none';
+      imgWrap.style.background = '#e8ede8';
+    };
+    imgWrap.style.background = '#f0f4f0';
+  } else {
+    imgEl.style.display = 'none';
+    imgWrap.style.background = '#e8ede8';
+  }
+
+  // البيانات
+  document.getElementById('pv-name').textContent   = name;
+  document.getElementById('pv-origin').textContent = ' ' + origin + ' · ' + weight;
+  document.getElementById('pv-price').textContent  = price + ' جنيه';
+  document.getElementById('pv-pid').value          = id;
+  document.getElementById('pv-link').href          = url;
+
+  var oldEl = document.getElementById('pv-old');
+  if (old) { oldEl.textContent = old + ' جنيه'; oldEl.style.display = 'inline'; }
+  else { oldEl.style.display = 'none'; }
+
+  // نجوم
+  var full = Math.round(rating), stars = '';
+  for (var i = 1; i <= 5; i++) stars += i <= full ? '' : '';
+  document.getElementById('pv-stars').innerHTML = stars + ' <small style="color:#999;font-size:.8rem">(' + rating + ')</small>';
+
+  // افتح
+  document.getElementById('preview-panel').classList.add('open');
+  setTimeout(function() {
+    document.getElementById('preview-panel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 50);
+
+  return false;
+}
+
+function closePreview() {
+  document.getElementById('preview-panel').classList.remove('open');
+  if (activeId) {
+    var c = document.getElementById('card-' + activeId);
+    if (c) c.classList.remove('active-preview');
+    activeId = null;
+  }
+}
+
+// إغلاق بالضغط برا
+document.addEventListener('click', function(e) {
+  if (!activeId) return;
+  var panel = document.getElementById('preview-panel');
+  var grid  = document.getElementById('prods-grid');
+  if (!panel.contains(e.target) && !grid.contains(e.target)) closePreview();
+});
+</script>
 {% endblock %}

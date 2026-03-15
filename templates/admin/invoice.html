@@ -71,7 +71,7 @@ body{font-family:'Cairo','Segoe UI',sans-serif;background:#f5f5f5;color:#1a1a1a;
 <body>
 
 <div class="print-bar">
-  <button class="print-btn" onclick="window.print()">🖨️ طباعة الفاتورة</button>
+  <button class="print-btn" onclick="window.print()">️ طباعة الفاتورة</button>
 </div>
 
 <div class="invoice-wrap">
@@ -93,16 +93,16 @@ body{font-family:'Cairo','Segoe UI',sans-serif;background:#f5f5f5;color:#1a1a1a;
     <div class="im"><strong>تاريخ الطلب</strong>{{ order['created_at'][:10] }}</div>
     <div class="im">
       <strong>الحالة</strong>
-      {% if order['status']=='confirmed' %}✅ مؤكد
-      {% elif order['status']=='shipped' %}🚚 مشحون
-      {% elif order['status']=='pending' %}⏳ انتظار
-      {% elif order['status']=='cancelled' %}❌ ملغى
+      {% if order['status']=='confirmed' %} مؤكد
+      {% elif order['status']=='shipped' %} مشحون
+      {% elif order['status']=='pending' %} انتظار
+      {% elif order['status']=='cancelled' %} ملغى
       {% else %}{{ order['status'] }}{% endif %}
     </div>
     <div class="im">
       <strong>طريقة الدفع</strong>
-      {% if order['payment_method']=='cod' %}💵 كاش عند الاستلام
-      {% else %}💳 Visa ****{{ order['card_last4'] }}{% endif %}
+      {% if order['payment_method']=='cod' %} كاش عند الاستلام
+      {% else %} Visa ****{{ order['card_last4'] }}{% endif %}
     </div>
     <div class="im"><strong>المدينة</strong>{{ order['city'] }}</div>
   </div>
@@ -171,9 +171,9 @@ body{font-family:'Cairo','Segoe UI',sans-serif;background:#f5f5f5;color:#1a1a1a;
     <div class="inv-section">
       <div class="inv-section-title">معلومات الدفع</div>
       {% if order['payment_method']=='cod' %}
-        <div class="pay-info">💵 الدفع كاش عند الاستلام — المبلغ المطلوب {{ order['grand_total']|int }} جنيه</div>
+        <div class="pay-info"> الدفع كاش عند الاستلام — المبلغ المطلوب {{ order['grand_total']|int }} جنيه</div>
       {% else %}
-        <div class="pay-info">💳 تم الدفع بالبطاقة — Visa ****{{ order['card_last4'] }}</div>
+        <div class="pay-info"> تم الدفع بالبطاقة — Visa ****{{ order['card_last4'] }}</div>
       {% endif %}
     </div>
 

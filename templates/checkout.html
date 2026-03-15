@@ -60,7 +60,7 @@
 {% endblock %}
 
 {% block body %}
-<div class="page-head"><h1>🔒 إتمام الطلب</h1></div>
+<div class="page-head"><h1> إتمام الطلب</h1></div>
 <div class="co-pg"><div class="wrap">
 <form action="{{ url_for('pay') }}" method="POST" id="checkoutForm">
 <input type="hidden" name="payment_method" id="paymentMethodInput" value="card">
@@ -69,7 +69,7 @@
   <div>
     <!-- بيانات التوصيل -->
     <div class="co-box">
-      <h3>📦 بيانات التوصيل</h3>
+      <h3> بيانات التوصيل</h3>
       <div class="field-row">
         <div class="field"><label>الاسم الكامل *</label><input type="text" name="full_name" required></div>
         <div class="field"><label>رقم الهاتف *</label><input type="tel" name="phone" required></div>
@@ -97,14 +97,14 @@
 
     <!-- طريقة الدفع -->
     <div class="co-box">
-      <h3>💳 طريقة الدفع</h3>
+      <h3> طريقة الدفع</h3>
       <div class="pay-tabs">
         <div class="pay-tab active" id="tabCard" onclick="switchPayment('card')">
-          <span class="pay-tab-icon">💳</span>
+          <span class="pay-tab-icon"></span>
           <div class="pay-tab-info"><strong>بطاقة ائتمان</strong><span>Visa / Mastercard</span></div>
         </div>
         <div class="pay-tab" id="tabCod" onclick="switchPayment('cod')">
-          <span class="pay-tab-icon">💵</span>
+          <span class="pay-tab-icon"></span>
           <div class="pay-tab-info"><strong>كاش عند الاستلام</strong><span>ادفع لما الطلب يوصل</span></div>
         </div>
       </div>
@@ -129,13 +129,13 @@
           </div>
         </div>
         <div class="sec-badges">
-          <span class="sb">🔒 SSL</span><span class="sb">✅ Visa Verified</span><span class="sb">🛡️ 3D Secure</span>
+          <span class="sb"> SSL</span><span class="sb"> Visa Verified</span><span class="sb">️ 3D Secure</span>
         </div>
       </div>
 
       <!-- قسم الكاش -->
       <div id="codSection" class="cod-box" style="display:none">
-        <div class="cod-icon">💵</div>
+        <div class="cod-icon"></div>
         <h3>الدفع كاش عند الاستلام</h3>
         <p>استلم طلبك وادفع للمندوب نقداً<br>بدون أى رسوم إضافية</p>
         <div class="cod-steps">
@@ -152,11 +152,11 @@
     <h3>ملخص الطلب</h3>
     {% for item in items %}
     <div class="os-item">
-      <div class="os-emoji">
+      <div class="os-emoji" style="background:#f0f4f0;border-radius:8px;overflow:hidden">
         {% if item["photo"] %}
-          <img src="{{ item['photo'] }}" alt="{{ item['name_ar'] }}" style="width:44px;height:44px;object-fit:cover;border-radius:8px;display:block" onerror="this.style.display='none'">
+          <img src="{{ item['photo'] }}" alt="{{ item['name_ar'] }}" style="width:44px;height:44px;object-fit:cover;display:block" onerror="this.parentElement.style.background='#e8ede8';this.remove()">
         {% else %}
-          {{ item["image"] or "🫒" }}
+          <div style="width:44px;height:44px"></div>
         {% endif %}
       </div>
       <div style="flex:1">
@@ -172,13 +172,13 @@
       <div class="ot">
         <span>الشحن</span>
         <span style="{% if sub >= 500 %}color:var(--mid-green);font-weight:800{% endif %}">
-          {% if sub >= 500 %}مجانى 🎉{% else %}50 جنيه{% endif %}
+          {% if sub >= 500 %}مجانى {% else %}50 جنيه{% endif %}
         </span>
       </div>
       <div class="ot grand"><span>الإجمالى</span><span>{{ total }} جنيه</span></div>
     </div>
-    <button type="submit" class="pay-btn" id="submitBtn">✅ ادفع وأكّد الطلب</button>
-    <p style="text-align:center;font-size:.77rem;color:var(--muted);margin-top:.6rem">🔒 بياناتك محمية ومشفرة</p>
+    <button type="submit" class="pay-btn" id="submitBtn"> ادفع وأكّد الطلب</button>
+    <p style="text-align:center;font-size:.77rem;color:var(--muted);margin-top:.6rem"> بياناتك محمية ومشفرة</p>
   </div>
 </div>
 </form>
@@ -194,7 +194,7 @@ function switchPayment(method){
   document.getElementById('codSection').style.display  = isCard?'none':'block';
   document.getElementById('tabCard').classList.toggle('active',isCard);
   document.getElementById('tabCod').classList.toggle('active',!isCard);
-  document.getElementById('submitBtn').textContent = isCard?'✅ ادفع وأكّد الطلب':'✅ أكّد الطلب (كاش)';
+  document.getElementById('submitBtn').textContent = isCard?' ادفع وأكّد الطلب':' أكّد الطلب (كاش)';
   ['in_card','inm','iex','cvvInput'].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.required=isCard;

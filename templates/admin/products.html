@@ -1,6 +1,6 @@
 {% extends "admin/base.html" %}
 {% block title %}المنتجات | أدمن سلافة{% endblock %}
-{% block page_title %}🫒 إدارة المنتجات{% endblock %}
+{% block page_title %}إدارة المنتجات{% endblock %}
 {% block extra_css %}
 <style>
 .a-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:1.5rem}
@@ -13,9 +13,6 @@
 .a-table tr:hover td{background:rgba(255,255,255,.025)}
 
 /* ── product visual cell ── */
-.prod-visual{
-  display:flex;align-items:center;justify-content:center;gap:.5rem;
-}
 .prod-photo{
   width:46px;height:46px;border-radius:10px;
   object-fit:cover;border:1px solid var(--border);
@@ -23,9 +20,6 @@
   transition:transform .2s;
 }
 .prod-photo:hover{transform:scale(1.08)}
-.prod-emoji{
-  font-size:1.7rem;line-height:1;flex-shrink:0;
-}
 /* placeholder when no photo */
 .prod-photo-placeholder{
   width:46px;height:46px;border-radius:10px;
@@ -48,7 +42,7 @@
     <table class="a-table">
       <thead>
         <tr>
-          <th style="text-align:center">الأيقونة / الصورة</th>
+          <th style="text-align:center">الصورة</th>
           <th>الاسم بالعربى</th>
           <th>الاسم بالإنجليزى</th>
           <th>السعر</th>
@@ -61,30 +55,13 @@
       <tbody>
         {% for p in products %}
         <tr>
-          <td>
-            <div class="prod-visual">
-
-              {# ── Emoji always shown ── #}
-              <span class="prod-emoji" title="الأيقونة">{{ p['image'] }}</span>
-
-              {# ── Photo if exists, placeholder if not ── #}
-              {% if p['photo'] %}
-                <img
-                  src="{{ p['photo'] }}"
-                  alt="{{ p['name_ar'] }}"
-                  class="prod-photo"
-                  title="صورة المنتج"
-                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
-                >
-                {# hidden fallback placeholder ── shown if img fails ── #}
-                <div class="prod-photo-placeholder" style="display:none">لا<br>صورة</div>
-              {% else %}
-                <div class="prod-photo-placeholder" title="لا توجد صورة - اضغط تعديل لإضافة صورة">
-                  📷<br><span style="font-size:.55rem">أضف صورة</span>
-                </div>
-              {% endif %}
-
-            </div>
+          <td style="text-align:center">
+            {% if p['photo'] %}
+              <img src="{{ p['photo'] }}" alt="{{ p['name_ar'] }}" class="prod-photo"
+                   onerror="this.outerHTML='<div class=prod-photo-placeholder>لا صورة</div>'">
+            {% else %}
+              <div class="prod-photo-placeholder">لا<br>صورة</div>
+            {% endif %}
           </td>
 
           <td><strong>{{ p['name_ar'] }}</strong></td>

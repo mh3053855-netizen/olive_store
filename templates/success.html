@@ -28,16 +28,16 @@
 
 {% block body %}
 <div class="top-strip">
-  <p>{% if order['payment_method']=='cod' %}🎉 شكراً! سيتم التواصل معك لتأكيد الطلب{% else %}🎉 شكراً لثقتك فى سلافة!{% endif %}</p>
+  <p>{% if order['payment_method']=='cod' %} شكراً! سيتم التواصل معك لتأكيد الطلب{% else %} شكراً لثقتك فى سلافة!{% endif %}</p>
 </div>
 <div class="suc"><div class="wrap">
-  <div class="suc-ic">✅</div>
+  <div class="suc-ic"></div>
   <h1>تم استلام طلبك!</h1>
   <p style="color:var(--muted);margin-top:.5rem">رقم الطلب: <strong style="color:var(--dark-green)">{{ order['order_number'] }}</strong></p>
 
   {% if order['payment_method']=='cod' %}
   <div class="cod-notice">
-    <div class="cod-notice-icon">💵</div>
+    <div class="cod-notice-icon"></div>
     <div class="cod-notice-text">
       <strong>الدفع كاش عند الاستلام</strong>
       <span>سيتصل بك المندوب قبل التوصيل — جهّز المبلغ {{ order['grand_total']|int }} جنيه</span>
@@ -53,13 +53,13 @@
       <span>طريقة الدفع</span>
       <span>
         {% if order['payment_method']=='cod' %}
-          💵 كاش عند الاستلام
+           كاش عند الاستلام
         {% else %}
-          💳 Visa ****{{ order['card_last4'] }}
+           Visa ****{{ order['card_last4'] }}
         {% endif %}
       </span>
     </div>
-    <div class="or"><span>الحالة</span><span style="color:var(--mid-green)">✅ مؤكد</span></div>
+    <div class="or"><span>الحالة</span><span style="color:var(--mid-green)"> مؤكد</span></div>
     <div class="ord-items">
       {% for item in items %}
       <div class="oi">
@@ -72,8 +72,8 @@
   </div>
 
   <div class="suc-btns">
-    <a href="{{ url_for('index') }}" class="btn btn-dark btn-lg">🏠 الرئيسية</a>
-    <a href="{{ url_for('shop') }}" class="btn btn-gold btn-lg">🫒 تسوق مجدداً</a>
+    <a href="{{ url_for('index') }}" class="btn btn-dark btn-lg"> الرئيسية</a>
+    <a href="{{ url_for('shop') }}" class="btn btn-gold btn-lg"> تسوق مجدداً</a>
   </div>
 </div></div>
 {% endblock %}

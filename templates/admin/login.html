@@ -28,13 +28,13 @@ h2{font-size:1.2rem;font-weight:800;color:#1a3a1a;margin-bottom:1.5rem;text-alig
 <body>
 <div class="box">
   <div class="logo">
-    <div class="logo-mark">🫒</div>
+    <div class="logo-mark"></div>
     <div class="logo-name">سلافة</div>
     <div class="logo-sub">Admin Panel</div>
   </div>
   <h2>تسجيل دخول المسؤول</h2>
   {% if error %}
-  <div class="error">❌ اسم المستخدم أو كلمة المرور غلط</div>
+  <div class="error"> اسم المستخدم أو كلمة المرور غلط</div>
   {% endif %}
   {% with messages = get_flashed_messages(with_categories=true) %}
   {% for cat, msg in messages %}
@@ -51,7 +51,7 @@ h2{font-size:1.2rem;font-weight:800;color:#1a3a1a;margin-bottom:1.5rem;text-alig
       <label>كلمة المرور</label>
       <input type="password" name="password" required>
     </div>
-    <button type="submit" class="submit-btn">🔐 دخول</button>
+    <button type="submit" class="submit-btn"> دخول</button>
   </form>
   <div class="back"><a href="{{ url_for('index') }}">← العودة للموقع</a></div>
 </div>

@@ -1,6 +1,6 @@
 {% extends "admin/base.html" %}
 {% block title %}الإعدادات | أدمن سلافة{% endblock %}
-{% block page_title %}<span>⚙️</span> إعدادات الموقع{% endblock %}
+{% block page_title %}إعدادات الموقع{% endblock %}
 {% block extra_css %}
 <style>
 .s-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
@@ -23,19 +23,36 @@
 .s-tab.active{background:var(--gold);color:#000;border-color:var(--gold)}
 .s-section{display:none}.s-section.active{display:block}
 @media(max-width:900px){.s-grid{grid-template-columns:1fr}.f2{grid-template-columns:1fr}}
+
+/* ── image upload ── */
+.img-box{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:1.3rem;margin-bottom:1.2rem}
+.img-box-lbl{font-size:.82rem;font-weight:800;color:var(--gold);margin-bottom:.25rem}
+.img-box-hint{font-size:.76rem;color:var(--muted);margin-bottom:1rem;line-height:1.5}
+.img-box-grid{display:grid;grid-template-columns:120px 1fr;gap:1rem;align-items:start}
+.img-cur{width:120px;height:96px;object-fit:cover;border-radius:8px;border:1px solid var(--border);display:block}
+.img-empty{width:120px;height:96px;border:1px dashed var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--muted);text-align:center}
+.img-dz{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.35rem;border:2px dashed var(--border);border-radius:10px;padding:1rem;cursor:pointer;transition:.2s;text-align:center;min-height:96px;overflow:hidden}
+.img-dz:hover,.img-dz.drag{border-color:var(--gold);background:rgba(201,168,76,.06)}
+.img-dz .di{font-size:1.4rem;pointer-events:none}
+.img-dz .dt{font-size:.82rem;color:var(--text);font-weight:600;pointer-events:none}
+.img-dz .dl{color:var(--gold);text-decoration:underline}
+.img-dz .dh{font-size:.7rem;color:var(--muted);pointer-events:none}
+.img-dz .dp{max-width:100%;max-height:86px;border-radius:6px;object-fit:contain;pointer-events:none}
+@media(max-width:600px){.img-box-grid{grid-template-columns:1fr}}
 </style>
 {% endblock %}
 {% block content %}
-<form method="POST" id="settingsForm">
+<form method="POST" id="settingsForm" enctype="multipart/form-data">
 
 <!-- TABS -->
 <div class="s-tabs">
-  <button type="button" class="s-tab active" onclick="showTab('general')">🌐 عام</button>
-  <button type="button" class="s-tab" onclick="showTab('categories')">🏷️ الأصناف</button>
-  <button type="button" class="s-tab" onclick="showTab('texts')">✍️ نصوص الموقع</button>
-  <button type="button" class="s-tab" onclick="showTab('about')">🫒 عن سلافة</button>
-  <button type="button" class="s-tab" onclick="showTab('social')">📱 السوشيال</button>
-  <button type="button" class="s-tab" onclick="showTab('shipping')">🚚 الشحن</button>
+  <button type="button" class="s-tab active" onclick="showTab('general')">عام</button>
+  <button type="button" class="s-tab" onclick="showTab('categories')">الأصناف</button>
+  <button type="button" class="s-tab" onclick="showTab('texts')">نصوص الموقع</button>
+  <button type="button" class="s-tab" onclick="showTab('about')">عن سلافة</button>
+  <button type="button" class="s-tab" onclick="showTab('social')">السوشيال</button>
+  <button type="button" class="s-tab" onclick="showTab('shipping')">الشحن</button>
+  <button type="button" class="s-tab" onclick="showTab('images')">🖼️ صور الموقع</button>
 </div>
 
 <!-- ══ TAB: GENERAL ══ -->
@@ -51,6 +68,26 @@
       <div class="f2">
         <div class="field"><label>الشعار بالعربى</label><input type="text" name="tagline_ar" value="{{ s.tagline_ar or '' }}"></div>
         <div class="field"><label>Tagline (English)</label><input type="text" name="tagline_en" value="{{ s.tagline_en or '' }}" style="direction:ltr"></div>
+
+      <div class="field" style="margin-top:.5rem">
+        <label>النص الصغير تحت اسم الموقع (الناف بار)</label>
+        <input type="text" name="brand_sub" value="{{ s.brand_sub or 'SULAFA OIL' }}"
+               placeholder="SULAFA OIL" style="direction:ltr;letter-spacing:2px">
+        <small style="color:var(--muted);font-size:.74rem;display:block;margin-top:.3rem">
+          يظهر تحت اسم الموقع في الشريط العلوى — مثال: SULAFA OIL
+        </small>
+      </div>
+      </div>
+    </div>
+    <div class="s-card">
+      <h3>📢 شريط الإعلان العلوى</h3>
+      <div class="field">
+        <label>نص الشريط الداكن فوق القائمة</label>
+        <input type="text" name="topbar_text"
+               value="{{ s.topbar_text or '🚚 توصيل مجانى على الطلبات فوق 500 جنيه · 🔒 دفع آمن بـ Visa' }}">
+        <small style="color:var(--muted);font-size:.74rem;display:block;margin-top:.3rem">
+          الشريط اللى بيظهر فوق القائمة — تقدر تغير النص أو تكتب عروض جديدة
+        </small>
       </div>
     </div>
     <div class="s-card">
@@ -361,9 +398,34 @@
 <div class="s-card" style="max-width:600px">
   <h3>📱 روابط السوشيال ميديا</h3>
   <div class="field">
-    <label>💬 واتساب (رقم دولى بدون +)</label>
-    <input type="text" name="whatsapp" value="{{ s.whatsapp or '' }}" placeholder="201001234567" style="direction:ltr">
-    <small style="color:var(--muted);font-size:.75rem;display:block;margin-top:.3rem">مثال: 201001234567 (بدون + أو مسافات)</small>
+    <label>واتساب (رقم دولى بدون +)</label>
+    <input type="text" name="whatsapp" id="wa-input" value="{{ s.whatsapp or '' }}" placeholder="201001234567"
+           style="direction:ltr" oninput="updateWaPreview(this.value)">
+    <small style="color:var(--muted);font-size:.75rem;display:block;margin-top:.3rem">
+      مثال: 201001234567 (بدون + أو مسافات) — الرابط اللى هيشوفه العميل:
+    </small>
+    <a id="wa-preview" href="https://wa.me/{{ s.whatsapp or '' }}" target="_blank"
+       style="display:inline-flex;align-items:center;gap:.4rem;margin-top:.5rem;
+              padding:.45rem 1rem;border-radius:8px;font-size:.82rem;font-weight:700;
+              background:rgba(37,211,102,.15);border:1px solid rgba(37,211,102,.35);
+              color:#25d366;text-decoration:none;transition:.2s"
+       onmouseover="this.style.background='rgba(37,211,102,.25)'"
+       onmouseout="this.style.background='rgba(37,211,102,.15)'">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="#25d366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.556 4.116 1.526 5.845L.057 23.49a.75.75 0 00.906.98l5.818-1.525A11.944 11.944 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.698-.504-5.244-1.385l-.376-.22-3.898 1.022 1.04-3.793-.243-.389A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+      فتح محادثة واتساب
+    </a>
+  </div>
+
+  <!-- رسالة الواتساب الجاهزة -->
+  <div class="field" style="margin-top:.8rem">
+    <label>الرسالة الجاهزة للعميل</label>
+    <textarea name="whatsapp_msg" id="wa-msg" rows="3"
+              placeholder="مثال: مرحباً، أريد الاستفسار عن منتجاتكم 🫒"
+              oninput="updateWaPreview(document.getElementById('wa-input').value)"
+              style="resize:vertical">{{ s.whatsapp_msg or 'مرحباً، أريد الاستفسار عن منتجاتكم 🫒' }}</textarea>
+    <small style="color:var(--muted);font-size:.75rem;display:block;margin-top:.3rem">
+      هى الرسالة اللى هتظهر جاهزة للعميل لما يفتح الواتساب — تقدر تعدلها زى ما تحب
+    </small>
   </div>
   <div class="field"><label>📘 Facebook</label><input type="url" name="facebook" value="{{ s.facebook or '' }}" placeholder="https://facebook.com/sulafa" style="direction:ltr"></div>
   <div class="field"><label>📷 Instagram</label><input type="url" name="instagram" value="{{ s.instagram or '' }}" placeholder="https://instagram.com/sulafa" style="direction:ltr"></div>
@@ -376,7 +438,7 @@
 <!-- ══ TAB: SHIPPING ══ -->
 <div class="s-section" id="tab-shipping">
 <div class="s-card" style="max-width:600px">
-  <h3>🚚 الشحن والأسعار</h3>
+  <h3>الشحن والأسعار</h3>
   <div class="f2">
     <div class="field"><label>تكلفة الشحن (جنيه)</label><input type="number" name="shipping_cost" value="{{ s.shipping_cost or 50 }}"></div>
     <div class="field"><label>شحن مجانى فوق (جنيه)</label><input type="number" name="free_shipping_threshold" value="{{ s.free_shipping_threshold or 500 }}"></div>
@@ -392,6 +454,90 @@
 </div>
 </div>
 
+
+<!-- ══ TAB: IMAGES ══ -->
+<div class="s-section" id="tab-images">
+<div class="s-card" style="max-width:660px">
+  <h3>🖼️ صور الموقع</h3>
+  <p style="font-size:.82rem;color:var(--muted);margin-bottom:1.5rem">
+    ارفع صورة لكل موضع — تظهر في الموقع بدل الأيقونة تلقائياً.
+  </p>
+
+  <!-- صورة Hero -->
+  <div class="img-box">
+    <div class="img-box-lbl">صورة الصفحة الرئيسية (Hero)</div>
+    <p class="img-box-hint">تظهر على يمين العنوان الكبير في الصفحة الرئيسية</p>
+    <div class="img-box-grid">
+      <div>
+        {% if s.hero_image %}<img src="{{ s.hero_image }}" class="img-cur" alt="">
+        <div style="font-size:.65rem;color:var(--muted);text-align:center;margin-top:.3rem">الحالية</div>
+        {% else %}<div class="img-empty">لا توجد<br>صورة</div>{% endif %}
+      </div>
+      <label class="img-dz" id="dz-hero"
+        ondragover="event.preventDefault();this.classList.add('drag')"
+        ondragleave="this.classList.remove('drag')"
+        ondrop="dzDrop(event,'dz-hero','inp-hero','pv-hero')">
+        <input type="file" name="hero_image_file" id="inp-hero" accept="image/*" style="display:none"
+               onchange="dzShow(this,'dz-hero','pv-hero')">
+        <span class="di">📁</span>
+        <span class="dt">اسحب الصورة هنا أو <span class="dl">اختر من الجهاز</span></span>
+        <span class="dh">PNG · JPG · WEBP — حد أقصى 5MB</span>
+        <img id="pv-hero" class="dp" src="" style="display:none" alt="">
+      </label>
+    </div>
+  </div>
+
+  <!-- صورة about -->
+  <div class="img-box">
+    <div class="img-box-lbl">صورة صفحة "عن سلافة"</div>
+    <p class="img-box-hint">تظهر بجانب النص في صفحة "عن سلافة"</p>
+    <div class="img-box-grid">
+      <div>
+        {% if s.about_image %}<img src="{{ s.about_image }}" class="img-cur" alt="">
+        <div style="font-size:.65rem;color:var(--muted);text-align:center;margin-top:.3rem">الحالية</div>
+        {% else %}<div class="img-empty">لا توجد<br>صورة</div>{% endif %}
+      </div>
+      <label class="img-dz" id="dz-about"
+        ondragover="event.preventDefault();this.classList.add('drag')"
+        ondragleave="this.classList.remove('drag')"
+        ondrop="dzDrop(event,'dz-about','inp-about','pv-about')">
+        <input type="file" name="about_image_file" id="inp-about" accept="image/*" style="display:none"
+               onchange="dzShow(this,'dz-about','pv-about')">
+        <span class="di">📁</span>
+        <span class="dt">اسحب الصورة هنا أو <span class="dl">اختر من الجهاز</span></span>
+        <span class="dh">PNG · JPG · WEBP — حد أقصى 5MB</span>
+        <img id="pv-about" class="dp" src="" style="display:none" alt="">
+      </label>
+    </div>
+  </div>
+
+  <!-- صورة benefits -->
+  <div class="img-box">
+    <div class="img-box-lbl">صورة قسم الفوائد (الصفحة الرئيسية)</div>
+    <p class="img-box-hint">تظهر في قسم "اكتشف فوائد زيوت سلافة"</p>
+    <div class="img-box-grid">
+      <div>
+        {% if s.benefits_image %}<img src="{{ s.benefits_image }}" class="img-cur" alt="">
+        <div style="font-size:.65rem;color:var(--muted);text-align:center;margin-top:.3rem">الحالية</div>
+        {% else %}<div class="img-empty">لا توجد<br>صورة</div>{% endif %}
+      </div>
+      <label class="img-dz" id="dz-ben"
+        ondragover="event.preventDefault();this.classList.add('drag')"
+        ondragleave="this.classList.remove('drag')"
+        ondrop="dzDrop(event,'dz-ben','inp-ben','pv-ben')">
+        <input type="file" name="benefits_image_file" id="inp-ben" accept="image/*" style="display:none"
+               onchange="dzShow(this,'dz-ben','pv-ben')">
+        <span class="di">📁</span>
+        <span class="dt">اسحب الصورة هنا أو <span class="dl">اختر من الجهاز</span></span>
+        <span class="dh">PNG · JPG · WEBP — حد أقصى 5MB</span>
+        <img id="pv-ben" class="dp" src="" style="display:none" alt="">
+      </label>
+    </div>
+  </div>
+
+</div>
+</div>
+
 <div class="save-bar">
   <p>💡 كل التغييرات ستظهر فى الموقع فوراً بعد الحفظ</p>
   <button type="submit" class="btn btn-gold" style="padding:.75rem 2rem;font-size:.95rem">💾 حفظ جميع الإعدادات</button>
@@ -401,6 +547,51 @@
 
 {% block extra_js %}
 <script>
+
+/* ── whatsapp preview ── */
+function updateWaPreview(val) {
+  var link = document.getElementById('wa-preview');
+  if (!link) return;
+  val = val.trim().replace(/[^0-9]/g, '');
+  var msgEl = document.getElementById('wa-msg');
+  var msg = msgEl ? msgEl.value.trim() : '';
+  if (val) {
+    link.href = msg
+      ? 'https://wa.me/' + val + '?text=' + encodeURIComponent(msg)
+      : 'https://wa.me/' + val;
+    link.style.opacity = '1';
+  } else {
+    link.href = '#';
+    link.style.opacity = '.4';
+  }
+}
+// init on load
+document.addEventListener('DOMContentLoaded', function() {
+  var inp = document.getElementById('wa-input');
+  if (inp) updateWaPreview(inp.value);
+});
+
+
+/* ── image upload ── */
+function dzShow(inp,dzId,pvId){
+  var f=inp.files[0]; if(!f)return;
+  if(f.size>5*1024*1024){alert('الصورة أكبر من 5MB');inp.value='';return;}
+  var r=new FileReader();
+  r.onload=function(e){
+    var dz=document.getElementById(dzId);
+    dz.querySelectorAll('.di,.dt,.dh').forEach(function(el){el.style.display='none';});
+    var pv=document.getElementById(pvId); pv.src=e.target.result; pv.style.display='block';
+  };
+  r.readAsDataURL(f);
+}
+function dzDrop(e,dzId,inpId,pvId){
+  e.preventDefault(); document.getElementById(dzId).classList.remove('drag');
+  var files=e.dataTransfer.files; if(!files.length)return;
+  var inp=document.getElementById(inpId);
+  try{var dt=new DataTransfer();dt.items.add(files[0]);inp.files=dt.files;}catch(ex){}
+  dzShow(inp,dzId,pvId);
+}
+
 /* ── tabs ── */
 function showTab(name) {
   document.querySelectorAll('.s-section').forEach(s => s.classList.remove('active'));

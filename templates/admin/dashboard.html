@@ -52,18 +52,18 @@
 {% endblock %}
 {% block content %}
 <div class="kpi-grid">
-  <div class="kpi green"><div class="kpi-icon">💰</div><div class="kpi-body"><strong>{{ total_revenue|int }}</strong><span>إجمالى الإيرادات (جنيه)</span><div class="kpi-tag">📈 كل الوقت</div></div></div>
-  <div class="kpi blue"><div class="kpi-icon">📦</div><div class="kpi-body"><strong>{{ total_orders }}</strong><span>إجمالى الطلبات</span><div class="kpi-tag">🛒 نمو مستمر</div></div></div>
-  <div class="kpi purple"><div class="kpi-icon">👥</div><div class="kpi-body"><strong>{{ total_customers }}</strong><span>عملاء فريدون</span><div class="kpi-tag">❤️ قاعدة متنامية</div></div></div>
-  <div class="kpi gold"><div class="kpi-icon">🫒</div><div class="kpi-body"><strong>{{ total_products }}</strong><span>منتج نشط</span><div class="kpi-tag">✅ المتجر مكتمل</div></div></div>
-  <div class="kpi orange"><div class="kpi-icon">🧮</div><div class="kpi-body"><strong>{{ avg_order|int }}</strong><span>متوسط قيمة الطلب (جنيه)</span><div class="kpi-tag">⭐ AOV</div></div></div>
-  <div class="kpi red"><div class="kpi-icon">📤</div><div class="kpi-body"><strong>{{ total_items_sold }}</strong><span>قطعة مباعة</span><div class="kpi-tag">🚀 حركة ممتازة</div></div></div>
-  <div class="kpi green" style="grid-column:span 2"><div class="kpi-icon">🏙️</div><div class="kpi-body"><strong>{{ top_city or '—' }}</strong><span>أعلى مدينة مبيعاً</span><div class="kpi-tag">📍 الأكثر طلباً</div></div></div>
+  <div class="kpi green"><div class="kpi-icon"></div><div class="kpi-body"><strong>{{ total_revenue|int }}</strong><span>إجمالى الإيرادات (جنيه)</span><div class="kpi-tag"> كل الوقت</div></div></div>
+  <div class="kpi blue"><div class="kpi-icon"></div><div class="kpi-body"><strong>{{ total_orders }}</strong><span>إجمالى الطلبات</span><div class="kpi-tag"> نمو مستمر</div></div></div>
+  <div class="kpi purple"><div class="kpi-icon"></div><div class="kpi-body"><strong>{{ total_customers }}</strong><span>عملاء فريدون</span><div class="kpi-tag">️ قاعدة متنامية</div></div></div>
+  <div class="kpi gold"><div class="kpi-icon"></div><div class="kpi-body"><strong>{{ total_products }}</strong><span>منتج نشط</span><div class="kpi-tag"> المتجر مكتمل</div></div></div>
+  <div class="kpi orange"><div class="kpi-icon"></div><div class="kpi-body"><strong>{{ avg_order|int }}</strong><span>متوسط قيمة الطلب (جنيه)</span><div class="kpi-tag"> AOV</div></div></div>
+  <div class="kpi red"><div class="kpi-icon"></div><div class="kpi-body"><strong>{{ total_items_sold }}</strong><span>قطعة مباعة</span><div class="kpi-tag"> حركة ممتازة</div></div></div>
+  <div class="kpi green" style="grid-column:span 2"><div class="kpi-icon">️</div><div class="kpi-body"><strong>{{ top_city or '—' }}</strong><span>أعلى مدينة مبيعاً</span><div class="kpi-tag"> الأكثر طلباً</div></div></div>
 </div>
 
 <div class="charts-row">
   <div class="chart-card">
-    <div class="card-title"><span>📊 إيرادات آخر 7 أيام</span></div>
+    <div class="card-title"><span> إيرادات آخر 7 أيام</span></div>
     <div class="bar-chart">
       {% if daily_revenues %}
         {% set max_rev = namespace(v=1) %}
@@ -82,7 +82,7 @@
   </div>
 
   <div class="chart-card">
-    <div class="card-title"><span>🍩 حالة الطلبات</span></div>
+    <div class="card-title"><span> حالة الطلبات</span></div>
     <div class="donut-wrap">
       {% set colors = ['#4a7c59','#c9a84c','#2980b9','#c0392b'] %}
       {% set statuses = [('confirmed','مؤكد'),('pending','انتظار'),('shipped','مشحون'),('cancelled','ملغى')] %}
@@ -118,7 +118,7 @@
 <div class="bottom-grid">
   <div class="data-card">
     <div class="card-title">
-      <span>🧾 آخر الطلبات</span>
+      <span> آخر الطلبات</span>
       <a href="{{ url_for('admin_orders') }}">عرض الكل ←</a>
     </div>
     {% if recent_orders %}
@@ -138,13 +138,13 @@
       </tbody>
     </table>
     {% else %}
-    <div style="text-align:center;padding:2.5rem;color:var(--muted)"><div style="font-size:2.5rem">📭</div><p style="margin-top:.5rem">لا توجد طلبات بعد</p></div>
+    <div style="text-align:center;padding:2.5rem;color:var(--muted)"><div style="font-size:2.5rem"></div><p style="margin-top:.5rem">لا توجد طلبات بعد</p></div>
     {% endif %}
   </div>
 
   <div class="data-card">
     <div class="card-title">
-      <span>🏆 أكثر المنتجات مبيعاً</span>
+      <span> أكثر المنتجات مبيعاً</span>
       <a href="{{ url_for('admin_products') }}">إدارة ←</a>
     </div>
     {% if top_products %}
@@ -152,7 +152,7 @@
       {% for n,e,q,r in top_products %}{% if q > max_q.v %}{% set max_q.v = q %}{% endif %}{% endfor %}
       {% for name,emoji,qty,rev in top_products %}
       <div class="prod-row">
-        <div class="prod-emoji">{{ emoji or '🫒' }}</div>
+        <div class="prod-emoji">{{ emoji or '' }}</div>
         <div class="prod-info">
           <strong>{{ name }}</strong>
           <small>{{ qty }} قطعة مباعة</small>
@@ -162,7 +162,7 @@
       </div>
       {% endfor %}
     {% else %}
-    <div style="text-align:center;padding:2.5rem;color:var(--muted)"><div style="font-size:2.5rem">📦</div><p style="margin-top:.5rem">لا توجد مبيعات بعد</p></div>
+    <div style="text-align:center;padding:2.5rem;color:var(--muted)"><div style="font-size:2.5rem"></div><p style="margin-top:.5rem">لا توجد مبيعات بعد</p></div>
     {% endif %}
   </div>
 </div>

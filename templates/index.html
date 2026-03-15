@@ -83,9 +83,16 @@
     <div class="hero-visual">
       <div class="bottle-wrap">
         <div class="bottle-bg"></div>
-        <div class="bottle-main">🫒</div>
-        <div class="bottle-leaves bl1">🌿</div>
-        <div class="bottle-leaves bl2">🍃</div>
+        {% if s.hero_image %}
+          <img src="{{ s.hero_image }}" alt="{{ s.site_name_ar }}"
+               style="width:270px;height:330px;object-fit:contain;
+                      filter:drop-shadow(0 20px 40px rgba(0,0,0,.4));
+                      animation:floatBottle 4s ease-in-out infinite">
+        {% else %}
+          <div class="bottle-main">🫒</div>
+          <div class="bottle-leaves bl1">🌿</div>
+          <div class="bottle-leaves bl2">🍃</div>
+        {% endif %}
       </div>
     </div>
   </div>
@@ -183,7 +190,14 @@
           <a href="{{ url_for('about') }}" class="btn btn-dark">اعرف أكثر ←</a>
         </div>
       </div>
-      <div class="benefits-visual">🫒</div>
+      <div class="benefits-visual">
+        {% if s.benefits_image %}
+          <img src="{{ s.benefits_image }}" alt="فوائد زيت الزيتون"
+               style="width:100%;height:100%;object-fit:cover;border-radius:var(--r-lg)">
+        {% else %}
+          🫒
+        {% endif %}
+      </div>
     </div>
   </div>
 </section>
