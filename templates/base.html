@@ -110,25 +110,26 @@ button,input,select,textarea{font-family:inherit}
 .ham-btn.open span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg)}
 
 /* mobile menu overlay */
-.mob-menu{display:none;position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.45);
+.mob-menu{display:none;position:fixed;top:73px;left:0;right:0;bottom:0;z-index:800;background:rgba(0,0,0,.45);
   opacity:0;transition:opacity .25s}
 .mob-menu.open{display:block;opacity:1}
-.mob-panel{position:absolute;top:0;right:0;width:75%;max-width:300px;height:100%;
-  background:#fff;box-shadow:-4px 0 20px rgba(0,0,0,.15);
+.mob-panel{position:absolute;top:0;right:0;width:80%;max-width:320px;height:100%;
+  background:#fff;box-shadow:-4px 0 20px rgba(0,0,0,.2);
   transform:translateX(100%);transition:transform .28s ease;
-  display:flex;flex-direction:column;overflow-y:auto}
+  display:flex;flex-direction:column;overflow-y:auto;
+  border-top:2px solid var(--border)}
 .mob-menu.open .mob-panel{transform:translateX(0)}
 .mob-panel-head{padding:1.2rem 1.4rem;border-bottom:2px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between}
+  display:flex;align-items:center;justify-content:space-between;direction:rtl}
 .mob-panel-brand{font-size:1.3rem;font-weight:900;font-family:'Playfair Display',serif;
   color:var(--dark-green)}
 .mob-panel-brand span{color:var(--gold)}
 .mob-close{background:none;border:none;font-size:1.5rem;cursor:pointer;
   color:var(--muted);padding:4px;line-height:1}
 .mob-nav{padding:.8rem 0;flex:1}
-.mob-nav a{display:flex;align-items:center;padding:.85rem 1.4rem;
-  font-size:1rem;font-weight:700;color:var(--text);border-right:3px solid transparent;
-  transition:.18s}
+.mob-nav a{display:flex;align-items:center;justify-content:flex-end;padding:1rem 1.4rem;
+  font-size:1.05rem;font-weight:700;color:var(--text);
+  border-right:3px solid transparent;width:100%;transition:.18s;text-align:right}
 .mob-nav a:hover,.mob-nav a.on{color:var(--dark-green);background:var(--light-green);
   border-right-color:var(--dark-green)}
 .mob-cart{padding:1rem 1.4rem;border-top:1px solid var(--border)}
@@ -139,6 +140,7 @@ button,input,select,textarea{font-family:inherit}
 @media(max-width:768px){
   .nav-links{display:none}
   .ham-btn{display:flex}
+  .nav-inner{justify-content:space-between}
   .footer-grid{grid-template-columns:1fr;gap:1.5rem}
   .field-row{grid-template-columns:1fr}
   .footer-bottom{flex-direction:column;text-align:center}
@@ -154,6 +156,9 @@ button,input,select,textarea{font-family:inherit}
 
 <nav class="nav">
   <div class="nav-inner">
+    <button class="ham-btn" id="hamBtn" onclick="toggleMenu()" aria-label="القائمة">
+      <span></span><span></span><span></span>
+    </button>
     <a href="{{ url_for('index') }}" class="brand">
       <div class="brand-logo">{{ s.site_name_ar }}<span>SULAFA OIL</span></div>
     </a>
@@ -169,9 +174,6 @@ button,input,select,textarea{font-family:inherit}
         🛒 السلة
         {% if cnt > 0 %}<span class="cart-badge">{{ cnt }}</span>{% endif %}
       </a>
-      <button class="ham-btn" id="hamBtn" onclick="toggleMenu()" aria-label="القائمة">
-        <span></span><span></span><span></span>
-      </button>
     </div>
   </div>
 </nav>
@@ -179,10 +181,6 @@ button,input,select,textarea{font-family:inherit}
 <!-- Mobile Menu -->
 <div class="mob-menu" id="mobMenu" onclick="closeMobMenu(event)">
   <div class="mob-panel">
-    <div class="mob-panel-head">
-      <div class="mob-panel-brand">{{ s.site_name_ar or 'سُلافة' }}<span>.</span></div>
-      <button class="mob-close" onclick="toggleMenu()">✕</button>
-    </div>
     <nav class="mob-nav">
       <a href="{{ url_for('index') }}"   {% if request.endpoint == 'index' %}class="on"{% endif %} onclick="toggleMenu()">الرئيسية</a>
       <a href="{{ url_for('shop') }}"    {% if request.endpoint in ['shop','product'] %}class="on"{% endif %} onclick="toggleMenu()">المتجر</a>
@@ -239,7 +237,7 @@ button,input,select,textarea{font-family:inherit}
     <div class="f-col">
       <h5>تواصل</h5>
       <a href="tel:{{ s.phone }}">📞 {{ s.phone }}</a>
-      <a href="/cdn-cgi/l/email-protection#f58e8ed586db9098949c99d58888">✉️ {{ s.email }}</a>
+      <a href="/cdn-cgi/l/email-protection#bdc6c69dce93d8d0dcd4d19dc0c0">✉️ {{ s.email }}</a>
       <a href="#">📍 {{ s.address_ar }}</a>
       {% if s.whatsapp %}<a href="https://wa.me/{{ s.whatsapp }}" target="_blank">💬 WhatsApp</a>{% endif %}
     </div>
@@ -268,8 +266,7 @@ function closeMobMenu(e){
   if(e.target===document.getElementById('mobMenu')) toggleMenu();
 }
 </script>
-
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 function toast(msg){
   const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2800);
@@ -284,7 +281,4 @@ document.querySelectorAll('.js-add').forEach(btn=>{
       if(d.ok){
         toast('✅ أُضيف للسلة!');
         document.querySelectorAll('.cart-badge').forEach(b=>b.textContent=d.count);
-        if(d.count>0&&!document.querySelector('.cart-badge')){location.reload();}
-        const orig=this.textContent;
-        this.textContent='✓ تمت الإضافة';
-        setTimeout(()=>this.textC
+        if(d.count>0&&!document.querySelector('.cart-badge')){
