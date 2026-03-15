@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}المتجر | {{ s.site_name_ar }}{% endblock %}
+
+{% block extra_css %}
+<style>
+.shop-wrap{display:grid;grid-template-columns:230px 1fr;gap:2rem;padding:3rem 0}
+.sidebar{position:sticky;top:90px;height:fit-content}
+.sb-box{background:#fff;border-radius:var(--r-lg);padding:1.4rem;border:1.5px solid var(--border);margin-bottom:1.25rem}
+.sb-box h4{font-size:.82rem;font-weight:800;color:var(--dark-green);text-transform:uppercase;letter-spacing:.6px;margin-bottom:.9rem;padding-bottom:.5rem;border-bottom:2px solid var(--border)}
+.search-wrap{position:relative}
+.search-wrap input{width:100%;padding:10px 38px 10px 15px;border:2px solid var(--border);border-radius:50px;font-size:.9rem;outline:none;transition:.2s}
+.search-wrap input:focus{border-color:var(--bright-green)}
+.search-icon{position:absolute;right:13px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+.cat-btn{display:block;width:100%;text-align:right;padding:9px 12px;border:none;background:transparent;border-radius:8px;font-family:inherit;font-size:.9rem;color:var(--text);cursor:pointer;transition:.18s;margin-bottom:3px}
+.cat-btn:hover,.cat-btn.on{background:var(--light-green);color:var(--dark-green);font-weight:700}
+.results-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+.results-bar p{font-size:.88rem;color:var(--muted)}
+.results-bar p strong{color:var(--dark-green)}
+.clear-link{font-size:.83rem;color:var(--red)}
+.prods-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1.5rem}
+.empty{text-align:center;padding:5rem 2rem;color:var(--muted)}
+.empty .big{font-size:4rem;margin-bottom:1rem}
+@media(max-width:900px){.shop-wrap{grid-template-columns:1fr}.sidebar{position:static}}
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="page-head">
+  <h1>المتجر</h1>
+  <p>اختار من أجود زيوت الزيتون</p>
+</div>
+<div class="wrap">
+  <div class="shop-wrap">
+    <aside class="sidebar">
+      <div class="sb-box">
+        <form action="{{ url_for('shop') }}" method="GET" class="search-wrap">
+          {% if sel_cat %}<input type="hidden" name="cat" value="{{ sel_cat }}">{% endif %}
+          <input type="text" name="q" placeholder="بحث..." value="{{ q or '' }}">
+          <span class="search-icon">🔍</span>
+        </form>
+      </div>
+      <div class="sb-box">
+        <h4>الأصناف</h4>
+        <a href="{{ url_for('shop') }}{% if q %}?q={{ q }}{% endif %}" class="cat-btn {% if not sel_cat %}on{% endif %}">الكل</a>
+        {% for cat in cats_ar %}
+        <a href="{{ url_for('shop') }}?cat={{ cat['category_ar'] }}&q={{ q or '' }}" class="cat-btn {% if sel_cat == cat['category_ar'] %}on{% endif %}">{{ cat['category_ar'] }}</a>
+        {% endfor %}
+      </div>
+    </aside>
+    <div>
+      <div class="results-bar">
+        <p><strong>{{ products|length }}</strong> منتج</p>
+        {% if sel_cat or q %}<a href="{{ url_for('shop') }}" class="clear-link">✕ إلغاء الفلتر</a>{% endif %}
+      </div>
+      {% if products %}
+      <div class="prods-grid">
+        {% for p in products %}
+        <div class="card">
+          {% if p['old_price'] %}<div class="card-discount">خصم</div>{% endif %}
+          <a href="{{ url_for('product', pid=p['id']) }}">
+            <div class="card-img">
+              {% if p['photo'] %}
+                <img src="{{ p['photo'] }}" alt="{{ p['name_ar'] }}"
+                     style="width:100%;height:100%;object-fit:cover;border-radius:inherit"
+                     onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+                <span style="display:none">{{ p['image'] or '🫒' }}</span>
+              {% else %}
+                {{ p['image'] or '🫒' }}
+              {% endif %}
+            </div>
+          </a>
+          <div class="card-body">
+            <div class="card-origin">🌍 {{ p['origin_ar'] }} · {{ p['weight'] }}</div>
+            <a href="{{ url_for('product', pid=p['id']) }}">
+              <div class="card-name">{{ p['name_ar'] }}</div>
+            </a>
+            <div class="card-stars"><span class="stars">★★★★★</span><span class="stars-n">{{ p['rating'] }}</span></div>
+            <div class="card-foot">
+              <div>
+                <div class="price-now">{{ p.price }} جنيه</div>
+                {% if p['old_price'] %}<div class="price-old">{{ p['old_price'] }} جنيه</div>{% endif %}
+              </div>
+              <form action="{{ url_for('cart_add') }}" method="POST">
+                
+                <input type="hidden" name="pid" value="{{ p['id'] }}">
+                <input type="hidden" name="qty" value="1">
+                <button type="submit" class="add-btn js-add">أضف</button>
+              </form>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty"><div class="big">🔍</div><h3>لا توجد نتائج</h3></div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

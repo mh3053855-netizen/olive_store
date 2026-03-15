@@ -1,0 +1,150 @@
+{% extends "admin/base.html" %}
+{% block title %}المنتجات | أدمن سلافة{% endblock %}
+{% block page_title %}🫒 إدارة المنتجات{% endblock %}
+{% block extra_css %}
+<style>
+.a-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:1.5rem}
+.a-card-head{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.4rem;border-bottom:1px solid var(--border)}
+.a-card-head h3{font-size:.95rem;font-weight:700;color:var(--text)}
+.a-table{width:100%;border-collapse:collapse}
+.a-table th{text-align:right;padding:.7rem 1rem;font-size:.72rem;color:var(--muted);font-weight:700;border-bottom:1px solid var(--border);white-space:nowrap}
+.a-table td{padding:.75rem 1rem;font-size:.85rem;border-bottom:1px solid rgba(42,46,42,.5);vertical-align:middle}
+.a-table tr:last-child td{border-bottom:none}
+.a-table tr:hover td{background:rgba(255,255,255,.025)}
+
+/* ── product visual cell ── */
+.prod-visual{
+  display:flex;align-items:center;justify-content:center;gap:.5rem;
+}
+.prod-photo{
+  width:46px;height:46px;border-radius:10px;
+  object-fit:cover;border:1px solid var(--border);
+  background:rgba(255,255,255,.04);flex-shrink:0;
+  transition:transform .2s;
+}
+.prod-photo:hover{transform:scale(1.08)}
+.prod-emoji{
+  font-size:1.7rem;line-height:1;flex-shrink:0;
+}
+/* placeholder when no photo */
+.prod-photo-placeholder{
+  width:46px;height:46px;border-radius:10px;
+  border:1px dashed var(--border);
+  background:rgba(255,255,255,.03);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.6rem;color:var(--muted);text-align:center;
+  line-height:1.2;flex-shrink:0;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="a-card">
+  <div class="a-card-head">
+    <h3>المنتجات ({{ products|length }})</h3>
+    <a href="{{ url_for('admin_product_add') }}" class="btn btn-gold">➕ إضافة منتج</a>
+  </div>
+  <div style="padding:0">
+    <table class="a-table">
+      <thead>
+        <tr>
+          <th style="text-align:center">الأيقونة / الصورة</th>
+          <th>الاسم بالعربى</th>
+          <th>الاسم بالإنجليزى</th>
+          <th>السعر</th>
+          <th>المخزون</th>
+          <th>مميز</th>
+          <th>نشط</th>
+          <th>إجراءات</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in products %}
+        <tr>
+          <td>
+            <div class="prod-visual">
+
+              {# ── Emoji always shown ── #}
+              <span class="prod-emoji" title="الأيقونة">{{ p['image'] }}</span>
+
+              {# ── Photo if exists, placeholder if not ── #}
+              {% if p['photo'] %}
+                <img
+                  src="{{ p['photo'] }}"
+                  alt="{{ p['name_ar'] }}"
+                  class="prod-photo"
+                  title="صورة المنتج"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+                >
+                {# hidden fallback placeholder ── shown if img fails ── #}
+                <div class="prod-photo-placeholder" style="display:none">لا<br>صورة</div>
+              {% else %}
+                <div class="prod-photo-placeholder" title="لا توجد صورة - اضغط تعديل لإضافة صورة">
+                  📷<br><span style="font-size:.55rem">أضف صورة</span>
+                </div>
+              {% endif %}
+
+            </div>
+          </td>
+
+          <td><strong>{{ p['name_ar'] }}</strong></td>
+          <td style="color:var(--muted)">{{ p['name_en'] }}</td>
+
+          <td>
+            <strong style="color:var(--dk)">{{ p['price']|int }} جنيه</strong>
+            {% if p['old_price'] %}
+              <br><small style="color:#bbb;text-decoration:line-through">{{ p['old_price']|int }}</small>
+            {% endif %}
+          </td>
+
+          <td>{{ p['stock'] }}</td>
+
+          <td>
+            {% if p['featured'] %}
+              <span class="badge badge-green">⭐ نعم</span>
+            {% else %}
+              <span class="badge badge-red">لا</span>
+            {% endif %}
+          </td>
+
+          <td>
+            
+          </td>
+           <form action="{{ url_for('admin_product_toggle', pid=p['id']) }}" method="POST">
+            <button type="submit" class="btn btn-sm {{ 'btn-gold' if p['active'] else 'btn-secondary' }}"
+                   title="{{ 'إيقاف المنتج' if p['active'] else 'تفعيل المنتج' }}">
+             {{ '✅ نشط' if p['active'] else '❌ موقف' }}
+            </button>
+           </form>
+
+          <td>
+            <div style="display:flex;gap:.4rem">
+             <a href="{{ url_for('admin_product_edit', pid=p['id']) }}" class="btn btn-gold btn-sm">✏️ تعديل</a>
+             <form action="{{ url_for('admin_product_toggle', pid=p['id']) }}" method="POST">
+               <button type="submit" class="btn btn-sm {{ 'btn-secondary' if p['active'] else 'btn-gold' }}"
+                     title="{{ 'إيقاف المنتج' if p['active'] else 'تفعيل المنتج' }}">
+                 {{ '⏸️' if p['active'] else '▶️' }}
+               </button>
+             </form>
+             <form action="{{ url_for('admin_product_delete', pid=p['id']) }}" method="POST"
+                 onsubmit="return confirm('تأكيد حذف المنتج؟')">
+              <button type="submit" class="btn btn-red btn-sm">🗑️</button>
+             س</form>
+           </div>
+          </td>
+
+
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="8" style="text-align:center;color:#aaa;padding:2.5rem">
+            <div style="font-size:2rem;margin-bottom:.5rem">📦</div>
+            لا توجد منتجات بعد
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

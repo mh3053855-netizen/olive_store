@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}تواصل معنا | {{ s.site_name_ar }}{% endblock %}
+
+{% block body %}
+<div class="page-head"><h1>تواصل معنا</h1></div>
+<div class="section"><div class="wrap" style="max-width:900px">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:3rem">
+    <div>
+      <h2 style="font-size:1.5rem;font-weight:900;color:var(--dark-green);margin-bottom:1.5rem">ابعت رسالة</h2>
+      <form method="POST" action="{{ url_for('contact') }}">
+        
+        {% if messages %}
+          {% for message in messages %}
+          <div class="flash flash-{{ message.tags }}">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+        <div class="field"><label>الاسم *</label><input type="text" name="name" placeholder="اسمك" required></div>
+        <div class="field"><label>البريد الإلكترونى *</label><input type="email" name="email" required></div>
+        <div class="field">
+          <label>الموضوع</label>
+          <select name="subject">
+            <option value="">اختر الموضوع</option>
+            <option>استفسار عن منتج</option>
+            <option>مشكلة في طلب</option>
+            <option>التوصيل والشحن</option>
+            <option>اقتراح أو شكوى</option>
+            <option>أخرى</option>
+          </select>
+        </div>
+        <div class="field"><label>الرسالة *</label><textarea name="message" rows="5" style="width:100%;padding:11px 15px;border:2px solid var(--border);border-radius:var(--r);font-family:inherit;resize:vertical;outline:none" required></textarea></div>
+        <button type="submit" class="btn btn-dark btn-lg">📨 إرسال</button>
+      </form>
+    </div>
+    <div>
+      <h2 style="font-size:1.5rem;font-weight:900;color:var(--dark-green);margin-bottom:1.5rem">معلومات التواصل</h2>
+      <div style="display:flex;gap:1rem;margin-bottom:1.5rem;align-items:start">
+        <div style="width:44px;height:44px;border-radius:50%;background:var(--light-green);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">📞</div>
+        <div><div style="font-size:.8rem;color:var(--muted);font-weight:700;text-transform:uppercase">الهاتف</div><div style="font-weight:700;color:var(--text)">{{ s.phone }}</div></div>
+      </div>
+      <div style="display:flex;gap:1rem;margin-bottom:1.5rem;align-items:start">
+        <div style="width:44px;height:44px;border-radius:50%;background:var(--light-green);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">✉️</div>
+        <div><div style="font-size:.8rem;color:var(--muted);font-weight:700;text-transform:uppercase">البريد</div><div style="font-weight:700;color:var(--text)">{{ s.email }}</div></div>
+      </div>
+      <div style="display:flex;gap:1rem;margin-bottom:1.5rem;align-items:start">
+        <div style="width:44px;height:44px;border-radius:50%;background:var(--light-green);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">📍</div>
+        <div><div style="font-size:.8rem;color:var(--muted);font-weight:700;text-transform:uppercase">العنوان</div><div style="font-weight:700;color:var(--text)">{{ s.address_ar }}</div></div>
+      </div>
+      <div style="margin-top:2rem">
+        <div style="font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:.75rem">Social Media</div>
+        <div style="display:flex;gap:.6rem;flex-wrap:wrap">
+          {% if s.facebook %}<a href="{{ s.facebook }}" target="_blank" style="background:var(--dark-green);color:#fff;padding:8px 16px;border-radius:50px;font-size:.85rem;font-weight:700;display:flex;align-items:center;gap:6px">📘 Facebook</a>{% endif %}
+          {% if s.instagram %}<a href="{{ s.instagram }}" target="_blank" style="background:#e1306c;color:#fff;padding:8px 16px;border-radius:50px;font-size:.85rem;font-weight:700">📷 Instagram</a>{% endif %}
+          {% if s.whatsapp %}<a href="https://wa.me/{{ s.whatsapp }}" target="_blank" style="background:#25d366;color:#fff;padding:8px 16px;border-radius:50px;font-size:.85rem;font-weight:700">💬 WhatsApp</a>{% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div></div>
+{% endblock %}

@@ -1,0 +1,436 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ 'تعديل منتج' if action=='edit' else 'إضافة منتج' }} | أدمن سلافة{% endblock %}
+{% block page_title %}{{ '✏️ تعديل منتج' if action=='edit' else '➕ إضافة منتج جديد' }}{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ── layout ── */
+.pf-grid{display:grid;grid-template-columns:1fr 340px;gap:1.5rem;align-items:start}
+@media(max-width:900px){.pf-grid{grid-template-columns:1fr}}
+
+/* ── card ── */
+.a-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:1.5rem}
+.a-card-head{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.4rem;border-bottom:1px solid var(--border)}
+.a-card-head h3{font-size:.9rem;font-weight:700;color:var(--text)}
+.a-card-body{padding:1.4rem}
+
+/* ── form ── */
+.fg{margin-bottom:1.1rem}
+.fg label{display:block;font-size:.75rem;font-weight:700;color:var(--muted);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.04em}
+.fg input,.fg textarea,.fg select{
+  width:100%;background:var(--bg);border:1px solid var(--border);
+  border-radius:9px;padding:.65rem .9rem;font-size:.88rem;color:var(--text);
+  transition:border .2s,box-shadow .2s;box-sizing:border-box;
+}
+.fg input:focus,.fg textarea:focus,.fg select:focus{
+  outline:none;border-color:var(--dk);box-shadow:0 0 0 3px rgba(184,134,11,.15)
+}
+.fg textarea{resize:vertical;min-height:80px}
+.fg-row{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+.fg-check{display:flex;align-items:center;gap:.6rem;cursor:pointer}
+.fg-check input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--dk)}
+
+/* ── photo upload box ── */
+.photo-upload-box{
+  border:2px dashed var(--border);border-radius:14px;
+  padding:1.5rem;text-align:center;cursor:pointer;
+  transition:border-color .2s,background .2s;position:relative;
+  background:var(--bg);
+}
+.photo-upload-box:hover,.photo-upload-box.drag-over{
+  border-color:var(--dk);background:rgba(184,134,11,.06)
+}
+.photo-upload-box input[type=file]{
+  position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%
+}
+.photo-upload-icon{font-size:2.5rem;margin-bottom:.5rem;display:block}
+.photo-upload-label{font-size:.82rem;color:var(--muted);line-height:1.5}
+.photo-upload-label strong{color:var(--dk);display:block;font-size:.9rem;margin-bottom:.2rem}
+
+/* ── preview ── */
+.photo-preview-wrap{margin-top:1rem;display:none}
+.photo-preview-wrap.show{display:block}
+.photo-preview-img{
+  width:100%;max-height:220px;object-fit:cover;
+  border-radius:10px;border:1px solid var(--border);display:block;
+}
+.photo-preview-actions{display:flex;gap:.5rem;margin-top:.6rem}
+
+/* ── current photo ── */
+.current-photo-wrap{margin-bottom:1rem}
+.current-photo-img{
+  width:100%;max-height:200px;object-fit:cover;
+  border-radius:10px;border:1px solid var(--border);display:block;margin-bottom:.6rem
+}
+.current-photo-label{font-size:.75rem;color:var(--muted);margin-bottom:.5rem;display:flex;align-items:center;gap:.4rem}
+.current-photo-label span{
+  background:rgba(34,197,94,.15);color:#22c55e;
+  border-radius:20px;padding:.15rem .55rem;font-size:.7rem;font-weight:700
+}
+
+/* ── remove toggle ── */
+.remove-toggle{
+  display:flex;align-items:center;gap:.5rem;
+  font-size:.8rem;color:#ef4444;cursor:pointer;padding:.4rem .6rem;
+  border:1px solid rgba(239,68,68,.3);border-radius:8px;
+  transition:background .2s;background:transparent;width:100%;justify-content:center
+}
+.remove-toggle:hover{background:rgba(239,68,68,.1)}
+.remove-toggle input{display:none}
+
+/* ── emoji picker ── */
+.emoji-grid{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.5rem}
+.emoji-btn{
+  font-size:1.3rem;padding:.3rem .4rem;border-radius:8px;cursor:pointer;
+  border:2px solid transparent;background:var(--bg);transition:all .15s;line-height:1
+}
+.emoji-btn:hover{background:rgba(184,134,11,.15);border-color:var(--dk)}
+.emoji-btn.active{border-color:var(--dk);background:rgba(184,134,11,.2)}
+
+/* ── upload progress ── */
+.upload-progress{display:none;margin-top:.8rem}
+.upload-progress.show{display:block}
+.progress-bar{height:4px;background:var(--border);border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;background:var(--dk);width:0%;transition:width .3s;border-radius:99px}
+.upload-status{font-size:.75rem;color:var(--muted);margin-top:.4rem;text-align:center}
+</style>
+{% endblock %}
+
+{% block content %}
+<form method="POST" enctype="multipart/form-data" id="productForm">
+<input type="hidden" name="image" value="{{ product['image'] if product else '🫒' }}"
+
+<div class="pf-grid">
+
+  <!-- ══ RIGHT COLUMN: Photo + Settings ══ -->
+  <div style="order:2">
+
+    <!-- Photo Upload Card -->
+    <div class="a-card">
+      <div class="a-card-head">
+        <h3>🖼️ صورة المنتج</h3>
+        {% if product and product['photo'] %}
+          <span style="font-size:.72rem;color:#22c55e;font-weight:700">✅ مرفوعة</span>
+        {% else %}
+          <span style="font-size:.72rem;color:var(--muted)">اختيارية</span>
+        {% endif %}
+      </div>
+      <div class="a-card-body">
+
+        <!-- Current Photo -->
+        {% if product and product['photo'] %}
+        <div class="current-photo-wrap" id="currentPhotoWrap">
+          <div class="current-photo-label">الصورة الحالية <span>محفوظة</span></div>
+          <img src="{{ product['photo'] }}" alt="صورة المنتج" class="current-photo-img" id="currentPhotoImg">
+          <label class="remove-toggle" id="removeToggleLabel">
+            <input type="checkbox" name="remove_photo" id="removePhotoCheck" onchange="handleRemoveToggle(this)">
+            <span id="removeToggleText">🗑️ حذف الصورة الحالية</span>
+          </label>
+        </div>
+        {% endif %}
+
+        <!-- Upload Box -->
+        <div class="photo-upload-box" id="uploadBox">
+          <input type="file" name="photo" id="photoInput"
+                 accept="image/png,image/jpeg,image/jpg,image/webp,image/gif"
+                 onchange="handlePhotoSelect(this)">
+          <span class="photo-upload-icon">📸</span>
+          <div class="photo-upload-label">
+            <strong>اضغط لرفع صورة</strong>
+            أو اسحب وأفلت الصورة هنا<br>
+            <small style="opacity:.6">PNG · JPG · WebP · GIF</small>
+          </div>
+        </div>
+
+        <!-- Upload Progress -->
+        <div class="upload-progress" id="uploadProgress">
+          <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+          <div class="upload-status" id="uploadStatus">جارى الرفع...</div>
+        </div>
+
+        <!-- New Photo Preview -->
+        <div class="photo-preview-wrap" id="previewWrap">
+          <img src="" alt="معاينة" class="photo-preview-img" id="previewImg">
+          <div class="photo-preview-actions">
+            <button type="button" class="btn btn-red btn-sm" onclick="clearPhotoSelection()" style="flex:1">
+              ✕ إلغاء الاختيار
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Emoji / Icon Card -->
+   
+
+    <!-- Status Card -->
+    <div class="a-card">
+      <div class="a-card-head"><h3>⚙️ الحالة والإعدادات</h3></div>
+      <div class="a-card-body">
+        <div class="fg">
+          <label class="fg-check">
+            <input type="checkbox" name="featured" id="featuredCheck"
+                   {{ 'checked' if not product or product['featured'] }}>
+            ⭐ منتج مميز (يظهر فى الصفحة الرئيسية)
+          </label>
+        </div>
+        <div class="fg">
+          <label class="fg-check">
+            <input type="checkbox" name="active" id="activeCheck"
+                   {{ 'checked' if not product or product['active'] }}>
+            ✅ نشط (ظاهر للعملاء)
+          </label>
+        </div>
+        <div class="fg">
+          <label>ترتيب العرض</label>
+          <input type="number" name="sort_order" min="0"
+                 value="{{ product['sort_order'] if product else 0 }}">
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ LEFT COLUMN: Product Info ══ -->
+  <div style="order:1">
+
+    <!-- Names -->
+    <div class="a-card">
+      <div class="a-card-head"><h3>📝 بيانات المنتج</h3></div>
+      <div class="a-card-body">
+        <div class="fg-row">
+          <div class="fg">
+            <label>الاسم بالعربى *</label>
+            <input type="text" name="name_ar" required
+                   value="{{ product['name_ar'] if product else '' }}"
+                   placeholder="مثال: زيت الزيتون البكر">
+          </div>
+          <div class="fg">
+            <label>الاسم بالإنجليزى *</label>
+            <input type="text" name="name_en" required
+                   value="{{ product['name_en'] if product else '' }}"
+                   placeholder="e.g. Extra Virgin Olive Oil">
+          </div>
+        </div>
+        <div class="fg">
+          <label>الوصف بالعربى</label>
+          <textarea name="desc_ar" rows="3"
+                    placeholder="وصف تفصيلى للمنتج...">{{ product['desc_ar'] if product else '' }}</textarea>
+        </div>
+        <div class="fg">
+          <label>الوصف بالإنجليزى</label>
+          <textarea name="desc_en" rows="3"
+                    placeholder="Detailed product description...">{{ product['desc_en'] if product else '' }}</textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pricing -->
+    <div class="a-card">
+      <div class="a-card-head"><h3>💰 السعر والمخزون</h3></div>
+      <div class="a-card-body">
+        <div class="fg-row">
+          <div class="fg">
+            <label>السعر الحالى (جنيه) *</label>
+            <input type="number" name="price" required min="0" step="0.01"
+                   value="{{ product['price'] if product else '' }}"
+                   placeholder="189.00">
+          </div>
+          <div class="fg">
+            <label>السعر القديم (اختيارى)</label>
+            <input type="number" name="old_price" min="0" step="0.01"
+                   value="{{ product['old_price'] if product and product['old_price'] else '' }}"
+                   placeholder="249.00">
+          </div>
+        </div>
+        <div class="fg">
+          <label>الكمية فى المخزون</label>
+          <input type="number" name="stock" min="0"
+                 value="{{ product['stock'] if product else 100 }}">
+        </div>
+      </div>
+    </div>
+
+    <!-- Details -->
+    <div class="a-card">
+      <div class="a-card-head"><h3>📋 التفاصيل</h3></div>
+      <div class="a-card-body">
+        <!-- ── Category Selector ── -->
+        <div class="fg">
+          <label>الصنف / الفئة</label>
+
+          <!-- Dropdown to pick existing -->
+          <div style="display:flex;gap:.5rem;margin-bottom:.5rem">
+            <select id="catPicker" onchange="applyCategory(this.value)"
+              style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:.6rem .9rem;font-size:.88rem;color:var(--text);outline:none">
+              <option value="">— اختر صنف موجود —</option>
+              {% for c in cats %}
+              <option value="{{ c.ar }}|{{ c.en }}"
+                {{ 'selected' if product and product['category_ar']==c.ar }}>
+                {{ c.ar }}{% if c.en and c.en != c.ar %} / {{ c.en }}{% endif %}
+              </option>
+              {% endfor %}
+              <option value="__new__">➕ إضافة صنف جديد...</option>
+            </select>
+          </div>
+
+          <!-- Hidden inputs that actually get submitted -->
+          <div class="fg-row" id="catFields">
+            <div class="fg" style="margin-bottom:0">
+              <label style="font-size:.7rem">اسم الصنف بالعربى</label>
+              <input type="text" name="category_ar" id="cat_ar"
+                     value="{{ product['category_ar'] if product else 'بكر ممتاز' }}"
+                     placeholder="مثال: بكر ممتاز">
+            </div>
+            <div class="fg" style="margin-bottom:0">
+              <label style="font-size:.7rem">Category in English</label>
+              <input type="text" name="category_en" id="cat_en"
+                     value="{{ product['category_en'] if product else 'Extra Virgin' }}"
+                     placeholder="e.g. Extra Virgin">
+            </div>
+          </div>
+          <p style="font-size:.72rem;color:var(--muted);margin-top:.35rem">
+            💡 اختر من القائمة أو اكتب صنف جديد مباشرة
+          </p>
+        </div>
+        <div class="fg-row">
+          <div class="fg">
+            <label>الحجم / الوزن</label>
+            <input type="text" name="weight"
+                   value="{{ product['weight'] if product else '750ml' }}"
+                   placeholder="750ml">
+          </div>
+          <div class="fg" style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem">
+            <div>
+              <label>المنشأ (عربى)</label>
+              <input type="text" name="origin_ar"
+                     value="{{ product['origin_ar'] if product else 'اليونان' }}"
+                     placeholder="اليونان">
+            </div>
+            <div>
+              <label>المنشأ (إنجليزى)</label>
+              <input type="text" name="origin_en"
+                     value="{{ product['origin_en'] if product else 'Greece' }}"
+                     placeholder="Greece">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div style="display:flex;gap:.8rem;flex-wrap:wrap">
+      <button type="submit" class="btn btn-gold" style="flex:1;padding:.8rem;font-size:.95rem">
+        {{ '💾 حفظ التعديلات' if action=='edit' else '✅ إضافة المنتج' }}
+      </button>
+      <a href="{{ url_for('admin_products') }}" class="btn btn-secondary" style="flex:1;padding:.8rem;font-size:.95rem;text-align:center">
+        ↩️ إلغاء
+      </a>
+    </div>
+
+  </div>
+</div><!-- /pf-grid -->
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const uploadBox   = document.getElementById('uploadBox');
+const photoInput  = document.getElementById('photoInput');
+const previewWrap = document.getElementById('previewWrap');
+const previewImg  = document.getElementById('previewImg');
+const currentWrap = document.getElementById('currentPhotoWrap');
+const removeCheck = document.getElementById('removePhotoCheck');
+
+/* ── drag & drop ── */
+uploadBox.addEventListener('dragover', e => { e.preventDefault(); uploadBox.classList.add('drag-over'); });
+uploadBox.addEventListener('dragleave', () => uploadBox.classList.remove('drag-over'));
+uploadBox.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadBox.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) {
+    photoInput.files = e.dataTransfer.files;
+    showPreview(file);
+  }
+});
+
+/* ── file selected via input ── */
+function handlePhotoSelect(input) {
+  if (input.files && input.files[0]) {
+    showPreview(input.files[0]);
+    // Uncheck remove if was checked
+    if (removeCheck) {
+      removeCheck.checked = false;
+      handleRemoveToggle(removeCheck);
+    }
+  }
+}
+
+function showPreview(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    previewImg.src = e.target.result;
+    previewWrap.classList.add('show');
+    uploadBox.style.borderColor = 'var(--dk)';
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearPhotoSelection() {
+  photoInput.value = '';
+  previewImg.src = '';
+  previewWrap.classList.remove('show');
+  uploadBox.style.borderColor = '';
+}
+
+/* ── remove current photo toggle ── */
+function handleRemoveToggle(cb) {
+  const label = document.getElementById('removeToggleText');
+  const img   = document.getElementById('currentPhotoImg');
+  if (!img) return;
+  if (cb.checked) {
+    img.style.opacity = '.3';
+    img.style.filter  = 'grayscale(1)';
+    if (label) label.textContent = '↩️ استرجاع الصورة';
+    clearPhotoSelection();
+  } else {
+    img.style.opacity = '';
+    img.style.filter  = '';
+    if (label) label.textContent = '🗑️ حذف الصورة الحالية';
+  }
+}
+
+/* ── category picker ── */
+function applyCategory(val) {
+  if (!val) return;
+  if (val === '__new__') {
+    document.getElementById('cat_ar').value = '';
+    document.getElementById('cat_en').value = '';
+    document.getElementById('cat_ar').focus();
+    document.getElementById('catPicker').value = '';
+    return;
+  }
+  const parts = val.split('|');
+  document.getElementById('cat_ar').value = parts[0] || '';
+  document.getElementById('cat_en').value = parts[1] || '';
+}
+// On load: sync picker to current values
+(function(){
+  const ar = document.getElementById('cat_ar').value;
+  const picker = document.getElementById('catPicker');
+  if (!picker) return;
+  for (let opt of picker.options) {
+    if (opt.value && opt.value !== '__new__' && opt.value.split('|')[0] === ar) {
+      picker.value = opt.value; break;
+    }
+  }
+})();
+  document.getElementById('imageInput').value = e;
+  document.querySelectorAll('.emoji-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.trim() === e);
+  });
+}
+</script>
+{% endblock %}

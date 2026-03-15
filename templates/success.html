@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}تم الطلب | {{ s.site_name_ar }}{% endblock %}
+
+{% block extra_css %}
+<style>
+.suc{padding:5rem 0;text-align:center}
+.suc-ic{width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,var(--bright-green),var(--mid-green));display:flex;align-items:center;justify-content:center;font-size:2.5rem;margin:0 auto 1.5rem;box-shadow:0 8px 28px rgba(45,107,45,.35);animation:pop .6s cubic-bezier(.175,.885,.32,1.275) both}
+@keyframes pop{0%{transform:scale(0);opacity:0}100%{transform:scale(1);opacity:1}}
+.suc h1{font-size:1.9rem;font-weight:900;color:var(--dark-green)}
+.ord-card{background:#fff;border-radius:var(--r-lg);border:1.5px solid var(--border);padding:1.8rem;max-width:580px;margin:2rem auto;text-align:right;box-shadow:var(--shadow-md)}
+.or{display:flex;justify-content:space-between;padding:.55rem 0;border-bottom:1px solid var(--border);font-size:.9rem}
+.or:last-of-type{border-bottom:none}
+.or span:first-child{color:var(--muted)}
+.or span:last-child{font-weight:700}
+.ord-items{margin-top:1.2rem;padding-top:1.2rem;border-top:2px solid var(--border)}
+.oi{display:flex;justify-content:space-between;font-size:.87rem;padding:.4rem 0;border-bottom:1px dashed var(--border)}
+.oi:last-child{border-bottom:none;font-weight:800;font-size:.95rem;padding-top:.6rem}
+.suc-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:1.5rem}
+.top-strip{background:linear-gradient(135deg,var(--dark-green),var(--mid-green));padding:1rem;text-align:center}
+.top-strip p{color:rgba(255,255,255,.85);font-size:.9rem;font-weight:600}
+/* COD notice */
+.cod-notice{background:linear-gradient(135deg,#fffbeb,#fef3c7);border:1.5px solid #f59e0b;border-radius:var(--r-lg);padding:1.2rem 1.5rem;max-width:580px;margin:0 auto 1rem;display:flex;align-items:center;gap:1rem;text-align:right}
+.cod-notice-icon{font-size:2rem;flex-shrink:0}
+.cod-notice-text strong{display:block;font-size:.95rem;color:#92400e;font-weight:800;margin-bottom:.2rem}
+.cod-notice-text span{font-size:.83rem;color:#b45309}
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="top-strip">
+  <p>{% if order['payment_method']=='cod' %}🎉 شكراً! سيتم التواصل معك لتأكيد الطلب{% else %}🎉 شكراً لثقتك فى سلافة!{% endif %}</p>
+</div>
+<div class="suc"><div class="wrap">
+  <div class="suc-ic">✅</div>
+  <h1>تم استلام طلبك!</h1>
+  <p style="color:var(--muted);margin-top:.5rem">رقم الطلب: <strong style="color:var(--dark-green)">{{ order['order_number'] }}</strong></p>
+
+  {% if order['payment_method']=='cod' %}
+  <div class="cod-notice">
+    <div class="cod-notice-icon">💵</div>
+    <div class="cod-notice-text">
+      <strong>الدفع كاش عند الاستلام</strong>
+      <span>سيتصل بك المندوب قبل التوصيل — جهّز المبلغ {{ order['grand_total']|int }} جنيه</span>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="ord-card">
+    <div class="or"><span>رقم الطلب</span><span>{{ order['order_number'] }}</span></div>
+    <div class="or"><span>الاسم</span><span>{{ order['full_name'] }}</span></div>
+    <div class="or"><span>التوصيل</span><span>{{ order['city'] }} — {{ order['address'] }}</span></div>
+    <div class="or">
+      <span>طريقة الدفع</span>
+      <span>
+        {% if order['payment_method']=='cod' %}
+          💵 كاش عند الاستلام
+        {% else %}
+          💳 Visa ****{{ order['card_last4'] }}
+        {% endif %}
+      </span>
+    </div>
+    <div class="or"><span>الحالة</span><span style="color:var(--mid-green)">✅ مؤكد</span></div>
+    <div class="ord-items">
+      {% for item in items %}
+      <div class="oi">
+        <span>{{ item['name'] }} ×{{ item['quantity'] }}</span>
+        <span>{{ (item['price']*item['quantity'])|int }} جنيه</span>
+      </div>
+      {% endfor %}
+      <div class="oi"><span>الإجمالى</span><span>{{ order['grand_total']|int }} جنيه</span></div>
+    </div>
+  </div>
+
+  <div class="suc-btns">
+    <a href="{{ url_for('index') }}" class="btn btn-dark btn-lg">🏠 الرئيسية</a>
+    <a href="{{ url_for('shop') }}" class="btn btn-gold btn-lg">🫒 تسوق مجدداً</a>
+  </div>
+</div></div>
+{% endblock %}

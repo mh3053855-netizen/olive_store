@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+{% block title %}{{ s.site_name_ar }} | {{ s.hero_title_ar }}{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ── HERO ── */
+.hero{
+  background:linear-gradient(135deg,var(--dark-green) 0%,#2a6b2a 55%,#c8b840 100%);
+  min-height:480px;display:flex;align-items:center;position:relative;overflow:hidden;
+}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 50%,rgba(200,185,64,.25) 0%,transparent 65%)}
+.hero-inner{max-width:1280px;margin:0 auto;padding:4rem 2rem;display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;width:100%;position:relative;z-index:1}
+.hero-text h1{font-size:2.8rem;font-weight:900;color:#fff;line-height:1.2;margin-bottom:.6rem;font-family:'Tajawal',sans-serif}
+.hero-text h1 em{color:var(--gold-light);font-style:normal;display:block}
+.hero-text p{font-size:1.05rem;color:rgba(255,255,255,.8);margin-bottom:2rem;font-weight:500}
+.hero-visual{display:flex;align-items:center;justify-content:center}
+.bottle-wrap{position:relative;width:300px;height:380px;display:flex;align-items:center;justify-content:center}
+.bottle-bg{position:absolute;inset:0;background:radial-gradient(circle at center,rgba(255,255,255,.12),transparent 70%);border-radius:50%}
+.bottle-main{font-size:11rem;filter:drop-shadow(0 20px 40px rgba(0,0,0,.4));animation:floatBottle 4s ease-in-out infinite}
+@keyframes floatBottle{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-12px) rotate(2deg)}}
+.bottle-leaves{position:absolute;font-size:3rem;animation:sway 3s ease-in-out infinite}
+.bl1{bottom:30px;right:20px;animation-delay:.5s}
+.bl2{top:40px;left:10px;animation-delay:1s}
+@keyframes sway{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+
+/* ── TRUST BAR ── */
+.trust-bar{background:var(--pale);border-bottom:1.5px solid var(--border);padding:1.1rem 0}
+.trust-inner{max-width:1280px;margin:0 auto;padding:0 2rem;display:flex;justify-content:center;align-items:center;gap:3rem;flex-wrap:wrap}
+.trust-item{display:flex;align-items:center;gap:10px;font-size:.9rem;font-weight:700;color:var(--dark-green)}
+.trust-icon{font-size:1.5rem;color:var(--gold)}
+.trust-dot{width:5px;height:5px;border-radius:50%;background:var(--gold)}
+
+/* ── BEST SELLERS ── */
+.best-sellers{background:var(--pale)}
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.75rem}
+
+/* ── BENEFITS ── */
+.benefits{background:#fff;padding:4rem 0}
+.benefits-inner{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+.benefits-text h2{font-size:1.8rem;font-weight:900;color:var(--dark-green);margin-bottom:1.5rem}
+.benefit-item{display:flex;align-items:center;gap:.9rem;margin-bottom:1.1rem;font-size:1rem;font-weight:600;color:var(--text)}
+.benefit-check{width:26px;height:26px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;color:var(--dark-green);font-size:.85rem;font-weight:900;flex-shrink:0}
+.benefits-visual{display:flex;align-items:center;justify-content:center;background:linear-gradient(140deg,#f0faf0,var(--pale));border-radius:var(--r-lg);height:320px;font-size:9rem;position:relative;overflow:hidden;border:1.5px solid var(--border)}
+.benefits-visual::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 40% 40%,rgba(200,185,64,.15),transparent 60%)}
+
+/* ── NEWSLETTER ── */
+.newsletter{background:var(--dark-green);padding:2.5rem 0}
+.nl-inner{max-width:1280px;margin:0 auto;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap}
+.nl-text h3{color:#fff;font-size:1.2rem;font-weight:800}
+.nl-text p{color:rgba(255,255,255,.6);font-size:.88rem;margin-top:.2rem}
+.nl-form{display:flex;gap:.75rem;flex:1;max-width:500px}
+.nl-input{flex:1;padding:12px 18px;border:none;border-radius:var(--r);font-family:inherit;font-size:.95rem;outline:none}
+.nl-btn{background:var(--gold);color:var(--dark-green);border:none;border-radius:var(--r);padding:12px 24px;font-family:inherit;font-size:.95rem;font-weight:800;cursor:pointer;transition:.2s;white-space:nowrap}
+.nl-btn:hover{background:var(--gold-bright)}
+
+@media(max-width:900px){
+  .hero-inner,.benefits-inner{grid-template-columns:1fr}
+  .hero-visual{display:none}
+  .hero-text h1{font-size:2rem}
+  .nl-inner{flex-direction:column}
+  .nl-form{max-width:100%;width:100%}
+}
+@media(max-width:600px){
+  .trust-inner{gap:1.25rem}
+  .trust-dot{display:none}
+  .products-grid{grid-template-columns:1fr}
+}
+</style>
+{% endblock %}
+
+{% block body %}
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <h1>
+        {{ s.hero_title_ar }}
+        <em>Olive Oil</em>
+      </h1>
+      <p>{{ s.hero_sub_ar }}</p>
+      <a href="{{ url_for('shop') }}" class="btn btn-gold btn-lg">🛒 تسوق الآن</a>
+    </div>
+    <div class="hero-visual">
+      <div class="bottle-wrap">
+        <div class="bottle-bg"></div>
+        <div class="bottle-main">🫒</div>
+        <div class="bottle-leaves bl1">🌿</div>
+        <div class="bottle-leaves bl2">🍃</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<div class="trust-bar">
+  <div class="trust-inner">
+    <div class="trust-item"><span class="trust-icon">🌿</span>100% طبيعى</div>
+    <div class="trust-dot"></div>
+    <div class="trust-item"><span class="trust-icon">🫒</span>معصور على البارد</div>
+    <div class="trust-dot"></div>
+    <div class="trust-item"><span class="trust-icon">🚚</span>شحن مجانى فوق 500 جنيه</div>
+  </div>
+</div>
+
+<!-- BEST SELLERS -->
+<section class="section best-sellers">
+  <div class="wrap">
+    <div class="s-head">
+      <h2>الأكثر مبيعاً</h2>
+      <p>أشهر منتجاتنا</p>
+      <div class="line"></div>
+    </div>
+    <div class="products-grid">
+      {% for p in featured_products %}
+      <div class="card">
+        {% if p.old_price %}
+        <div class="card-discount">
+          -خصم%
+        </div>
+        {% endif %}
+        <a href="{{ url_for('product', pid=p['id']) }}">
+          <div class="card-img">
+            {% if p['photo'] %}
+              <img src="{{ p['photo'] }}" alt="{{ p['name_ar'] }}"
+                   style="width:100%;height:100%;object-fit:cover;border-radius:inherit"
+                   onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+              <span style="display:none">{{ p['image'] or '🫒' }}</span>
+            {% else %}
+              {{ p['image'] or '🫒' }}
+            {% endif %}
+          </div>
+        </a>
+        <div class="card-body">
+          <div class="card-origin">🌍 {{ p.origin_ar }} · {{ p.weight }}</div>
+          <a href="{{ url_for('product', pid=p['id']) }}">
+            <div class="card-name">{{ p.name_ar }}</div>
+          </a>
+          <div class="card-stars">
+            <span class="stars">★★★★★</span>
+            <span class="stars-n">{{ p.rating }} ({{ p.reviews_count }})</span>
+          </div>
+          <div class="card-foot">
+            <div>
+              <div class="price-now">{{ p.price }} جنيه</div>
+              {% if p.old_price %}<div class="price-old">{{ p.old_price }} جنيه</div>{% endif %}
+            </div>
+            <form action="{{ url_for('cart_add') }}" method="POST">
+              
+              <input type="hidden" name="pid" value="{{ p.id }}">
+              <input type="hidden" name="qty" value="1">
+              <button type="submit" class="add-btn js-add">أضف للسلة</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div style="text-align:center;margin-top:2.5rem">
+      <a href="{{ url_for('shop') }}" class="btn btn-outline btn-lg">عرض كل المنتجات ←</a>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section class="benefits">
+  <div class="wrap">
+    <div class="benefits-inner">
+      <div class="benefits-text">
+        <h2>اكتشف فوائد زيوت سلافة</h2>
+        <div class="benefit-item">
+          <div class="benefit-check">✓</div>
+          <span>{{ s.benefit1_ar }}</span>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-check">✓</div>
+          <span>{{ s.benefit2_ar }}</span>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-check">✓</div>
+          <span>{{ s.benefit3_ar }}</span>
+        </div>
+        <div style="margin-top:2rem">
+          <a href="{{ url_for('about') }}" class="btn btn-dark">اعرف أكثر ←</a>
+        </div>
+      </div>
+      <div class="benefits-visual">🫒</div>
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<div class="newsletter">
+  <div class="nl-inner">
+    <div class="nl-text">
+      <h3>{{ s.newsletter_title_ar }}</h3>
+      <p>{{ s.newsletter_sub_ar }}</p>
+    </div>
+    <div class="nl-form">
+      <input class="nl-input" type="email" placeholder="أدخل بريدك الإلكترونى">
+      <button class="nl-btn" onclick="toast('تم الاشتراك بنجاح! ✅')">اشترك</button>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "admin/base.html" %}
+{% block title %}الطلبات | أدمن سلافة{% endblock %}
+{% block page_title %}📦 إدارة الطلبات{% endblock %}
+{% block extra_css %}
+<style>
+.a-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:1.5rem}
+.a-card-head{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.4rem;border-bottom:1px solid var(--border)}
+.a-card-head h3{font-size:.95rem;font-weight:700;color:var(--text)}
+.a-table{width:100%;border-collapse:collapse}
+.a-table th{text-align:right;padding:.7rem 1rem;font-size:.72rem;color:var(--muted);font-weight:700;border-bottom:1px solid var(--border);white-space:nowrap}
+.a-table td{padding:.8rem 1rem;font-size:.85rem;border-bottom:1px solid rgba(42,46,42,.5);vertical-align:middle}
+.a-table tr:last-child td{border-bottom:none}
+.a-table tr:hover td{background:rgba(255,255,255,.025)}
+.status-sel{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:.25rem .5rem;color:var(--text);font-family:Cairo,sans-serif;font-size:.75rem;cursor:pointer;outline:none}
+.status-sel:focus{border-color:var(--gold)}
+.pay-badge{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .6rem;border-radius:20px;font-size:.72rem;font-weight:700}
+.pay-card{background:rgba(59,130,246,.15);color:#60a5fa}
+.pay-cod{background:rgba(234,179,8,.15);color:#ca8a04}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="a-card">
+  <div class="a-card-head"><h3>الطلبات ({{ orders|length }})</h3></div>
+  <div style="padding:0">
+    <table class="a-table">
+      <thead>
+        <tr>
+          <th>رقم الطلب</th>
+          <th>العميل</th>
+          <th>الهاتف</th>
+          <th>المدينة</th>
+          <th>الإجمالى</th>
+          <th>الدفع</th>
+          <th>التاريخ</th>
+          <th>الحالة</th>
+          <th>تغيير الحالة</th>
+          <th>إجراءات</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in orders %}
+        <tr>
+          <td><strong>{{ o['order_number'] }}</strong></td>
+          <td>{{ o['full_name'] }}</td>
+          <td>{{ o['phone'] }}</td>
+          <td>{{ o['city'] }}</td>
+          <td><strong style="color:var(--dk)">{{ o['grand_total']|int }} جنيه</strong></td>
+          <td>
+            {% if o['payment_method']=='cod' %}
+              <span class="pay-badge pay-cod">💵 كاش</span>
+            {% else %}
+              <span class="pay-badge pay-card">💳 ****{{ o['card_last4'] }}</span>
+            {% endif %}
+          </td>
+          <td>{{ o['created_at'][:10] }}</td>
+          <td>
+            <span class="badge {% if o['status']=='confirmed' %}badge-green{% elif o['status']=='shipped' %}badge-gold{% elif o['status']=='pending' %}badge-gold{% else %}badge-red{% endif %}">
+              {% if o['status']=='confirmed' %}✅ مؤكد
+              {% elif o['status']=='pending' %}⏳ انتظار
+              {% elif o['status']=='shipped' %}🚚 مشحون
+              {% elif o['status']=='cancelled' %}❌ ملغى
+              {% else %}{{ o['status'] }}{% endif %}
+            </span>
+          </td>
+          <td>
+            <form action="{{ url_for('admin_order_status', oid=o['id']) }}" method="POST">
+              <select name="status" class="status-sel" onchange="this.form.submit()">
+                <option value="confirmed" {% if o['status']=='confirmed' %}selected{% endif %}>✅ مؤكد</option>
+                <option value="pending"   {% if o['status']=='pending'   %}selected{% endif %}>⏳ انتظار</option>
+                <option value="shipped"   {% if o['status']=='shipped'   %}selected{% endif %}>🚚 مشحون</option>
+                <option value="cancelled" {% if o['status']=='cancelled' %}selected{% endif %}>❌ ملغى</option>
+              </select>
+            </form>
+          </td>
+          <td>
+            <a href="{{ url_for('admin_order_invoice', oid=o['id']) }}"
+               class="btn btn-gold btn-sm" target="_blank">🧾 فاتورة</a>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="10" style="text-align:center;color:#aaa;padding:3rem">لا توجد طلبات بعد</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

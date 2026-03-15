@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+{% block title %}إتمام الطلب | {{ s.site_name_ar }}{% endblock %}
+
+{% block extra_css %}
+<style>
+.co-pg{padding:3rem 0}
+.co-grid{display:grid;grid-template-columns:1fr 360px;gap:2rem;align-items:start}
+.co-box{background:#fff;border-radius:var(--r-lg);padding:1.8rem;border:1.5px solid var(--border);margin-bottom:1.5rem}
+.co-box h3{font-size:1rem;font-weight:800;color:var(--dark-green);margin-bottom:1.3rem;padding-bottom:.8rem;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:8px}
+/* ── payment tabs ── */
+.pay-tabs{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1.5rem}
+.pay-tab{border:2px solid var(--border);border-radius:var(--r-lg);padding:1rem 1.2rem;cursor:pointer;transition:.2s;background:#fff;display:flex;align-items:center;gap:.75rem;user-select:none}
+.pay-tab:hover{border-color:var(--dark-green)}
+.pay-tab.active{border-color:var(--dark-green);background:linear-gradient(135deg,#f0faf0,#fff)}
+.pay-tab-icon{font-size:1.6rem;flex-shrink:0}
+.pay-tab-info strong{display:block;font-size:.9rem;font-weight:800;color:var(--text)}
+.pay-tab-info span{font-size:.75rem;color:var(--muted)}
+.pay-tab.active .pay-tab-info strong{color:var(--dark-green)}
+/* ── card ── */
+.card-section{background:linear-gradient(135deg,#0f2010,#1a3a1a 50%,#2a6b2a);border-radius:var(--r-lg);padding:2rem;margin-bottom:1.5rem}
+.card-preview{background:linear-gradient(135deg,#b8892a,#d4a843 40%,#f5c030 70%,#d4a843);border-radius:16px;padding:1.5rem 1.7rem;margin-bottom:1.5rem;position:relative;min-height:185px;box-shadow:0 12px 35px rgba(0,0,0,.35)}
+.card-preview::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 20%,rgba(255,255,255,.25),transparent 55%);border-radius:16px}
+.c-logo{position:absolute;top:1.2rem;left:1.5rem;font-size:.9rem;font-weight:900;font-style:italic;color:rgba(15,30,15,.8);font-family:serif;letter-spacing:1px}
+.c-chip{width:40px;height:30px;background:rgba(255,255,255,.45);border-radius:5px;margin-bottom:1.2rem;border:1px solid rgba(255,255,255,.3);position:relative;z-index:1}
+.c-num{font-size:1.1rem;font-weight:700;color:rgba(15,30,15,.8);letter-spacing:3px;margin-bottom:1rem;font-family:monospace;position:relative;z-index:1}
+.c-bot{display:flex;justify-content:space-between;position:relative;z-index:1}
+.cl{font-size:.6rem;text-transform:uppercase;letter-spacing:.5px;color:rgba(15,30,15,.5)}
+.cv{font-size:.85rem;font-weight:700;color:rgba(15,30,15,.8)}
+.card-fields .field input{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.2);color:#fff}
+.card-fields .field input::placeholder{color:rgba(255,255,255,.4)}
+.card-fields .field input:focus{border-color:var(--gold-light);box-shadow:0 0 0 3px rgba(245,208,48,.2)}
+.card-fields .field label{color:rgba(255,255,255,.8)}
+.sec-badges{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.75rem}
+.sb{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);padding:5px 12px;border-radius:50px;font-size:.77rem;font-weight:600}
+/* ── COD ── */
+.cod-box{background:linear-gradient(135deg,#f0faf0,#fff);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:2rem;margin-bottom:1.5rem;text-align:center}
+.cod-icon{font-size:3.5rem;margin-bottom:.75rem}
+.cod-box h3{font-size:1.1rem;font-weight:900;color:var(--dark-green);margin-bottom:.5rem}
+.cod-box p{font-size:.88rem;color:var(--muted);line-height:1.7}
+.cod-steps{display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;margin-top:1rem}
+.cod-step{display:flex;flex-direction:column;align-items:center;gap:.3rem;font-size:.78rem;color:var(--muted);font-weight:600}
+.cod-step-num{width:28px;height:28px;border-radius:50%;background:var(--dark-green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800}
+/* ── summary ── */
+.ord-sum{background:#fff;border-radius:var(--r-lg);padding:1.6rem;border:1.5px solid var(--border);position:sticky;top:90px}
+.ord-sum h3{font-size:1rem;font-weight:800;color:var(--dark-green);margin-bottom:1.1rem}
+.os-item{display:flex;align-items:center;gap:.8rem;padding:.75rem 0;border-bottom:1px solid var(--border)}
+.os-item:last-of-type{border-bottom:none}
+.os-emoji{font-size:1.9rem;width:44px;text-align:center;flex-shrink:0}
+.os-name{font-size:.87rem;font-weight:700;flex:1}
+.os-qty{font-size:.77rem;color:var(--muted)}
+.os-pr{font-size:.92rem;font-weight:900;color:var(--dark-green)}
+.os-totals{margin-top:1rem;padding-top:1rem;border-top:2px solid var(--border)}
+.ot{display:flex;justify-content:space-between;font-size:.88rem;margin-bottom:.6rem}
+.ot.grand{font-size:1.1rem;font-weight:900;color:var(--dark-green);margin-top:.5rem;padding-top:.6rem;border-top:2px solid var(--border)}
+.pay-btn{width:100%;padding:14px;border:none;border-radius:var(--r-lg);background:linear-gradient(135deg,var(--gold),var(--gold-bright));color:var(--dark-green);font-family:inherit;font-size:1.05rem;font-weight:900;cursor:pointer;margin-top:1.2rem;transition:.22s;box-shadow:0 5px 18px rgba(200,150,12,.35)}
+.pay-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(200,150,12,.45)}
+@media(max-width:900px){.co-grid{grid-template-columns:1fr}.ord-sum{position:static}}
+@media(max-width:600px){.pay-tabs{grid-template-columns:1fr}}
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="page-head"><h1>🔒 إتمام الطلب</h1></div>
+<div class="co-pg"><div class="wrap">
+<form action="{{ url_for('pay') }}" method="POST" id="checkoutForm">
+<input type="hidden" name="payment_method" id="paymentMethodInput" value="card">
+
+<div class="co-grid">
+  <div>
+    <!-- بيانات التوصيل -->
+    <div class="co-box">
+      <h3>📦 بيانات التوصيل</h3>
+      <div class="field-row">
+        <div class="field"><label>الاسم الكامل *</label><input type="text" name="full_name" required></div>
+        <div class="field"><label>رقم الهاتف *</label><input type="tel" name="phone" required></div>
+      </div>
+      <div class="field"><label>العنوان *</label><input type="text" name="address" required></div>
+      <div class="field-row">
+        <div class="field">
+          <label>المحافظة *</label>
+          <select name="city" required>
+            <option value="">اختر...</option>
+            <option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option>
+            <option>الشرقية</option><option>المنوفية</option><option>القليوبية</option>
+            <option>الغربية</option><option>الدقهلية</option><option>الفيوم</option>
+            <option>أسيوط</option><option>سوهاج</option><option>قنا</option>
+            <option>الأقصر</option><option>أسوان</option><option>البحيرة</option>
+            <option>المنيا</option><option>بني سويف</option><option>دمياط</option>
+            <option>بورسعيد</option><option>السويس</option><option>الإسماعيلية</option>
+            <option>كفر الشيخ</option><option>البحر الأحمر</option><option>مطروح</option>
+            <option>شمال سيناء</option><option>جنوب سيناء</option><option>الوادي الجديد</option>
+          </select>
+        </div>
+        <div class="field"><label>الرمز البريدى</label><input type="text" name="postal"></div>
+      </div>
+    </div>
+
+    <!-- طريقة الدفع -->
+    <div class="co-box">
+      <h3>💳 طريقة الدفع</h3>
+      <div class="pay-tabs">
+        <div class="pay-tab active" id="tabCard" onclick="switchPayment('card')">
+          <span class="pay-tab-icon">💳</span>
+          <div class="pay-tab-info"><strong>بطاقة ائتمان</strong><span>Visa / Mastercard</span></div>
+        </div>
+        <div class="pay-tab" id="tabCod" onclick="switchPayment('cod')">
+          <span class="pay-tab-icon">💵</span>
+          <div class="pay-tab-info"><strong>كاش عند الاستلام</strong><span>ادفع لما الطلب يوصل</span></div>
+        </div>
+      </div>
+
+      <!-- قسم البطاقة -->
+      <div id="cardSection" class="card-section">
+        <div class="card-preview">
+          <div class="c-logo">VISA</div>
+          <div class="c-chip"></div>
+          <div class="c-num" id="dn">•••• •••• •••• ••••</div>
+          <div class="c-bot">
+            <div><div class="cl">حامل البطاقة</div><div class="cv" id="dnm">FULL NAME</div></div>
+            <div><div class="cl">الصلاحية</div><div class="cv" id="dex">MM/YY</div></div>
+          </div>
+        </div>
+        <div class="card-fields">
+          <div class="field"><label>رقم البطاقة</label><input type="text" name="card_number" id="in_card" placeholder="0000 0000 0000 0000" maxlength="19" required></div>
+          <div class="field"><label>الاسم على البطاقة</label><input type="text" name="card_name" id="inm" placeholder="AHMED MOHAMED" required></div>
+          <div class="field-row">
+            <div class="field"><label>تاريخ الانتهاء</label><input type="text" name="expiry" id="iex" placeholder="MM/YY" maxlength="5" required></div>
+            <div class="field"><label>CVV</label><input type="password" name="cvv" id="cvvInput" placeholder="•••" maxlength="4" required></div>
+          </div>
+        </div>
+        <div class="sec-badges">
+          <span class="sb">🔒 SSL</span><span class="sb">✅ Visa Verified</span><span class="sb">🛡️ 3D Secure</span>
+        </div>
+      </div>
+
+      <!-- قسم الكاش -->
+      <div id="codSection" class="cod-box" style="display:none">
+        <div class="cod-icon">💵</div>
+        <h3>الدفع كاش عند الاستلام</h3>
+        <p>استلم طلبك وادفع للمندوب نقداً<br>بدون أى رسوم إضافية</p>
+        <div class="cod-steps">
+          <div class="cod-step"><div class="cod-step-num">1</div>اطلب</div>
+          <div class="cod-step"><div class="cod-step-num">2</div>نشحن</div>
+          <div class="cod-step"><div class="cod-step-num">3</div>استلم وادفع</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ملخص الطلب -->
+  <div class="ord-sum">
+    <h3>ملخص الطلب</h3>
+    {% for item in items %}
+    <div class="os-item">
+      <div class="os-emoji">
+        {% if item["photo"] %}
+          <img src="{{ item['photo'] }}" alt="{{ item['name_ar'] }}" style="width:44px;height:44px;object-fit:cover;border-radius:8px;display:block" onerror="this.style.display='none'">
+        {% else %}
+          {{ item["image"] or "🫒" }}
+        {% endif %}
+      </div>
+      <div style="flex:1">
+        <div class="os-name">{{ item["name_ar"] }}</div>
+        <div class="os-qty">×{{ item["quantity"] }}</div>
+      </div>
+      <div class="os-pr">{{ (item["price"]*item["quantity"])|int }} جنيه</div>
+    </div>
+    {% endfor %}
+    <div class="os-totals">
+      <div class="ot"><span>المجموع</span><span>{{ sub }} جنيه</span></div>
+      <div class="ot"><span>ضريبة 14%</span><span>{{ tax }} جنيه</span></div>
+      <div class="ot">
+        <span>الشحن</span>
+        <span style="{% if sub >= 500 %}color:var(--mid-green);font-weight:800{% endif %}">
+          {% if sub >= 500 %}مجانى 🎉{% else %}50 جنيه{% endif %}
+        </span>
+      </div>
+      <div class="ot grand"><span>الإجمالى</span><span>{{ total }} جنيه</span></div>
+    </div>
+    <button type="submit" class="pay-btn" id="submitBtn">✅ ادفع وأكّد الطلب</button>
+    <p style="text-align:center;font-size:.77rem;color:var(--muted);margin-top:.6rem">🔒 بياناتك محمية ومشفرة</p>
+  </div>
+</div>
+</form>
+</div></div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function switchPayment(method){
+  const isCard = method==='card';
+  document.getElementById('paymentMethodInput').value = method;
+  document.getElementById('cardSection').style.display = isCard?'block':'none';
+  document.getElementById('codSection').style.display  = isCard?'none':'block';
+  document.getElementById('tabCard').classList.toggle('active',isCard);
+  document.getElementById('tabCod').classList.toggle('active',!isCard);
+  document.getElementById('submitBtn').textContent = isCard?'✅ ادفع وأكّد الطلب':'✅ أكّد الطلب (كاش)';
+  ['in_card','inm','iex','cvvInput'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.required=isCard;
+  });
+}
+const n=document.getElementById('in_card'),nm=document.getElementById('inm'),ex=document.getElementById('iex');
+const dn=document.getElementById('dn'),dnm=document.getElementById('dnm'),dex=document.getElementById('dex');
+n.addEventListener('input',function(){
+  let v=this.value.replace(/\D/g,'').substring(0,16);
+  this.value=v.replace(/(.{4})/g,'$1 ').trim();
+  let d='';for(let i=0;i<16;i++){if(i>0&&i%4===0)d+=' ';d+=i<v.length?v[i]:'•';}
+  dn.textContent=d;
+});
+nm.addEventListener('input',function(){dnm.textContent=this.value.toUpperCase()||'FULL NAME';});
+ex.addEventListener('input',function(){
+  let v=this.value.replace(/\D/g,'').substring(0,4);
+  if(v.length>=3)v=v.substring(0,2)+'/'+v.substring(2);
+  this.value=v;dex.textContent=v||'MM/YY';
+});
+</script>
+{% endblock %}

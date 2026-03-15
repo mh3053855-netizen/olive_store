@@ -1,0 +1,447 @@
+{% extends "admin/base.html" %}
+{% block title %}الإعدادات | أدمن سلافة{% endblock %}
+{% block page_title %}<span>⚙️</span> إعدادات الموقع{% endblock %}
+{% block extra_css %}
+<style>
+.s-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.s-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1.2rem}
+.s-card h3{font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:1.2rem;padding-bottom:.7rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.5rem}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.save-bar{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.2rem 1.5rem;display:flex;align-items:center;justify-content:space-between;margin-top:1rem;position:sticky;bottom:1rem;z-index:10}
+.save-bar p{font-size:.85rem;color:var(--muted)}
+/* category row */
+.cat-row{display:grid;grid-template-columns:1fr 1fr 36px;gap:.5rem;align-items:center;margin-bottom:.6rem;padding:.6rem .8rem;background:var(--bg);border-radius:9px;border:1px solid var(--border)}
+.cat-row input{background:transparent;border:none;padding:.3rem .2rem;font-size:.88rem;color:var(--text);outline:none;width:100%}
+.cat-row input:focus{border-bottom:1px solid var(--gold)}
+.cat-del{width:28px;height:28px;border-radius:7px;background:rgba(239,68,68,.15);border:none;color:#ef4444;font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;flex-shrink:0}
+.cat-del:hover{background:rgba(239,68,68,.3)}
+.add-cat-btn{display:flex;align-items:center;gap:.5rem;background:rgba(201,168,76,.12);border:1px dashed var(--gold);border-radius:9px;padding:.6rem 1rem;font-size:.85rem;font-weight:700;color:var(--gold);cursor:pointer;width:100%;margin-top:.4rem;transition:.2s}
+.add-cat-btn:hover{background:rgba(201,168,76,.2)}
+/* tabs for sections */
+.s-tabs{display:flex;gap:.4rem;margin-bottom:1.5rem;flex-wrap:wrap}
+.s-tab{padding:.5rem 1.1rem;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--muted);transition:.18s}
+.s-tab.active{background:var(--gold);color:#000;border-color:var(--gold)}
+.s-section{display:none}.s-section.active{display:block}
+@media(max-width:900px){.s-grid{grid-template-columns:1fr}.f2{grid-template-columns:1fr}}
+</style>
+{% endblock %}
+{% block content %}
+<form method="POST" id="settingsForm">
+
+<!-- TABS -->
+<div class="s-tabs">
+  <button type="button" class="s-tab active" onclick="showTab('general')">🌐 عام</button>
+  <button type="button" class="s-tab" onclick="showTab('categories')">🏷️ الأصناف</button>
+  <button type="button" class="s-tab" onclick="showTab('texts')">✍️ نصوص الموقع</button>
+  <button type="button" class="s-tab" onclick="showTab('about')">🫒 عن سلافة</button>
+  <button type="button" class="s-tab" onclick="showTab('social')">📱 السوشيال</button>
+  <button type="button" class="s-tab" onclick="showTab('shipping')">🚚 الشحن</button>
+</div>
+
+<!-- ══ TAB: GENERAL ══ -->
+<div class="s-section active" id="tab-general">
+<div class="s-grid">
+  <div>
+    <div class="s-card">
+      <h3>🌐 معلومات الموقع</h3>
+      <div class="f2">
+        <div class="field"><label>اسم الموقع بالعربى</label><input type="text" name="site_name_ar" value="{{ s.site_name_ar or 'سلافة' }}"></div>
+        <div class="field"><label>Site Name (English)</label><input type="text" name="site_name_en" value="{{ s.site_name_en or 'SULAFA' }}" style="direction:ltr"></div>
+      </div>
+      <div class="f2">
+        <div class="field"><label>الشعار بالعربى</label><input type="text" name="tagline_ar" value="{{ s.tagline_ar or '' }}"></div>
+        <div class="field"><label>Tagline (English)</label><input type="text" name="tagline_en" value="{{ s.tagline_en or '' }}" style="direction:ltr"></div>
+      </div>
+    </div>
+    <div class="s-card">
+      <h3>📞 معلومات التواصل</h3>
+      <div class="field"><label>📞 رقم الهاتف</label><input type="text" name="phone" value="{{ s.phone or '' }}" style="direction:ltr"></div>
+      <div class="field"><label>✉️ البريد الإلكترونى</label><input type="email" name="email" value="{{ s.email or '' }}" style="direction:ltr"></div>
+      <div class="f2">
+        <div class="field"><label>📍 العنوان بالعربى</label><input type="text" name="address_ar" value="{{ s.address_ar or '' }}"></div>
+        <div class="field"><label>📍 Address (English)</label><input type="text" name="address_en" value="{{ s.address_en or '' }}" style="direction:ltr"></div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="s-card">
+      <h3>🔐 بيانات الدخول للأدمن</h3>
+      <div class="field"><label>اسم المستخدم</label><input type="text" name="admin_username" value="{{ s.admin_username or 'admin' }}" style="direction:ltr"></div>
+      <div class="field">
+        <label>كلمة المرور الجديدة</label>
+        <input type="password" name="admin_password" placeholder="اتركه فارغ للإبقاء على الحالى" style="direction:ltr">
+        <small style="color:var(--muted);font-size:.73rem;display:block;margin-top:.3rem">⚠️ لو هتغير كلمة المرور، اكتبها هنا</small>
+      </div>
+    </div>
+    <div class="s-card">
+      <h3>🖼️ إعدادات الصفحة الرئيسية</h3>
+      <div class="f2">
+        <div class="field"><label>عنوان الهيرو عربى</label><input type="text" name="hero_title_ar" value="{{ s.hero_title_ar or '' }}"></div>
+        <div class="field"><label>Hero Title English</label><input type="text" name="hero_title_en" value="{{ s.hero_title_en or '' }}" style="direction:ltr"></div>
+      </div>
+      <div class="f2">
+        <div class="field"><label>وصف الهيرو عربى</label><input type="text" name="hero_sub_ar" value="{{ s.hero_sub_ar or '' }}"></div>
+        <div class="field"><label>Hero Subtitle English</label><input type="text" name="hero_sub_en" value="{{ s.hero_sub_en or '' }}" style="direction:ltr"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ TAB: CATEGORIES ══ -->
+<div class="s-section" id="tab-categories">
+<div class="s-card" style="max-width:700px">
+  <h3>🏷️ إدارة أصناف المنتجات</h3>
+  <p style="font-size:.82rem;color:var(--muted);margin-bottom:1.2rem">
+    الأصناف دى هتظهر كـ dropdown فى صفحة إضافة/تعديل المنتج، وكمان كفلاتر فى صفحة المتجر.
+  </p>
+
+  <!-- Column headers -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 36px;gap:.5rem;padding:.3rem .8rem;margin-bottom:.3rem">
+    <span style="font-size:.72rem;font-weight:700;color:var(--muted)">الصنف بالعربى</span>
+    <span style="font-size:.72rem;font-weight:700;color:var(--muted)">Category in English</span>
+    <span></span>
+  </div>
+
+  <!-- Existing categories -->
+  <div id="catList">
+    {% for i, c in cats|enumerate %}
+    <div class="cat-row" id="catRow_{{ i }}">
+      <input type="text" name="cat_ar_{{ i }}" value="{{ c.ar }}" placeholder="مثال: بكر ممتاز">
+      <input type="text" name="cat_en_{{ i }}" value="{{ c.en }}" placeholder="Extra Virgin" style="direction:ltr">
+      <button type="button" class="cat-del" onclick="delCat(this)" title="حذف">✕</button>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Add new -->
+  <button type="button" class="add-cat-btn" onclick="addCat()">
+    ➕ إضافة صنف جديد
+  </button>
+
+  <div style="margin-top:1.2rem;padding:1rem;background:rgba(201,168,76,.08);border-radius:10px;border:1px solid rgba(201,168,76,.2)">
+    <p style="font-size:.8rem;color:var(--muted)">
+      💡 <strong style="color:var(--gold)">تلميح:</strong>
+      أضف الأصناف اللى عندك زى: بكر ممتاز، عضوى، منكّه، فاخر، طقم هدايا
+    </p>
+  </div>
+</div>
+</div>
+
+<!-- ══ TAB: TEXTS ══ -->
+<div class="s-section" id="tab-texts">
+<div class="s-grid">
+  <div>
+    <div class="s-card">
+      <h3>🔗 روابط التنقل (الناف بار)</h3>
+      <div class="f2">
+        <div class="field"><label>الرئيسية (عربى)</label><input type="text" name="nav_home_ar" value="{{ s.nav_home_ar or 'الرئيسية' }}"></div>
+        <div class="field"><label>Home (English)</label><input type="text" name="nav_home_en" value="{{ s.nav_home_en or 'Home' }}" style="direction:ltr"></div>
+      </div>
+      <div class="f2">
+        <div class="field"><label>المتجر (عربى)</label><input type="text" name="nav_shop_ar" value="{{ s.nav_shop_ar or 'المتجر' }}"></div>
+        <div class="field"><label>Shop (English)</label><input type="text" name="nav_shop_en" value="{{ s.nav_shop_en or 'Shop' }}" style="direction:ltr"></div>
+      </div>
+      <div class="f2">
+        <div class="field"><label>عن سلافة (عربى)</label><input type="text" name="nav_about_ar" value="{{ s.nav_about_ar or 'عن سلافة' }}"></div>
+        <div class="field"><label>About (English)</label><input type="text" name="nav_about_en" value="{{ s.nav_about_en or 'About' }}" style="direction:ltr"></div>
+      </div>
+      <div class="f2">
+        <div class="field"><label>تواصل معنا (عربى)</label><input type="text" name="nav_contact_ar" value="{{ s.nav_contact_ar or 'تواصل معنا' }}"></div>
+        <div class="field"><label>Contact (English)</label><input type="text" name="nav_contact_en" value="{{ s.nav_contact_en or 'Contact' }}" style="direction:ltr"></div>
+      </div>
+    </div>
+
+    <div class="s-card">
+      <h3>🌿 شريط الثقة (Trust Bar)</h3>
+      <div class="f2">
+        <div class="field"><label>النص 1 (عربى)</label><input type="text" name="trust1_ar" value="{{ s.trust1_ar or '100% طبيعى' }}"></div>
+        <div class="field"><label>Trust 1 (English)</label><input type="text" name="trust1_en" value="{{ s.trust1_en or '100% Natural' }}" style="direction:ltr"></div>
+      </div>
+      <div class="f2">
+        <div class="field"><label>الأيقونة 1</label><input type="text" name="trust1_icon" value="{{ s.trust1_icon or '🌿' }}" style="width:80px"></div>
+      </div>
+      <div class="f2">
+        <div class="field"><label>النص 2 (عربى)</label><input type="text" name="trust2_ar" value="{{ s.trust2_ar or 'معصور على البارد' }}"></div>
+        <div class="field"><label>Trust 2 (English)</label><input type="text" name="trust2_en" value="{{ s.trust2_en or 'Cold Pressed' }}" style="direction:ltr"></div>
+      </div>
+      <div class="f2">
+        <div class="field"><label>الأيقونة 2</label><input type="text" name="trust2_icon" value="{{ s.trust2_icon or '🫒' }}" style="width:80px"></div>
+      </div>
+      <div class="f2">
+        <div class="field"><label>النص 3 (عربى)</label><input type="text" name="trust3_ar" value="{{ s.trust3_ar or 'شحن مجانى فوق 500 جنيه' }}"></div>
+        <div class="field"><label>Trust 3 (English)</label><input type="text" name="trust3_en" value="{{ s.trust3_en or 'Free Shipping above 500' }}" style="direction:ltr"></div>
+      </div>
+      <div class="f2">
+        <div class="field"><label>الأيقونة 3</label><input type="text" name="trust3_icon" value="{{ s.trust3_icon or '🚚' }}" style="width:80px"></div>
+      </div>
+    </div>
+
+    <div class="s-card">
+      <h3>✅ فوائد الزيت (الصفحة الرئيسية)</h3>
+      <div class="field"><label>عنوان قسم الفوائد (عربى)</label><input type="text" name="benefits_title_ar" value="{{ s.benefits_title_ar or 'اكتشف فوائد زيوت سلافة' }}"></div>
+      <div class="f2">
+        <div class="field"><label>الفائدة 1 عربى</label><input type="text" name="benefit1_ar" value="{{ s.benefit1_ar or '' }}"></div>
+        <div class="field"><label>Benefit 1 English</label><input type="text" name="benefit1_en" value="{{ s.benefit1_en or '' }}" style="direction:ltr"></div>
+      </div>
+      <div class="f2">
+        <div class="field"><label>الفائدة 2 عربى</label><input type="text" name="benefit2_ar" value="{{ s.benefit2_ar or '' }}"></div>
+        <div class="field"><label>Benefit 2 English</label><input type="text" name="benefit2_en" value="{{ s.benefit2_en or '' }}" style="direction:ltr"></div>
+      </div>
+      <div class="f2">
+        <div class="field"><label>الفائدة 3 عربى</label><input type="text" name="benefit3_ar" value="{{ s.benefit3_ar or '' }}"></div>
+        <div class="field"><label>Benefit 3 English</label><input type="text" name="benefit3_en" value="{{ s.benefit3_en or '' }}" style="direction:ltr"></div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="s-card">
+      <h3>🏪 نصوص صفحة المتجر</h3>
+      <div class="f2">
+        <div class="field"><label>عنوان الصفحة (عربى)</label><input type="text" name="shop_title_ar" value="{{ s.shop_title_ar or 'المتجر' }}"></div>
+        <div class="field"><label>Page Title (English)</label><input type="text" name="shop_title_en" value="{{ s.shop_title_en or 'Shop' }}" style="direction:ltr"></div>
+      </div>
+      <div class="f2">
+        <div class="field"><label>زر "أضف للسلة" عربى</label><input type="text" name="btn_add_ar" value="{{ s.btn_add_ar or 'أضف للسلة' }}"></div>
+        <div class="field"><label>Add to Cart Button</label><input type="text" name="btn_add_en" value="{{ s.btn_add_en or 'Add to Cart' }}" style="direction:ltr"></div>
+      </div>
+      <div class="f2">
+        <div class="field"><label>نص "الكل" فى الفلاتر</label><input type="text" name="filter_all_ar" value="{{ s.filter_all_ar or 'الكل' }}"></div>
+        <div class="field"><label>Filter "All" text</label><input type="text" name="filter_all_en" value="{{ s.filter_all_en or 'All' }}" style="direction:ltr"></div>
+      </div>
+      <div class="f2">
+        <div class="field"><label>عنوان الأصناف (سايدبار)</label><input type="text" name="sidebar_cats_ar" value="{{ s.sidebar_cats_ar or 'الأصناف' }}"></div>
+        <div class="field"><label>Sidebar Categories Label</label><input type="text" name="sidebar_cats_en" value="{{ s.sidebar_cats_en or 'Categories' }}" style="direction:ltr"></div>
+      </div>
+    </div>
+
+    <div class="s-card">
+      <h3>🛒 نصوص السلة والدفع</h3>
+      <div class="f2">
+        <div class="field"><label>عنوان السلة (عربى)</label><input type="text" name="cart_title_ar" value="{{ s.cart_title_ar or 'سلة الشراء' }}"></div>
+        <div class="field"><label>Cart Title (English)</label><input type="text" name="cart_title_en" value="{{ s.cart_title_en or 'Shopping Cart' }}" style="direction:ltr"></div>
+      </div>
+      <div class="f2">
+        <div class="field"><label>زر "إتمام الشراء" عربى</label><input type="text" name="btn_checkout_ar" value="{{ s.btn_checkout_ar or 'إتمام الشراء' }}"></div>
+        <div class="field"><label>Checkout Button</label><input type="text" name="btn_checkout_en" value="{{ s.btn_checkout_en or 'Checkout' }}" style="direction:ltr"></div>
+      </div>
+      <div class="f2">
+        <div class="field"><label>نص الشحن المجانى (عربى)</label><input type="text" name="free_ship_text_ar" value="{{ s.free_ship_text_ar or 'مجانى 🎉' }}"></div>
+        <div class="field"><label>Free Shipping Text</label><input type="text" name="free_ship_text_en" value="{{ s.free_ship_text_en or 'Free 🎉' }}" style="direction:ltr"></div>
+      </div>
+    </div>
+
+    <div class="s-card">
+      <h3>📧 النشرة البريدية</h3>
+      <div class="f2">
+        <div class="field"><label>العنوان بالعربى</label><input type="text" name="newsletter_title_ar" value="{{ s.newsletter_title_ar or '' }}"></div>
+        <div class="field"><label>Title English</label><input type="text" name="newsletter_title_en" value="{{ s.newsletter_title_en or '' }}" style="direction:ltr"></div>
+      </div>
+      <div class="f2">
+        <div class="field"><label>الوصف بالعربى</label><input type="text" name="newsletter_sub_ar" value="{{ s.newsletter_sub_ar or '' }}"></div>
+        <div class="field"><label>Subtitle English</label><input type="text" name="newsletter_sub_en" value="{{ s.newsletter_sub_en or '' }}" style="direction:ltr"></div>
+      </div>
+      <div class="f2">
+        <div class="field"><label>نص زر الاشتراك (عربى)</label><input type="text" name="newsletter_btn_ar" value="{{ s.newsletter_btn_ar or 'اشترك' }}"></div>
+        <div class="field"><label>Subscribe Button</label><input type="text" name="newsletter_btn_en" value="{{ s.newsletter_btn_en or 'Subscribe' }}" style="direction:ltr"></div>
+      </div>
+    </div>
+
+    <div class="s-card">
+      <h3>📄 نصوص الفوتر</h3>
+      <div class="f2">
+        <div class="field"><label>نص الفوتر (عربى)</label><input type="text" name="footer_about_ar" value="{{ s.footer_about_ar or 'أجود زيوت الزيتون من المزارع الأصيلة مباشرةً لمائدتك.' }}"></div>
+        <div class="field"><label>Footer About (English)</label><input type="text" name="footer_about_en" value="{{ s.footer_about_en or 'Finest olive oils from authentic farms straight to your table.' }}" style="direction:ltr"></div>
+      </div>
+      <div class="f2">
+        <div class="field"><label>نص الحقوق (عربى)</label><input type="text" name="footer_copy_ar" value="{{ s.footer_copy_ar or 'جميع الحقوق محفوظة' }}"></div>
+        <div class="field"><label>Copyright (English)</label><input type="text" name="footer_copy_en" value="{{ s.footer_copy_en or 'All rights reserved' }}" style="direction:ltr"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ TAB: ABOUT ══ -->
+<div class="s-section" id="tab-about">
+<div class="s-grid">
+  <div>
+
+    <div class="s-card">
+      <h3>🫒 عنوان الصفحة</h3>
+      <div class="f2">
+        <div class="field"><label>عنوان الصفحة (عربى)</label><input type="text" name="about_page_title_ar" value="{{ s.about_page_title_ar or 'عن سلافة' }}"></div>
+        <div class="field"><label>Page Title (English)</label><input type="text" name="about_page_title_en" value="{{ s.about_page_title_en or 'About Sulafa' }}" style="direction:ltr"></div>
+      </div>
+    </div>
+
+    <div class="s-card">
+      <h3>📖 القسم الرئيسى</h3>
+      <div class="f2">
+        <div class="field"><label>العنوان الكبير (عربى)</label><input type="text" name="about_title_ar" value="{{ s.about_title_ar or 'من الشجرة لمائدتك' }}"></div>
+        <div class="field"><label>Main Title (English)</label><input type="text" name="about_title_en" value="{{ s.about_title_en or 'From the Tree to Your Table' }}" style="direction:ltr"></div>
+      </div>
+      <div class="f2">
+        <div class="field">
+          <label>الفقرة الأولى (عربى)</label>
+          <textarea name="about_p1_ar" rows="3">{{ s.about_p1_ar or 'سلافة علامة تجارية مصرية متخصصة فى توفير أجود أنواع زيت الزيتون الطبيعى من أعرق المناطق المنتجة حول العالم.' }}</textarea>
+        </div>
+        <div class="field">
+          <label>Paragraph 1 (English)</label>
+          <textarea name="about_p1_en" rows="3" style="direction:ltr">{{ s.about_p1_en or 'Sulafa is an Egyptian brand specializing in providing the finest natural olive oils from the most renowned producing regions around the world.' }}</textarea>
+        </div>
+      </div>
+      <div class="f2">
+        <div class="field">
+          <label>الفقرة الثانية (عربى)</label>
+          <textarea name="about_p2_ar" rows="3">{{ s.about_p2_ar or 'نتعاون مباشرةً مع المزارعين لنضمن لك منتجاً أصيلاً وطازجاً، خالياً من أى إضافات أو مواد حافظة.' }}</textarea>
+        </div>
+        <div class="field">
+          <label>Paragraph 2 (English)</label>
+          <textarea name="about_p2_en" rows="3" style="direction:ltr">{{ s.about_p2_en or 'We work directly with farmers to ensure you receive an authentic and fresh product, free from any additives or preservatives.' }}</textarea>
+        </div>
+      </div>
+      <div class="f2">
+        <div class="field"><label>نص زر "تسوق الآن" (عربى)</label><input type="text" name="about_btn_ar" value="{{ s.about_btn_ar or 'تسوق الآن ←' }}"></div>
+        <div class="field"><label>Button Text (English)</label><input type="text" name="about_btn_en" value="{{ s.about_btn_en or 'Shop Now →' }}" style="direction:ltr"></div>
+      </div>
+    </div>
+
+  </div>
+  <div>
+
+    <div class="s-card">
+      <h3>📊 الأرقام والإحصائيات</h3>
+      <p style="font-size:.78rem;color:var(--muted);margin-bottom:1rem">الأرقام الـ 4 اللى بتظهر فى صفحة عن سلافة</p>
+
+      <div style="background:var(--bg);border-radius:10px;padding:1rem;margin-bottom:.8rem;border:1px solid var(--border)">
+        <div style="font-size:.72rem;font-weight:700;color:var(--gold);margin-bottom:.5rem">📌 الرقم الأول</div>
+        <div class="f2">
+          <div class="field"><label>الرقم</label><input type="text" name="stat1_num" value="{{ s.stat1_num or '12+' }}" placeholder="12+"></div>
+          <div class="field"><label>الوصف (عربى)</label><input type="text" name="stat1_label_ar" value="{{ s.stat1_label_ar or 'سنة خبرة' }}"></div>
+        </div>
+        <div class="field"><label>Label (English)</label><input type="text" name="stat1_label_en" value="{{ s.stat1_label_en or 'Years of Experience' }}" style="direction:ltr"></div>
+      </div>
+
+      <div style="background:var(--bg);border-radius:10px;padding:1rem;margin-bottom:.8rem;border:1px solid var(--border)">
+        <div style="font-size:.72rem;font-weight:700;color:var(--gold);margin-bottom:.5rem">📌 الرقم الثانى</div>
+        <div class="f2">
+          <div class="field"><label>الرقم</label><input type="text" name="stat2_num" value="{{ s.stat2_num or '1000+' }}" placeholder="1000+"></div>
+          <div class="field"><label>الوصف (عربى)</label><input type="text" name="stat2_label_ar" value="{{ s.stat2_label_ar or 'عميل راضٍ' }}"></div>
+        </div>
+        <div class="field"><label>Label (English)</label><input type="text" name="stat2_label_en" value="{{ s.stat2_label_en or 'Happy Customers' }}" style="direction:ltr"></div>
+      </div>
+
+      <div style="background:var(--bg);border-radius:10px;padding:1rem;margin-bottom:.8rem;border:1px solid var(--border)">
+        <div style="font-size:.72rem;font-weight:700;color:var(--gold);margin-bottom:.5rem">📌 الرقم الثالث</div>
+        <div class="f2">
+          <div class="field"><label>الرقم</label><input type="text" name="stat3_num" value="{{ s.stat3_num or '8' }}" placeholder="8"></div>
+          <div class="field"><label>الوصف (عربى)</label><input type="text" name="stat3_label_ar" value="{{ s.stat3_label_ar or 'دول مصدر' }}"></div>
+        </div>
+        <div class="field"><label>Label (English)</label><input type="text" name="stat3_label_en" value="{{ s.stat3_label_en or 'Source Countries' }}" style="direction:ltr"></div>
+      </div>
+
+      <div style="background:var(--bg);border-radius:10px;padding:1rem;border:1px solid var(--border)">
+        <div style="font-size:.72rem;font-weight:700;color:var(--gold);margin-bottom:.5rem">📌 الرقم الرابع</div>
+        <div class="f2">
+          <div class="field"><label>الرقم</label><input type="text" name="stat4_num" value="{{ s.stat4_num or '100%' }}" placeholder="100%"></div>
+          <div class="field"><label>الوصف (عربى)</label><input type="text" name="stat4_label_ar" value="{{ s.stat4_label_ar or 'طبيعى أصيل' }}"></div>
+        </div>
+        <div class="field"><label>Label (English)</label><input type="text" name="stat4_label_en" value="{{ s.stat4_label_en or 'Pure & Natural' }}" style="direction:ltr"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- ══ TAB: SOCIAL ══ -->
+<div class="s-section" id="tab-social">
+<div class="s-card" style="max-width:600px">
+  <h3>📱 روابط السوشيال ميديا</h3>
+  <div class="field">
+    <label>💬 واتساب (رقم دولى بدون +)</label>
+    <input type="text" name="whatsapp" value="{{ s.whatsapp or '' }}" placeholder="201001234567" style="direction:ltr">
+    <small style="color:var(--muted);font-size:.75rem;display:block;margin-top:.3rem">مثال: 201001234567 (بدون + أو مسافات)</small>
+  </div>
+  <div class="field"><label>📘 Facebook</label><input type="url" name="facebook" value="{{ s.facebook or '' }}" placeholder="https://facebook.com/sulafa" style="direction:ltr"></div>
+  <div class="field"><label>📷 Instagram</label><input type="url" name="instagram" value="{{ s.instagram or '' }}" placeholder="https://instagram.com/sulafa" style="direction:ltr"></div>
+  <div class="field"><label>🎵 TikTok</label><input type="url" name="tiktok" value="{{ s.tiktok or '' }}" placeholder="https://tiktok.com/@sulafa" style="direction:ltr"></div>
+  <div class="field"><label>🐦 X (Twitter)</label><input type="url" name="twitter" value="{{ s.twitter or '' }}" placeholder="https://twitter.com/sulafa" style="direction:ltr"></div>
+  <div class="field"><label>▶️ YouTube</label><input type="url" name="youtube" value="{{ s.youtube or '' }}" placeholder="https://youtube.com/@sulafa" style="direction:ltr"></div>
+</div>
+</div>
+
+<!-- ══ TAB: SHIPPING ══ -->
+<div class="s-section" id="tab-shipping">
+<div class="s-card" style="max-width:600px">
+  <h3>🚚 الشحن والأسعار</h3>
+  <div class="f2">
+    <div class="field"><label>تكلفة الشحن (جنيه)</label><input type="number" name="shipping_cost" value="{{ s.shipping_cost or 50 }}"></div>
+    <div class="field"><label>شحن مجانى فوق (جنيه)</label><input type="number" name="free_shipping_threshold" value="{{ s.free_shipping_threshold or 500 }}"></div>
+  </div>
+  <div class="f2">
+    <div class="field"><label>رمز العملة بالعربى</label><input type="text" name="currency_ar" value="{{ s.currency_ar or 'جنيه' }}"></div>
+    <div class="field"><label>Currency (English)</label><input type="text" name="currency_en" value="{{ s.currency_en or 'EGP' }}" style="direction:ltr"></div>
+  </div>
+  <div class="f2">
+    <div class="field"><label>نسبة الضريبة %</label><input type="number" name="tax_rate" value="{{ s.tax_rate or 14 }}" min="0" max="100"></div>
+    <div class="field"><label>أقصى كمية فى الطلب</label><input type="number" name="max_qty" value="{{ s.max_qty or 10 }}" min="1"></div>
+  </div>
+</div>
+</div>
+
+<div class="save-bar">
+  <p>💡 كل التغييرات ستظهر فى الموقع فوراً بعد الحفظ</p>
+  <button type="submit" class="btn btn-gold" style="padding:.75rem 2rem;font-size:.95rem">💾 حفظ جميع الإعدادات</button>
+</div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+/* ── tabs ── */
+function showTab(name) {
+  document.querySelectorAll('.s-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.s-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+/* ── categories ── */
+let catIdx = {{ cats|length }};
+
+function addCat() {
+  const list = document.getElementById('catList');
+  const row = document.createElement('div');
+  row.className = 'cat-row';
+  row.id = 'catRow_' + catIdx;
+  row.innerHTML = `
+    <input type="text" name="cat_ar_${catIdx}" placeholder="اسم الصنف بالعربى">
+    <input type="text" name="cat_en_${catIdx}" placeholder="Category in English" style="direction:ltr">
+    <button type="button" class="cat-del" onclick="delCat(this)" title="حذف">✕</button>
+  `;
+  list.appendChild(row);
+  row.querySelector('input').focus();
+  catIdx++;
+}
+
+function delCat(btn) {
+  const row = btn.closest('.cat-row');
+  row.style.opacity = '0';
+  row.style.transform = 'translateX(20px)';
+  row.style.transition = 'all .2s';
+  setTimeout(() => {
+    row.remove();
+    // Re-index all remaining rows
+    document.querySelectorAll('.cat-row').forEach((r, i) => {
+      const inputs = r.querySelectorAll('input');
+      inputs[0].name = `cat_ar_${i}`;
+      inputs[1].name = `cat_en_${i}`;
+    });
+    catIdx = document.querySelectorAll('.cat-row').length;
+  }, 200);
+}
+</script>
+{% endblock %}

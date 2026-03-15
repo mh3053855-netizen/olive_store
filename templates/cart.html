@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block title %}السلة | {{ s.site_name_ar }}{% endblock %}
+
+{% block extra_css %}
+<style>
+.cart-pg{padding:3rem 0}
+.cart-lay{display:grid;grid-template-columns:1fr 340px;gap:2rem;align-items:start}
+.cart-box{background:#fff;border-radius:var(--r-lg);border:1.5px solid var(--border);overflow:hidden}
+.cart-hd{padding:1.2rem 1.5rem;border-bottom:1.5px solid var(--border);font-size:1rem;font-weight:800;color:var(--dark-green)}
+.ci{display:flex;align-items:center;gap:1.1rem;padding:1.1rem 1.5rem;border-bottom:1px solid var(--border);transition:.18s}
+.ci:last-child{border-bottom:none}
+.ci:hover{background:var(--pale)}
+.ci-img{width:68px;height:68px;border-radius:10px;background:linear-gradient(135deg,var(--light-green),var(--pale));display:flex;align-items:center;justify-content:center;font-size:2.2rem;flex-shrink:0}
+.ci-name{font-size:.95rem;font-weight:800;color:var(--text)}
+.ci-meta{font-size:.78rem;color:var(--muted);margin-top:.15rem}
+.ci-ctrl{display:flex;align-items:center;gap:.4rem}
+.c-btn{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--border);background:var(--pale);color:var(--dark-green);font-size:.95rem;font-weight:800;cursor:pointer;transition:.18s;display:flex;align-items:center;justify-content:center}
+.c-btn:hover{background:var(--dark-green);color:#fff;border-color:var(--dark-green)}
+.ci-qty{font-size:.95rem;font-weight:800;min-width:24px;text-align:center}
+.ci-price{font-size:1.05rem;font-weight:900;color:var(--dark-green)}
+.ci-del{background:none;border:none;color:#ccc;font-size:1rem;cursor:pointer;padding:4px;border-radius:6px;transition:.18s}
+.ci-del:hover{color:var(--red);background:#fee}
+.sum-box{background:#fff;border-radius:var(--r-lg);border:1.5px solid var(--border);padding:1.6rem;position:sticky;top:90px}
+.sum-box h3{font-size:1rem;font-weight:800;color:var(--dark-green);margin-bottom:1.2rem;padding-bottom:.8rem;border-bottom:2px solid var(--border)}
+.sr{display:flex;justify-content:space-between;font-size:.9rem;margin-bottom:.7rem}
+.sr.tot{font-size:1.1rem;font-weight:900;color:var(--dark-green);border-top:2px solid var(--border);padding-top:.7rem;margin-top:.4rem}
+.free{color:#2d6b2d;font-weight:800}
+.empty{text-align:center;padding:5rem 2rem}
+.empty .big{font-size:4rem;margin-bottom:1rem}
+@media(max-width:900px){.cart-lay{grid-template-columns:1fr}.sum-box{position:static}}
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="page-head"><h1>سلة الشراء</h1></div>
+<div class="cart-pg"><div class="wrap">
+{% if items %}
+<div class="cart-lay">
+  <div class="cart-box">
+    <div class="cart-hd">{{ items|length }} منتج</div>
+    {% for item in items %}
+    <div class="ci">
+      <div class="ci-img">
+        {% if item["photo"] %}
+          <img src="{{ item['photo'] }}" alt="{{ item['name_ar'] }}"
+               style="width:100%;height:100%;object-fit:cover;border-radius:10px"
+               onerror="this.style.display='none'">
+        {% else %}
+          {{ item["image"] or "🫒" }}
+        {% endif %}
+      </div>
+      <div style="flex:1">
+        <div class="ci-name">{{ item["name_ar"] }}</div>
+        <div class="ci-meta">{{ item["weight"] }} · {{ item["price"] }} جنيه</div>
+      </div>
+      <div class="ci-ctrl">
+        <form action="{{ url_for('cart_update') }}" method="POST" style="display:inline">
+          
+          <input type="hidden" name="cid" value="{{ item["id"] }}">
+          <input type="hidden" name="action" value="-">
+          <button class="c-btn">−</button>
+        </form>
+        <span class="ci-qty">{{ item["quantity"] }}</span>
+        <form action="{{ url_for('cart_update') }}" method="POST" style="display:inline">
+          
+          <input type="hidden" name="cid" value="{{ item["id"] }}">
+          <input type="hidden" name="action" value="+">
+          <button class="c-btn">+</button>
+        </form>
+      </div>
+      <div class="ci-price">{{ (item["price"]*item["quantity"])|int }} جنيه</div>
+      <form action="{{ url_for('cart_update') }}" method="POST" style="display:inline">
+        
+        <input type="hidden" name="cid" value="{{ item["id"] }}">
+        <input type="hidden" name="action" value="del">
+        <button class="ci-del">🗑️</button>
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="sum-box">
+    <h3>ملخص الطلب</h3>
+    <div class="sr"><span>المجموع</span><span>{{ sub }} جنيه</span></div>
+    <div class="sr"><span>ضريبة 14%</span><span>{{ tax }} جنيه</span></div>
+    <div class="sr">
+      <span>الشحن</span>
+      <span class="{% if sub >= 500 %}free{% endif %}">
+        {% if sub >= 500 %}مجانى 🎉{% else %}50 جنيه{% endif %}
+      </span>
+    </div>
+    {% if sub < 500 %}
+    <p style="font-size:.77rem;color:var(--muted)">أضف {{ (500 - sub) }} جنيه للشحن المجانى</p>
+    {% endif %}
+    <div class="sr tot"><span>الإجمالى</span><span>{{ total }} جنيه</span></div>
+    <a href="{{ url_for('checkout') }}" class="btn btn-gold" style="display:flex;justify-content:center;width:100%;margin-top:1.2rem;font-size:1rem">
+      🔒 إتمام الشراء
+    </a>
+    <a href="{{ url_for('shop') }}" style="display:block;text-align:center;margin-top:.9rem;font-size:.85rem;color:var(--dark-green);font-weight:600">
+      ← كمّل تسوّقك
+    </a>
+  </div>
+</div>
+{% else %}
+<div class="empty">
+  <div class="big">🛒</div>
+  <h2>السلة فارغة</h2>
+  <p style="color:var(--muted);margin:.5rem 0 1.5rem">لم تضف أى منتجات بعد</p>
+  <a href="{{ url_for('shop') }}" class="btn btn-dark btn-lg">🫒 تسوق الآن</a>
+</div>
+{% endif %}
+</div></div>
+{% endblock %}

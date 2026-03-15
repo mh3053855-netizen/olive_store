@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% block title %}{{ p['name_ar'] }} | {{ s.site_name_ar }}{% endblock %}
+
+{% block extra_css %}
+<style>
+.pd-wrap{padding:3rem 0}
+.pd-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start}
+.pd-img{background:linear-gradient(140deg,#f0faf0,var(--pale));border-radius:var(--r-lg);height:420px;display:flex;align-items:center;justify-content:center;font-size:12rem;border:1.5px solid var(--border)}
+.pd-tags{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.9rem}
+.tag{background:var(--pale);color:var(--dark-green);padding:4px 13px;border-radius:50px;font-size:.78rem;font-weight:700;border:1px solid var(--border)}
+.pd-name{font-size:1.8rem;font-weight:900;color:var(--text);margin-bottom:.5rem;line-height:1.2}
+.pd-stars{display:flex;align-items:center;gap:8px;margin-bottom:1.25rem}
+.price-box{background:var(--pale);border-radius:var(--r-lg);padding:1.4rem;margin-bottom:1.4rem;border:1.5px solid var(--border)}
+.pd-price{font-size:2.2rem;font-weight:900;color:var(--dark-green)}
+.pd-old{font-size:1rem;color:#bbb;text-decoration:line-through}
+.pd-save{display:inline-block;background:var(--red);color:#fff;padding:4px 13px;border-radius:50px;font-size:.8rem;font-weight:800;margin-top:.3rem}
+.pd-desc{color:#3a4a3a;line-height:1.8;margin-bottom:1.4rem}
+.pd-specs{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-bottom:1.4rem}
+.spec{background:#fff;border:1.5px solid var(--border);border-radius:var(--r);padding:.8rem 1rem}
+.spec label{display:block;font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.spec span{font-size:.92rem;font-weight:800;color:var(--text)}
+.qty-row{display:flex;align-items:center;gap:1rem;margin-bottom:1.2rem}
+.qty-ctrl{display:flex;align-items:center;gap:.5rem;background:#fff;border:2px solid var(--border);border-radius:50px;padding:4px 8px}
+.q-btn{width:30px;height:30px;border-radius:50%;border:none;background:var(--dark-green);color:#fff;font-size:1rem;font-weight:800;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center}
+.q-btn:hover{background:var(--mid-green)}
+#qval{font-size:1rem;font-weight:800;min-width:26px;text-align:center}
+.pd-actions{display:flex;gap:.9rem}
+.pd-actions .btn{flex:1;justify-content:center}
+.trust-pills{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem}
+.tp{background:var(--pale);color:var(--muted);padding:5px 13px;border-radius:50px;font-size:.78rem;font-weight:600;border:1px solid var(--border)}
+.rel-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem}
+@media(max-width:900px){.pd-grid{grid-template-columns:1fr}.rel-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.rel-grid{grid-template-columns:1fr}}
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="page-head">
+  <div class="breadcrumb">
+    <a href="{{ url_for('index') }}">الرئيسية</a> ›
+    <a href="{{ url_for('shop') }}">المتجر</a> ›
+    {{ p['name_ar'] }}
+  </div>
+</div>
+<div class="pd-wrap"><div class="wrap">
+  <div class="pd-grid">
+    <div class="pd-img">
+      {% if p['photo'] %}
+         <img src="{{ p['photo'] }}" alt="{{ p['name_ar'] }}"
+            style="width:100%;height:100%;object-fit:cover;border-radius:var(--r-lg)">
+      {% else %}
+        {{ p['image'] or '🫒' }}
+      {% endif %}
+    </div>
+    <div>
+      <div class="pd-tags">
+        <span class="tag">🌍 {{ p['origin_ar'] }}</span>
+        <span class="tag">{{ p['category_ar'] }}</span>
+        <span class="tag">⚖️ {{ p['weight'] }}</span>
+      </div>
+      <h1 class="pd-name">{{ p['name_ar'] }}</h1>
+      <div class="pd-stars">
+        <span class="stars" style="font-size:1.1rem">★★★★★</span>
+        <span style="font-size:.88rem;color:var(--muted)">{{ p['rating'] }} ({{ p['reviews_count'] }})</span>
+      </div>
+      <div class="price-box">
+        <div class="pd-price">{{ p['price'] }} جنيه</div>
+        {% if p['old_price'] %}
+        <div class="pd-old">{{ p['old_price'] }} جنيه</div>
+        <span class="pd-save">وفّرت {{ p['old_price']|int }} جنيه</span>
+        {% endif %}
+      </div>
+      <p class="pd-desc">{{ p['desc_ar'] }}</p>
+      <div class="pd-specs">
+        <div class="spec"><label>المنشأ</label><span>{{ p['origin_ar'] }}</span></div>
+        <div class="spec"><label>الحجم</label><span>{{ p['weight'] }}</span></div>
+        <div class="spec"><label>الصنف</label><span>{{ p['category_ar'] }}</span></div>
+        <div class="spec"><label>المخزون</label><span>✅ {{ p['stock'] }}</span></div>
+      </div>
+      <form action="{{ url_for('cart_add') }}" method="POST" id="pf">
+        
+        <input type="hidden" name="pid" value="{{ p['id'] }}">
+        <input type="hidden" name="qty" value="1" id="qi">
+        <div class="qty-row">
+          <label style="font-weight:700;color:var(--dark-green)">الكمية:</label>
+          <div class="qty-ctrl">
+            <button type="button" class="q-btn" onclick="chQ(-1)">−</button>
+            <span id="qval">1</span>
+            <button type="button" class="q-btn" onclick="chQ(1)">+</button>
+          </div>
+        </div>
+        <div class="pd-actions">
+          <button type="submit" class="btn btn-gold js-add">🛒 أضف للسلة</button>
+          <a href="{{ url_for('checkout') }}" class="btn btn-dark" id="buynow">⚡ اشترى الآن</a>
+        </div>
+      </form>
+      <div class="trust-pills">
+        <span class="tp">🔒 دفع آمن</span>
+        <span class="tp">🚚 توصيل سريع</span>
+        <span class="tp">↩️ ضمان استرداد</span>
+      </div>
+    </div>
+  </div>
+  {% if rel %}
+  <div style="margin-top:4rem">
+    <div class="s-head"><h2>منتجات مشابهة</h2><div class="line"></div></div>
+    <div class="rel-grid">
+      {% for r in rel %}
+      <div class="card">
+        <a href="{{ url_for('product', pid=r['id']) }}"><div class="card-img">{{ r['image'] or '🫒' }}</div></a>
+        <div class="card-body">
+          <div class="card-name">{{ r['name_ar'] }}</div>
+          <div class="card-foot" style="margin-top:.75rem">
+            <div class="price-now">{{ r['price'] }} جنيه</div>
+            <form action="{{ url_for('cart_add') }}" method="POST">
+              
+              <input type="hidden" name="pid" value="{{ r['id'] }}"><input type="hidden" name="qty" value="1">
+              <button type="submit" class="add-btn js-add">أضف</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div></div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let qv=1;
+function chQ(d){qv=Math.max(1,qv+d);document.getElementById('qval').textContent=qv;document.getElementById('qi').value=qv;}
+document.getElementById('buynow').addEventListener('click',function(e){
+  e.preventDefault();
+  document.getElementById('pf').submit();
+  setTimeout(()=>window.location='{{ url_for("checkout") }}',300);
+});
+</script>
+{% endblock %}
