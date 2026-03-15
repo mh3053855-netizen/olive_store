@@ -168,11 +168,11 @@
     {% endfor %}
     <div class="os-totals">
       <div class="ot"><span>المجموع</span><span>{{ sub }} جنيه</span></div>
-      <div class="ot"><span>ضريبة 14%</span><span>{{ tax }} جنيه</span></div>
+      <div class="ot"><span>ضريبة {{ tax_rate }}%</span><span>{{ tax }} جنيه</span></div>
       <div class="ot">
         <span>الشحن</span>
-        <span style="{% if sub >= 500 %}color:var(--mid-green);font-weight:800{% endif %}">
-          {% if sub >= 500 %}مجانى {% else %}50 جنيه{% endif %}
+        <span style="{% if sub >= free_thresh %}color:var(--mid-green);font-weight:800{% endif %}">
+          {% if sub >= free_thresh %}مجانى {% else %}{{ ship_cost|int }} جنيه{% endif %}
         </span>
       </div>
       <div class="ot grand"><span>الإجمالى</span><span>{{ total }} جنيه</span></div>

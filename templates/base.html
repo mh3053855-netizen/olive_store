@@ -98,8 +98,47 @@ button,input,select,textarea{font-family:inherit}
 .flash-success{background:#e8f5e9;color:#1b5e20;border:1.5px solid #a5d6a7}
 .flash-error{background:#ffebee;color:#b71c1c;border:1.5px solid #ef9a9a}
 .flash-warning{background:#fff8e1;color:#e65100;border:1.5px solid #ffcc80}
+/* ── hamburger ── */
+.ham-btn{display:none;flex-direction:column;justify-content:center;gap:5px;
+  width:38px;height:38px;background:none;border:none;cursor:pointer;padding:4px;
+  border-radius:8px;transition:.2s}
+.ham-btn:hover{background:var(--light-green)}
+.ham-btn span{display:block;height:2.5px;border-radius:2px;background:var(--dark-green);
+  transition:all .3s;transform-origin:center}
+.ham-btn.open span:nth-child(1){transform:translateY(7.5px) rotate(45deg)}
+.ham-btn.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+.ham-btn.open span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg)}
+
+/* mobile menu overlay */
+.mob-menu{display:none;position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.45);
+  opacity:0;transition:opacity .25s}
+.mob-menu.open{display:block;opacity:1}
+.mob-panel{position:absolute;top:0;right:0;width:75%;max-width:300px;height:100%;
+  background:#fff;box-shadow:-4px 0 20px rgba(0,0,0,.15);
+  transform:translateX(100%);transition:transform .28s ease;
+  display:flex;flex-direction:column;overflow-y:auto}
+.mob-menu.open .mob-panel{transform:translateX(0)}
+.mob-panel-head{padding:1.2rem 1.4rem;border-bottom:2px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between}
+.mob-panel-brand{font-size:1.3rem;font-weight:900;font-family:'Playfair Display',serif;
+  color:var(--dark-green)}
+.mob-panel-brand span{color:var(--gold)}
+.mob-close{background:none;border:none;font-size:1.5rem;cursor:pointer;
+  color:var(--muted);padding:4px;line-height:1}
+.mob-nav{padding:.8rem 0;flex:1}
+.mob-nav a{display:flex;align-items:center;padding:.85rem 1.4rem;
+  font-size:1rem;font-weight:700;color:var(--text);border-right:3px solid transparent;
+  transition:.18s}
+.mob-nav a:hover,.mob-nav a.on{color:var(--dark-green);background:var(--light-green);
+  border-right-color:var(--dark-green)}
+.mob-cart{padding:1rem 1.4rem;border-top:1px solid var(--border)}
+.mob-cart a{display:flex;align-items:center;justify-content:center;gap:8px;
+  background:var(--gold);color:var(--dark-green);padding:12px;border-radius:var(--r);
+  font-weight:800;font-size:.95rem}
+
 @media(max-width:768px){
   .nav-links{display:none}
+  .ham-btn{display:flex}
   .footer-grid{grid-template-columns:1fr;gap:1.5rem}
   .field-row{grid-template-columns:1fr}
   .footer-bottom{flex-direction:column;text-align:center}
@@ -116,7 +155,7 @@ button,input,select,textarea{font-family:inherit}
 <nav class="nav">
   <div class="nav-inner">
     <a href="{{ url_for('index') }}" class="brand">
-      <div class="brand-logo">{{ s.site_name_ar }}<span>OLIVE OIL</span></div>
+      <div class="brand-logo">{{ s.site_name_ar }}<span>SULAFA OIL</span></div>
     </a>
     <div class="nav-links">
       <a href="{{ url_for('index') }}"   {% if request.endpoint == 'index' %}class="on"{% endif %}>الرئيسية</a>
@@ -130,9 +169,34 @@ button,input,select,textarea{font-family:inherit}
         🛒 السلة
         {% if cnt > 0 %}<span class="cart-badge">{{ cnt }}</span>{% endif %}
       </a>
+      <button class="ham-btn" id="hamBtn" onclick="toggleMenu()" aria-label="القائمة">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </div>
 </nav>
+
+<!-- Mobile Menu -->
+<div class="mob-menu" id="mobMenu" onclick="closeMobMenu(event)">
+  <div class="mob-panel">
+    <div class="mob-panel-head">
+      <div class="mob-panel-brand">{{ s.site_name_ar or 'سُلافة' }}<span>.</span></div>
+      <button class="mob-close" onclick="toggleMenu()">✕</button>
+    </div>
+    <nav class="mob-nav">
+      <a href="{{ url_for('index') }}"   {% if request.endpoint == 'index' %}class="on"{% endif %} onclick="toggleMenu()">الرئيسية</a>
+      <a href="{{ url_for('shop') }}"    {% if request.endpoint in ['shop','product'] %}class="on"{% endif %} onclick="toggleMenu()">المتجر</a>
+      <a href="{{ url_for('about') }}"   {% if request.endpoint == 'about' %}class="on"{% endif %} onclick="toggleMenu()">عن سلافة</a>
+      <a href="{{ url_for('contact') }}" {% if request.endpoint == 'contact' %}class="on"{% endif %} onclick="toggleMenu()">تواصل معنا</a>
+    </nav>
+    <div class="mob-cart">
+      {% set cnt = cart_count() %}
+      <a href="{{ url_for('cart_view') }}" onclick="toggleMenu()">
+        🛒 السلة {% if cnt > 0 %}({{ cnt }}){% endif %}
+      </a>
+    </div>
+  </div>
+</div>
 
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
@@ -181,7 +245,7 @@ button,input,select,textarea{font-family:inherit}
     </div>
   </div>
   <div class="footer-bottom">
-    <p>© 2024 {{ s.site_name_ar }}. جميع الحقوق محفوظة</p>
+    <p>© 2026 {{ s.site_name_ar }}. جميع الحقوق محفوظة</p>
     <div class="pay-row">
       <span class="pay-badge">🔒 SSL</span>
       <span class="pay-badge">VISA</span>
@@ -191,6 +255,20 @@ button,input,select,textarea{font-family:inherit}
 </footer>
 
 <div id="toast"></div>
+
+<script>
+function toggleMenu(){
+  var btn=document.getElementById('hamBtn');
+  var menu=document.getElementById('mobMenu');
+  btn.classList.toggle('open');
+  menu.classList.toggle('open');
+  document.body.style.overflow=menu.classList.contains('open')?'hidden':'';
+}
+function closeMobMenu(e){
+  if(e.target===document.getElementById('mobMenu')) toggleMenu();
+}
+</script>
+
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 function toast(msg){
   const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
