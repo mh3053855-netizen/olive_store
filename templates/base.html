@@ -162,10 +162,10 @@ button,input,select,textarea{font-family:inherit}
   </div>
   <!-- Mobile Dropdown Menu -->
   <div class="mob-drop" id="mobDrop">
-    <a href="{{ url_for('index') }}"   {% if request.endpoint == 'index' %}class="on"{% endif %} onclick="closeMenu()">الرئيسية</a>
-    <a href="{{ url_for('shop') }}"    {% if request.endpoint in ['shop','product'] %}class="on"{% endif %} onclick="closeMenu()">المتجر</a>
-    <a href="{{ url_for('about') }}"   {% if request.endpoint == 'about' %}class="on"{% endif %} onclick="closeMenu()">عن سلافة</a>
-    <a href="{{ url_for('contact') }}" {% if request.endpoint == 'contact' %}class="on"{% endif %} onclick="closeMenu()">تواصل معنا</a>
+    <a href="{{ url_for('index') }}"   {% if request.endpoint == 'index' %}class="on"{% endif %}>الرئيسية</a>
+    <a href="{{ url_for('shop') }}"    {% if request.endpoint in ['shop','product'] %}class="on"{% endif %}>المتجر</a>
+    <a href="{{ url_for('about') }}"   {% if request.endpoint == 'about' %}class="on"{% endif %}>عن سلافة</a>
+    <a href="{{ url_for('contact') }}" {% if request.endpoint == 'contact' %}class="on"{% endif %}>تواصل معنا</a>
   </div>
 </nav>
 
@@ -233,10 +233,6 @@ function toggleMenu(){
   var drop=document.getElementById('mobDrop');
   btn.classList.toggle('open');
   drop.classList.toggle('open');
-}
-function closeMenu(){
-  document.getElementById('hamBtn').classList.remove('open');
-  document.getElementById('mobDrop').classList.remove('open');
 }
 document.addEventListener('click',function(e){
   var btn=document.getElementById('hamBtn');

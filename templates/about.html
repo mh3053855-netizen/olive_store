@@ -1,10 +1,28 @@
 {% extends "base.html" %}
 {% block title %}{{ s.about_page_title_ar or 'عن سلافة' }} | {{ s.site_name_ar or 'سلافة' }}{% endblock %}
 
+{% block extra_css %}
+<style>
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+.about-img{background:linear-gradient(140deg,var(--light-green),var(--pale));border-radius:var(--r-lg);height:360px;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--border);overflow:hidden}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-top:4rem;text-align:center}
+.stat-box{background:#fff;border-radius:var(--r-lg);padding:2rem 1.5rem;border:1.5px solid var(--border)}
+.stat-num{font-size:2.2rem;font-weight:900;color:var(--dark-green)}
+.stat-lbl{font-size:.88rem;color:var(--muted);margin-top:.3rem}
+@media(max-width:768px){
+  .about-grid{grid-template-columns:1fr;gap:2rem}
+  .about-img{height:260px}
+  .stats-grid{grid-template-columns:1fr 1fr;gap:1rem;margin-top:2rem}
+  .stat-box{padding:1.2rem 1rem}
+  .stat-num{font-size:1.7rem}
+}
+</style>
+{% endblock %}
+
 {% block body %}
 <div class="page-head"><h1>{{ s.about_page_title_ar or 'عن سلافة' }}</h1></div>
 <div class="section"><div class="wrap">
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center">
+  <div class="about-grid">
     <div>
       <h2 style="font-size:2rem;font-weight:900;color:var(--dark-green);margin-bottom:1rem">
         {{ s.about_title_ar or 'من الشجرة لمائدتك' }}
@@ -13,13 +31,13 @@
         {{ s.about_p1_ar or 'سلافة علامة تجارية مصرية متخصصة فى إنتاج أجود أنواع زيت الزيتون الطبيعى من مزارعنا بوادى النطرون طريق العلمين.' }}
       </p>
       <p style="color:#3a4a3a;line-height:1.85;margin-bottom:1.5rem">
-        {{ s.about_p2_ar or 'نتعاون  لنضمن لك منتجاً أصيلاً وطازجاً، خالياً من أى إضافات أو مواد حافظة.' }}
+        {{ s.about_p2_ar or 'نتعاون لنضمن لك منتجاً أصيلاً وطازجاً، خالياً من أى إضافات أو مواد حافظة.' }}
       </p>
       <a href="{{ url_for('shop') }}" class="btn btn-dark btn-lg">
         {{ s.about_btn_ar or 'تسوق الآن ←' }}
       </a>
     </div>
-    <div style="background:linear-gradient(140deg,var(--light-green),var(--pale));border-radius:var(--r-lg);height:360px;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--border);overflow:hidden">
+    <div class="about-img">
       {% if s.about_image %}
         <img src="{{ s.about_image }}" alt="{{ s.about_title_ar or 'عن سلافة' }}"
              style="width:100%;height:100%;object-fit:cover;border-radius:var(--r-lg)">
@@ -28,24 +46,22 @@
       {% endif %}
     </div>
   </div>
-
-  <!-- Stats -->
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-top:4rem;text-align:center">
-    <div style="background:#fff;border-radius:var(--r-lg);padding:2rem 1.5rem;border:1.5px solid var(--border)">
-      <div style="font-size:2.2rem;font-weight:900;color:var(--dark-green)">{{ s.stat1_num or '12+' }}</div>
-      <div style="font-size:.88rem;color:var(--muted);margin-top:.3rem">{{ s.stat1_label_ar or 'سنة خبرة' }}</div>
+  <div class="stats-grid">
+    <div class="stat-box">
+      <div class="stat-num">{{ s.stat1_num or '12+' }}</div>
+      <div class="stat-lbl">{{ s.stat1_label_ar or 'سنة خبرة' }}</div>
     </div>
-    <div style="background:#fff;border-radius:var(--r-lg);padding:2rem 1.5rem;border:1.5px solid var(--border)">
-      <div style="font-size:2.2rem;font-weight:900;color:var(--dark-green)">{{ s.stat2_num or '1000+' }}</div>
-      <div style="font-size:.88rem;color:var(--muted);margin-top:.3rem">{{ s.stat2_label_ar or 'عميل راضٍ' }}</div>
+    <div class="stat-box">
+      <div class="stat-num">{{ s.stat2_num or '1000+' }}</div>
+      <div class="stat-lbl">{{ s.stat2_label_ar or 'عميل راضٍ' }}</div>
     </div>
-    <div style="background:#fff;border-radius:var(--r-lg);padding:2rem 1.5rem;border:1.5px solid var(--border)">
-      <div style="font-size:2.2rem;font-weight:900;color:var(--dark-green)">{{ s.stat3_num or '8' }}</div>
-      <div style="font-size:.88rem;color:var(--muted);margin-top:.3rem">{{ s.stat3_label_ar or 'دول مصدر' }}</div>
+    <div class="stat-box">
+      <div class="stat-num">{{ s.stat3_num or '8' }}</div>
+      <div class="stat-lbl">{{ s.stat3_label_ar or 'دول مصدر' }}</div>
     </div>
-    <div style="background:#fff;border-radius:var(--r-lg);padding:2rem 1.5rem;border:1.5px solid var(--border)">
-      <div style="font-size:2.2rem;font-weight:900;color:var(--dark-green)">{{ s.stat4_num or '100%' }}</div>
-      <div style="font-size:.88rem;color:var(--muted);margin-top:.3rem">{{ s.stat4_label_ar or 'طبيعى أصيل' }}</div>
+    <div class="stat-box">
+      <div class="stat-num">{{ s.stat4_num or '100%' }}</div>
+      <div class="stat-lbl">{{ s.stat4_label_ar or 'طبيعى أصيل' }}</div>
     </div>
   </div>
 </div></div>
