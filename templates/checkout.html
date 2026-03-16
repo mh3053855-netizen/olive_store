@@ -100,11 +100,11 @@
       <h3> طريقة الدفع</h3>
       <div class="pay-tabs">
         <div class="pay-tab active" id="tabCard" onclick="switchPayment('card')">
-          <span class="pay-tab-icon"></span>
+          <span class="pay-tab-icon">💳</span>
           <div class="pay-tab-info"><strong>بطاقة ائتمان</strong><span>Visa / Mastercard</span></div>
         </div>
         <div class="pay-tab" id="tabCod" onclick="switchPayment('cod')">
-          <span class="pay-tab-icon"></span>
+          <span class="pay-tab-icon">💵</span>
           <div class="pay-tab-info"><strong>كاش عند الاستلام</strong><span>ادفع لما الطلب يوصل</span></div>
         </div>
       </div>
@@ -135,7 +135,7 @@
 
       <!-- قسم الكاش -->
       <div id="codSection" class="cod-box" style="display:none">
-        <div class="cod-icon"></div>
+        <div class="cod-icon">💵</div>
         <h3>الدفع كاش عند الاستلام</h3>
         <p>استلم طلبك وادفع للمندوب نقداً<br>بدون أى رسوم إضافية</p>
         <div class="cod-steps">
@@ -183,9 +183,6 @@
 </div>
 </form>
 </div></div>
-{% endblock %}
-
-{% block extra_js %}
 <script>
 function switchPayment(method){
   const isCard = method==='card';
