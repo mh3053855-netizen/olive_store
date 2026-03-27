@@ -1,261 +1,360 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{% block title %}{{ s.site_name_ar }} | {{ s.tagline_ar }}{% endblock %}</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Playfair+Display:wght@700;800&family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --dark-green:#1a3a1a;--mid-green:#2d6b2d;--bright-green:#3d8b3d;
-  --light-green:#c8e6c9;--pale:#f5f5e8;--cream:#faf9f0;
-  --gold:#c8960c;--gold-bright:#e6b015;--gold-light:#f5d030;
-  --white:#ffffff;--text:#1a2b1a;--muted:#5a7a5a;--border:#e0ebd0;--red:#c0392b;
-  --r:10px;--r-lg:18px;
-  --shadow:0 2px 14px rgba(26,58,26,.1);
-  --shadow-md:0 6px 28px rgba(26,58,26,.14);
-  --shadow-lg:0 14px 50px rgba(26,58,26,.18);
-}
-html{scroll-behavior:smooth}
-body{font-family:'Tajawal',sans-serif;background:var(--cream);color:var(--text);-webkit-font-smoothing:antialiased}
-a{text-decoration:none;color:inherit}
-button,input,select,textarea{font-family:inherit}
-.topbar{background:var(--dark-green);padding:7px 0;text-align:center}
-.topbar p{color:rgba(255,255,255,.75);font-size:.82rem;letter-spacing:.3px}
-.topbar em{color:var(--gold-bright);font-style:normal;font-weight:700}
-.nav{background:var(--white);border-bottom:3px solid var(--dark-green);position:sticky;top:0;z-index:900;box-shadow:0 2px 12px rgba(0,0,0,.08);position:sticky}
-.nav-inner{max-width:1280px;margin:0 auto;padding:0 2rem;height:70px;display:flex;align-items:center;justify-content:space-between;gap:1rem}
-.brand{display:flex;align-items:center;gap:10px}
-.brand-logo{font-size:2rem;font-weight:900;font-family:'Playfair Display',serif;color:var(--dark-green);letter-spacing:1px;line-height:1}
-.brand-logo span{color:var(--gold);display:block;font-size:.6rem;font-family:'Montserrat',sans-serif;letter-spacing:4px;font-weight:700;margin-top:-2px}
-.nav-links{display:flex;align-items:center;gap:4px}
-.nav-links a{color:var(--text);font-size:.9rem;font-weight:600;padding:8px 16px;border-radius:50px;transition:.2s;letter-spacing:.3px}
-.nav-links a:hover,.nav-links a.on{color:var(--dark-green);background:var(--light-green)}
-.nav-right{display:flex;align-items:center;gap:.75rem}
-.cart-btn{position:relative;background:var(--gold);color:var(--dark-green);padding:8px 18px;border-radius:50px;font-size:.9rem;font-weight:800;display:flex;align-items:center;gap:6px;transition:.2s;box-shadow:0 4px 12px rgba(200,150,12,.3)}
-.cart-btn:hover{background:var(--gold-bright);transform:translateY(-1px)}
-.cart-badge{position:absolute;top:-7px;left:-7px;background:var(--red);color:#fff;min-width:20px;height:20px;border-radius:10px;font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 4px;border:2px solid #fff}
-.footer{background:var(--dark-green);color:rgba(255,255,255,.8);padding:4rem 2rem 0}
-.footer-grid{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:3rem;padding-bottom:3rem}
-.f-brand-name{font-size:2rem;font-weight:900;font-family:'Playfair Display',serif;color:#fff;letter-spacing:1px}
-.f-brand-name span{color:var(--gold-bright)}
-.f-desc{color:rgba(255,255,255,.55);font-size:.88rem;line-height:1.75;margin-top:.75rem;margin-bottom:1.25rem}
-.social-links{display:flex;gap:.6rem;flex-wrap:wrap}
-.social-link{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.8);padding:7px 14px;border-radius:50px;font-size:.82rem;font-weight:600;transition:.2s}
-.social-link:hover{background:var(--gold);color:var(--dark-green);border-color:var(--gold)}
-.f-col h5{color:#fff;font-size:.85rem;font-weight:800;text-transform:uppercase;letter-spacing:.8px;margin-bottom:1rem;padding-bottom:.6rem;border-bottom:2px solid rgba(255,255,255,.1)}
-.f-col a{display:flex;align-items:center;gap:7px;color:rgba(255,255,255,.55);font-size:.87rem;margin-bottom:.55rem;transition:.2s}
-.f-col a:hover{color:var(--gold-bright)}
-.footer-bottom{max-width:1280px;margin:0 auto;padding:1.5rem 0;border-top:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
-.footer-bottom p{color:rgba(255,255,255,.3);font-size:.8rem}
-.pay-row{display:flex;gap:.5rem}
-.pay-badge{background:rgba(255,255,255,.08);padding:4px 11px;border-radius:6px;color:rgba(255,255,255,.5);font-size:.75rem;font-weight:700}
-.wrap{max-width:1280px;margin:0 auto;padding:0 2rem}
-.btn{display:inline-flex;align-items:center;gap:7px;padding:12px 26px;border-radius:var(--r);font-size:.95rem;font-weight:700;cursor:pointer;border:none;transition:.22s;letter-spacing:.3px}
-.btn-dark{background:var(--dark-green);color:#fff}
-.btn-dark:hover{background:var(--mid-green);transform:translateY(-1px)}
-.btn-gold{background:var(--gold);color:var(--dark-green);font-weight:800}
-.btn-gold:hover{background:var(--gold-bright);transform:translateY(-1px);box-shadow:0 6px 18px rgba(200,150,12,.4)}
-.btn-outline{background:transparent;color:var(--dark-green);border:2px solid var(--dark-green)}
-.btn-outline:hover{background:var(--dark-green);color:#fff}
-.btn-lg{padding:14px 32px;font-size:1.05rem}
-.s-head{text-align:center;margin-bottom:3rem}
-.s-head h2{font-size:1.9rem;font-weight:900;color:var(--dark-green)}
-.s-head p{color:var(--gold);font-size:.95rem;font-weight:600;margin-top:.3rem}
-.s-head .line{width:60px;height:3px;background:var(--gold);margin:.75rem auto 0;border-radius:2px}
-.section{padding:5rem 0}
-.card{background:#fff;border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow);transition:.28s;position:relative;border:1.5px solid var(--border)}
-.card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg);border-color:var(--bright-green)}
-.card-img{height:220px;background:linear-gradient(140deg,#f5faf0 0%,#e8f5e8 100%);display:flex;align-items:center;justify-content:center;font-size:5.5rem;position:relative;overflow:hidden;cursor:pointer}
-.card-img::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.5),transparent 65%)}
-.card-discount{position:absolute;top:12px;right:12px;background:var(--red);color:#fff;padding:4px 11px;border-radius:50px;font-size:.75rem;font-weight:800}
-.card-body{padding:1.3rem}
-.card-origin{font-size:.77rem;color:var(--muted);font-weight:600;margin-bottom:.3rem}
-.card-name{font-size:1rem;font-weight:800;color:var(--text);margin-bottom:.4rem;line-height:1.35}
-.card-stars{display:flex;align-items:center;gap:5px;margin-bottom:.9rem}
-.stars{color:var(--gold);font-size:.9rem}
-.stars-n{font-size:.78rem;color:var(--muted)}
-.card-foot{display:flex;align-items:center;justify-content:space-between}
-.price-now{font-size:1.15rem;font-weight:900;color:var(--dark-green)}
-.price-old{font-size:.8rem;color:#bbb;text-decoration:line-through}
-.add-btn{background:var(--gold);color:var(--dark-green);border:none;border-radius:var(--r);padding:9px 18px;font-family:inherit;font-size:.88rem;font-weight:800;cursor:pointer;transition:.2s}
-.add-btn:hover{background:var(--gold-bright);transform:scale(1.04)}
-.field{margin-bottom:1rem}
-.field label{display:block;font-size:.87rem;font-weight:700;color:var(--dark-green);margin-bottom:.4rem}
-.field input,.field select,.field textarea{width:100%;padding:11px 15px;border:2px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:.93rem;color:var(--text);background:#fff;outline:none;transition:.2s}
-.field input:focus,.field select:focus{border-color:var(--bright-green);box-shadow:0 0 0 3px rgba(61,139,61,.1)}
-.field-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-#toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);background:var(--dark-green);color:#fff;padding:12px 26px;border-radius:50px;font-size:.92rem;font-weight:700;z-index:9999;opacity:0;pointer-events:none;transition:.35s;white-space:nowrap;box-shadow:var(--shadow-lg)}
-#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.page-head{background:linear-gradient(135deg,var(--dark-green),var(--mid-green));padding:3rem 0;text-align:center}
-.page-head h1{font-size:2rem;font-weight:900;color:#fff}
-.page-head p{color:rgba(255,255,255,.65);margin-top:.35rem}
-.breadcrumb{font-size:.83rem;color:rgba(255,255,255,.55);margin-top:.6rem}
-.breadcrumb a{color:rgba(255,255,255,.75);font-weight:600}
-.flash{padding:12px 20px;border-radius:var(--r);margin-bottom:1.25rem;font-weight:600;font-size:.9rem}
-.flash-success{background:#e8f5e9;color:#1b5e20;border:1.5px solid #a5d6a7}
-.flash-error{background:#ffebee;color:#b71c1c;border:1.5px solid #ef9a9a}
-.flash-warning{background:#fff8e1;color:#e65100;border:1.5px solid #ffcc80}
-/* ── hamburger ── */
-.ham-btn{display:none;flex-direction:column;justify-content:center;gap:5px;
-  width:38px;height:38px;background:none;border:none;cursor:pointer;padding:4px;
-  border-radius:8px;transition:.2s;flex-shrink:0}
-.ham-btn:hover{background:var(--light-green)}
-.ham-btn span{display:block;height:2.5px;border-radius:2px;background:var(--dark-green);
-  transition:all .3s;transform-origin:center}
-.ham-btn.open span:nth-child(1){transform:translateY(7.5px) rotate(45deg)}
-.ham-btn.open span:nth-child(2){opacity:0;transform:scaleX(0)}
-.ham-btn.open span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg)}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ s.site_name_ar }} | {{ s.tagline_ar }}{% endblock %}</title>
 
-/* dropdown menu */
-.mob-drop{display:none;position:absolute;top:100%;right:0;left:0;
-  background:#fff;border-top:2px solid var(--dark-green);
-  box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:850}
-.mob-drop.open{display:block}
-.mob-drop a{display:flex;align-items:center;justify-content:flex-start;
-  padding:.95rem 1.5rem;font-size:1rem;font-weight:700;color:var(--text);
-  border-bottom:1px solid var(--border);transition:.18s;
-  border-right:3px solid transparent}
-.mob-drop a:last-child{border-bottom:none}
-.mob-drop a:hover,.mob-drop a.on{color:var(--dark-green);
-  background:var(--light-green);border-right-color:var(--dark-green)}
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Playfair+Display:wght@700;800&family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
-@media(max-width:768px){
-  .nav-links{display:none}
-  .ham-btn{display:flex}
-  .footer-grid{grid-template-columns:1fr;gap:1.5rem}
-  .field-row{grid-template-columns:1fr}
-  .footer-bottom{flex-direction:column;text-align:center}
-}
-</style>
-{% block extra_css %}{% endblock %}
+  <style>
+    /* ══════════════════════════════════════
+       RESET & TOKENS
+    ══════════════════════════════════════ */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --dark-green:  #1a3a1a;
+      --mid-green:   #2d6b2d;
+      --bright-green:#3d8b3d;
+      --light-green: #c8e6c9;
+      --cream:       #faf9f0;
+      --gold:        #c8960c;
+      --gold-bright: #e6b015;
+      --white:       #ffffff;
+      --text:        #1a2b1a;
+      --muted:       #5a7a5a;
+      --border:      #e0ebd0;
+      --red:         #c0392b;
+      --r:           10px;
+      --r-lg:        18px;
+      --shadow:      0 2px  14px rgba(26,58,26,.10);
+      --shadow-md:   0 6px  28px rgba(26,58,26,.14);
+      --shadow-lg:   0 14px 50px rgba(26,58,26,.18);
+    }
+
+    html  { scroll-behavior: smooth; }
+    body  { font-family: 'Tajawal', sans-serif; background: var(--cream); color: var(--text); -webkit-font-smoothing: antialiased; }
+    a     { text-decoration: none; color: inherit; }
+    button, input, select, textarea { font-family: inherit; }
+
+    /* ── Topbar ── */
+    .topbar   { background: var(--dark-green); padding: 7px 0; text-align: center; }
+    .topbar p { color: rgba(255,255,255,.75); font-size: .82rem; letter-spacing: .3px; }
+    .topbar em{ color: var(--gold-bright); font-style: normal; font-weight: 700; }
+
+    /* ── Nav ── */
+    .nav {
+      background: var(--white);
+      border-bottom: 3px solid var(--dark-green);
+      position: sticky; top: 0; z-index: 900;
+      box-shadow: 0 2px 12px rgba(0,0,0,.08);
+    }
+    .nav-inner {
+      max-width: 1280px; margin: 0 auto;
+      padding: 0 2rem; height: 70px;
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 1rem;
+    }
+    .brand      { display: flex; align-items: center; gap: 10px; }
+    .brand-logo { font-size: 2rem; font-weight: 900; font-family: 'Playfair Display', serif; color: var(--dark-green); letter-spacing: 1px; line-height: 1; }
+    .brand-logo span { color: var(--gold); display: block; font-size: .6rem; font-family: 'Montserrat', sans-serif; letter-spacing: 4px; font-weight: 700; margin-top: -2px; }
+
+    .nav-links   { display: flex; align-items: center; gap: 4px; }
+    .nav-links a { color: var(--text); font-size: .9rem; font-weight: 600; padding: 8px 16px; border-radius: 50px; transition: .2s; letter-spacing: .3px; }
+    .nav-links a:hover,
+    .nav-links a.on { color: var(--dark-green); background: var(--light-green); }
+
+    .nav-right { display: flex; align-items: center; gap: .75rem; }
+
+    .admin-btn { color: var(--muted); font-size: .85rem; font-weight: 700; padding: 7px 14px; border-radius: 50px; border: 1.5px solid var(--border); transition: .2s; display: flex; align-items: center; gap: 5px; }
+    .admin-btn:hover { color: var(--dark-green); background: var(--light-green); border-color: var(--bright-green); }
+
+    .cart-btn  { position: relative; background: var(--gold); color: var(--dark-green); padding: 8px 18px; border-radius: 50px; font-size: .9rem; font-weight: 800; display: flex; align-items: center; gap: 6px; transition: .2s; box-shadow: 0 4px 12px rgba(200,150,12,.3); }
+    .cart-btn:hover { background: var(--gold-bright); transform: translateY(-1px); }
+    .cart-badge { position: absolute; top: -7px; left: -7px; background: var(--red); color: #fff; min-width: 20px; height: 20px; border-radius: 10px; font-size: .7rem; font-weight: 800; display: flex; align-items: center; justify-content: center; padding: 0 4px; border: 2px solid #fff; }
+
+    /* ── Hamburger ── */
+    .ham-btn { display: none; flex-direction: column; justify-content: center; gap: 5px; width: 38px; height: 38px; background: none; border: none; cursor: pointer; padding: 4px; border-radius: 8px; transition: .2s; flex-shrink: 0; }
+    .ham-btn:hover { background: var(--light-green); }
+    .ham-btn span  { display: block; height: 2.5px; border-radius: 2px; background: var(--dark-green); transition: all .3s; transform-origin: center; }
+    .ham-btn.open span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+    .ham-btn.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .ham-btn.open span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+
+    .mob-drop       { display: none; position: absolute; top: 100%; right: 0; left: 0; background: #fff; border-top: 2px solid var(--dark-green); box-shadow: 0 8px 24px rgba(0,0,0,.12); z-index: 850; }
+    .mob-drop.open  { display: block; }
+    .mob-drop a     { display: flex; align-items: center; padding: .95rem 1.5rem; font-size: 1rem; font-weight: 700; color: var(--text); border-bottom: 1px solid var(--border); transition: .18s; border-right: 3px solid transparent; }
+    .mob-drop a:last-child { border-bottom: none; }
+    .mob-drop a:hover,
+    .mob-drop a.on  { color: var(--dark-green); background: var(--light-green); border-right-color: var(--dark-green); }
+
+    /* ── Flash messages ── */
+    .flash         { padding: 12px 20px; border-radius: var(--r); margin-bottom: 1.25rem; font-weight: 600; font-size: .9rem; }
+    .flash-success { background: #e8f5e9; color: #1b5e20; border: 1.5px solid #a5d6a7; }
+    .flash-error   { background: #ffebee; color: #b71c1c; border: 1.5px solid #ef9a9a; }
+    .flash-warning { background: #fff8e1; color: #e65100; border: 1.5px solid #ffcc80; }
+
+    /* ── Layout utilities ── */
+    .wrap    { max-width: 1280px; margin: 0 auto; padding: 0 2rem; }
+    .section { padding: 5rem 0; }
+    .s-head      { text-align: center; margin-bottom: 3rem; }
+    .s-head h2   { font-size: 1.9rem; font-weight: 900; color: var(--dark-green); }
+    .s-head p    { color: var(--gold); font-size: .95rem; font-weight: 600; margin-top: .3rem; }
+    .s-head .line{ width: 60px; height: 3px; background: var(--gold); margin: .75rem auto 0; border-radius: 2px; }
+    .page-head    { background: linear-gradient(135deg, var(--dark-green), var(--mid-green)); padding: 3rem 0; text-align: center; }
+    .page-head h1 { font-size: 2rem; font-weight: 900; color: #fff; }
+    .page-head p  { color: rgba(255,255,255,.65); margin-top: .35rem; }
+    .breadcrumb   { font-size: .83rem; color: rgba(255,255,255,.55); margin-top: .6rem; }
+    .breadcrumb a { color: rgba(255,255,255,.75); font-weight: 600; }
+
+    /* ── Buttons ── */
+    .btn      { display: inline-flex; align-items: center; gap: 7px; padding: 12px 26px; border-radius: var(--r); font-size: .95rem; font-weight: 700; cursor: pointer; border: none; transition: .22s; letter-spacing: .3px; }
+    .btn-lg   { padding: 14px 32px; font-size: 1.05rem; }
+    .btn-dark { background: var(--dark-green); color: #fff; }
+    .btn-dark:hover   { background: var(--mid-green); transform: translateY(-1px); }
+    .btn-gold { background: var(--gold); color: var(--dark-green); font-weight: 800; }
+    .btn-gold:hover   { background: var(--gold-bright); transform: translateY(-1px); box-shadow: 0 6px 18px rgba(200,150,12,.4); }
+    .btn-outline      { background: transparent; color: var(--dark-green); border: 2px solid var(--dark-green); }
+    .btn-outline:hover{ background: var(--dark-green); color: #fff; }
+
+    /* ── Product card ── */
+    .card       { background: #fff; border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--shadow); transition: .28s; position: relative; border: 1.5px solid var(--border); }
+    .card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); border-color: var(--bright-green); }
+    .card-img   { height: 220px; background: linear-gradient(140deg,#f5faf0,#e8f5e8); display: flex; align-items: center; justify-content: center; font-size: 5.5rem; position: relative; overflow: hidden; cursor: pointer; }
+    .card-img::after { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 35% 30%,rgba(255,255,255,.5),transparent 65%); }
+    .card-discount   { position: absolute; top: 12px; right: 12px; background: var(--red); color: #fff; padding: 4px 11px; border-radius: 50px; font-size: .75rem; font-weight: 800; }
+    .card-body  { padding: 1.3rem; }
+    .card-origin{ font-size: .77rem; color: var(--muted); font-weight: 600; margin-bottom: .3rem; }
+    .card-name  { font-size: 1rem; font-weight: 800; color: var(--text); margin-bottom: .4rem; line-height: 1.35; }
+    .card-stars { display: flex; align-items: center; gap: 5px; margin-bottom: .9rem; }
+    .stars      { color: var(--gold); font-size: .9rem; }
+    .stars-n    { font-size: .78rem; color: var(--muted); }
+    .card-foot  { display: flex; align-items: center; justify-content: space-between; }
+    .price-now  { font-size: 1.15rem; font-weight: 900; color: var(--dark-green); }
+    .price-old  { font-size: .8rem; color: #bbb; text-decoration: line-through; }
+    .add-btn    { background: var(--gold); color: var(--dark-green); border: none; border-radius: var(--r); padding: 9px 18px; font-family: inherit; font-size: .88rem; font-weight: 800; cursor: pointer; transition: .2s; }
+    .add-btn:hover { background: var(--gold-bright); transform: scale(1.04); }
+
+    /* ── Form fields ── */
+    .field          { margin-bottom: 1rem; }
+    .field label    { display: block; font-size: .87rem; font-weight: 700; color: var(--dark-green); margin-bottom: .4rem; }
+    .field input,
+    .field select,
+    .field textarea { width: 100%; padding: 11px 15px; border: 2px solid var(--border); border-radius: var(--r); font-family: inherit; font-size: .93rem; color: var(--text); background: #fff; outline: none; transition: .2s; }
+    .field input:focus,
+    .field select:focus { border-color: var(--bright-green); box-shadow: 0 0 0 3px rgba(61,139,61,.1); }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    /* ── Toast ── */
+    #toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--dark-green); color: #fff; padding: 12px 26px; border-radius: 50px; font-size: .92rem; font-weight: 700; z-index: 9999; opacity: 0; pointer-events: none; transition: .35s; white-space: nowrap; box-shadow: var(--shadow-lg); }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ── Footer ── */
+    .footer       { background: var(--dark-green); color: rgba(255,255,255,.8); padding: 4rem 2rem 0; }
+    .footer-grid  { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 3rem; padding-bottom: 3rem; }
+    .f-brand-name { font-size: 2rem; font-weight: 900; font-family: 'Playfair Display', serif; color: #fff; letter-spacing: 1px; }
+    .f-brand-name span { color: var(--gold-bright); }
+    .f-desc       { color: rgba(255,255,255,.55); font-size: .88rem; line-height: 1.75; margin-top: .75rem; margin-bottom: 1.25rem; }
+    .social-links { display: flex; gap: .6rem; flex-wrap: wrap; }
+    .social-link  { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15); color: rgba(255,255,255,.8); padding: 7px 14px; border-radius: 50px; font-size: .82rem; font-weight: 600; transition: .2s; }
+    .social-link:hover { background: var(--gold); color: var(--dark-green); border-color: var(--gold); }
+    .f-col h5     { color: #fff; font-size: .85rem; font-weight: 800; text-transform: uppercase; letter-spacing: .8px; margin-bottom: 1rem; padding-bottom: .6rem; border-bottom: 2px solid rgba(255,255,255,.1); }
+    .f-col a      { display: flex; align-items: center; gap: 7px; color: rgba(255,255,255,.55); font-size: .87rem; margin-bottom: .55rem; transition: .2s; }
+    .f-col a:hover{ color: var(--gold-bright); }
+    .footer-bottom   { max-width: 1280px; margin: 0 auto; padding: 1.5rem 0; border-top: 1px solid rgba(255,255,255,.1); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .footer-bottom p { color: rgba(255,255,255,.3); font-size: .8rem; }
+    .pay-row  { display: flex; gap: .5rem; }
+    .pay-badge{ background: rgba(255,255,255,.08); padding: 4px 11px; border-radius: 6px; color: rgba(255,255,255,.5); font-size: .75rem; font-weight: 700; }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .nav-links     { display: none; }
+      .ham-btn       { display: flex; }
+      .footer-grid   { grid-template-columns: 1fr; gap: 1.5rem; }
+      .field-row     { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; text-align: center; }
+    }
+  </style>
+
+  {% block extra_css %}{% endblock %}
 </head>
 <body>
 
-<div class="topbar">
-  <p>{{ s.topbar_text or '🚚 توصيل مجانى على الطلبات فوق 2000 جنيه او 2 لتر · 🔒 دفع آمن بـ Visa' }}</p>
-</div>
+  <!-- Topbar -->
+  <div class="topbar">
+    <p>{{ s.topbar_text or '🚚 توصيل مجانى على الطلبات فوق 2000 جنيه او 2 لتر · 🔒 دفع آمن بـ Visa' }}</p>
+  </div>
 
-<nav class="nav">
-  <div class="nav-inner">
-    <button class="ham-btn" id="hamBtn" onclick="toggleMenu()" aria-label="القائمة">
-      <span></span><span></span><span></span>
-    </button>
-    <a href="{{ url_for('index') }}" class="brand">
-      <div class="brand-logo">{{ s.site_name_ar }}<span>SULAFA OIL</span></div>
-    </a>
-    <div class="nav-links">
-      <a href="{{ url_for('index') }}"   {% if request.endpoint == 'index' %}class="on"{% endif %}>الرئيسية</a>
-      <a href="{{ url_for('shop') }}"    {% if request.endpoint in ['shop','product'] %}class="on"{% endif %}>المتجر</a>
-      <a href="{{ url_for('about') }}"   {% if request.endpoint == 'about' %}class="on"{% endif %}>عن سلافة</a>
-      <a href="{{ url_for('contact') }}" {% if request.endpoint == 'contact' %}class="on"{% endif %}>تواصل معنا</a>
-    </div>
-    <div class="nav-right">
-      {% set cnt = cart_count() %}
-      <a href="{{ url_for('cart_view') }}" class="cart-btn">
-        🛒 السلة
-        {% if cnt > 0 %}<span class="cart-badge">{{ cnt }}</span>{% endif %}
+  <!-- Navbar -->
+  <nav class="nav">
+    <div class="nav-inner">
+
+      <button class="ham-btn" id="hamBtn" aria-label="القائمة">
+        <span></span><span></span><span></span>
+      </button>
+
+      <a href="{{ url_for('index') }}" class="brand">
+        <div class="brand-logo">{{ s.site_name_ar }}<span>SULAFA OIL</span></div>
       </a>
+
+      <div class="nav-links">
+        <a href="{{ url_for('index') }}"   {% if request.endpoint == 'index'                    %}class="on"{% endif %}>الرئيسية</a>
+        <a href="{{ url_for('shop') }}"    {% if request.endpoint in ['shop','product']          %}class="on"{% endif %}>المتجر</a>
+        <a href="{{ url_for('about') }}"   {% if request.endpoint == 'about'                    %}class="on"{% endif %}>عن سلافة</a>
+        <a href="{{ url_for('contact') }}" {% if request.endpoint == 'contact'                  %}class="on"{% endif %}>تواصل معنا</a>
+      </div>
+
+      <div class="nav-right">
+        <!--<a href="{{ url_for('admin_login') }}" class="admin-btn">⚙️ المسؤلين</a>-->
+        {% set cnt = cart_count() %}
+        <a href="{{ url_for('cart_view') }}" class="cart-btn">
+          🛒 السلة
+          {% if cnt > 0 %}<span class="cart-badge">{{ cnt }}</span>{% endif %}
+        </a>
+      </div>
+
     </div>
-  </div>
-  <!-- Mobile Dropdown Menu -->
-  <div class="mob-drop" id="mobDrop">
-    <a href="{{ url_for('index') }}"   {% if request.endpoint == 'index' %}class="on"{% endif %}>الرئيسية</a>
-    <a href="{{ url_for('shop') }}"    {% if request.endpoint in ['shop','product'] %}class="on"{% endif %}>المتجر</a>
-    <a href="{{ url_for('about') }}"   {% if request.endpoint == 'about' %}class="on"{% endif %}>عن سلافة</a>
-    <a href="{{ url_for('contact') }}" {% if request.endpoint == 'contact' %}class="on"{% endif %}>تواصل معنا</a>
-  </div>
-</nav>
 
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-  <div style="max-width:1280px;margin:1rem auto;padding:0 2rem">
-    {% for category, message in messages %}
-    <div class="flash flash-{{ category }}">{{ message }}</div>
-    {% endfor %}
-  </div>
-  {% endif %}
-{% endwith %}
+    <div class="mob-drop" id="mobDrop">
+      <a href="{{ url_for('index') }}"   {% if request.endpoint == 'index'           %}class="on"{% endif %}>الرئيسية</a>
+      <a href="{{ url_for('shop') }}"    {% if request.endpoint in ['shop','product'] %}class="on"{% endif %}>المتجر</a>
+      <a href="{{ url_for('about') }}"   {% if request.endpoint == 'about'           %}class="on"{% endif %}>عن سلافة</a>
+      <a href="{{ url_for('contact') }}" {% if request.endpoint == 'contact'         %}class="on"{% endif %}>تواصل معنا</a>
+    </div>
+  </nav>
 
-{% block body %}{% endblock %}
+  <!-- Flash messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="wrap" style="margin-top:1rem">
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
 
-<footer class="footer">
-  <div class="footer-grid">
-    <div>
-      <div class="f-brand-name">{{ s.site_name_ar }}<span>.</span></div>
-      <p class="f-desc">{{ s.tagline_ar }}</p>
-      <div class="social-links">
-        {% if s.facebook %}<a href="{{ s.facebook }}" target="_blank" class="social-link">📘 Facebook</a>{% endif %}
-        {% if s.instagram %}<a href="{{ s.instagram }}" target="_blank" class="social-link">📷 Instagram</a>{% endif %}
-        {% if s.tiktok %}<a href="{{ s.tiktok }}" target="_blank" class="social-link">🎵 TikTok</a>{% endif %}
-        {% if s.whatsapp %}<a href="https://wa.me/{{ s.whatsapp }}" target="_blank" class="social-link">💬 WhatsApp</a>{% endif %}
+  <!-- Page content -->
+  {% block body %}{% endblock %}
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-grid">
+
+      <div>
+        <div class="f-brand-name">{{ s.site_name_ar }}<span>.</span></div>
+        <p class="f-desc">{{ s.tagline_ar }}</p>
+        <div class="social-links">
+          {% if s.facebook  %}<a href="{{ s.facebook }}"               target="_blank" class="social-link">📘 Facebook</a>{% endif %}
+          {% if s.instagram %}<a href="{{ s.instagram }}"              target="_blank" class="social-link">📷 Instagram</a>{% endif %}
+          {% if s.tiktok    %}<a href="{{ s.tiktok }}"                 target="_blank" class="social-link">🎵 TikTok</a>{% endif %}
+          {% if s.whatsapp  %}<a href="https://wa.me/{{ s.whatsapp }}" target="_blank" class="social-link">💬 WhatsApp</a>{% endif %}
+        </div>
+      </div>
+
+      <div class="f-col">
+        <h5>روابط</h5>
+        <a href="{{ url_for('index')   }}">🏠 الرئيسية</a>
+        <a href="{{ url_for('shop')    }}">🛒 المتجر</a>
+        <a href="{{ url_for('about')   }}">🫒 عن سلافة</a>
+        <a href="{{ url_for('contact') }}">📞 تواصل معنا</a>
+      </div>
+
+      <div class="f-col">
+        <h5>الأصناف</h5>
+        <a href="{{ url_for('shop') }}?cat=بكر ممتاز">🫒 Extra Virgin</a>
+        <a href="{{ url_for('shop') }}?cat=عضوى">🌿 Organic</a>
+        <a href="{{ url_for('shop') }}?cat=فاخر">✨ Premium</a>
+        <a href="{{ url_for('shop') }}?cat=طقم هدايا">🎁 هدايا</a>
+      </div>
+
+      <div class="f-col">
+        <h5>تواصل</h5>
+        <a href="tel:{{ s.phone }}">📞 {{ s.phone }}</a>
+        <a href="mailto:{{ s.email }}">✉️ {{ s.email }}</a>
+        <a href="#">📍 {{ s.address_ar }}</a>
+        {% if s.whatsapp %}<a href="https://wa.me/{{ s.whatsapp }}" target="_blank">💬 WhatsApp</a>{% endif %}
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2026 {{ s.site_name_ar }}. جميع الحقوق محفوظة</p>
+      <div class="pay-row">
+        <span class="pay-badge">🔒 SSL</span>
+        <span class="pay-badge">VISA</span>
+        <span class="pay-badge">MC</span>
       </div>
     </div>
-    <div class="f-col">
-      <h5>روابط</h5>
-      <a href="{{ url_for('index') }}">🏠 الرئيسية</a>
-      <a href="{{ url_for('shop') }}">🛒 المتجر</a>
-      <a href="{{ url_for('about') }}">🫒 عن سلافة</a>
-      <a href="{{ url_for('contact') }}">📞 تواصل معنا</a>
-    </div>
-    <div class="f-col">
-      <h5>الأصناف</h5>
-      <a href="{{ url_for('shop') }}?cat=بكر ممتاز">🫒 Extra Virgin</a>
-      <a href="{{ url_for('shop') }}?cat=عضوى">🌿 Organic</a>
-      <a href="{{ url_for('shop') }}?cat=فاخر">✨ Premium</a>
-      <a href="{{ url_for('shop') }}?cat=طقم هدايا">🎁 هدايا</a>
-    </div>
-    <div class="f-col">
-      <h5>تواصل</h5>
-      <a href="tel:{{ s.phone }}">📞 {{ s.phone }}</a>
-      <a href="/cdn-cgi/l/email-protection#bdc6c69dce93d8d0dcd4d19dc0c0">✉️ {{ s.email }}</a>
-      <a href="#">📍 {{ s.address_ar }}</a>
-      {% if s.whatsapp %}<a href="https://wa.me/{{ s.whatsapp }}" target="_blank">💬 WhatsApp</a>{% endif %}
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <p>© 2026 {{ s.site_name_ar }}. جميع الحقوق محفوظة</p>
-    <div class="pay-row">
-      <span class="pay-badge">🔒 SSL</span>
-      <span class="pay-badge">VISA</span>
-      <span class="pay-badge">MC</span>
-    </div>
-  </div>
-</footer>
+  </footer>
 
-<div id="toast"></div>
+  <div id="toast"></div>
 
-<script>
-function toggleMenu(){
-  var btn=document.getElementById('hamBtn');
-  var drop=document.getElementById('mobDrop');
-  btn.classList.toggle('open');
-  drop.classList.toggle('open');
-}
-document.addEventListener('click',function(e){
-  var btn=document.getElementById('hamBtn');
-  var drop=document.getElementById('mobDrop');
-  if(drop && drop.classList.contains('open') && !drop.contains(e.target) && !btn.contains(e.target)){
-    btn.classList.remove('open');
-    drop.classList.remove('open');
-  }
-});
-</script>
-<script>
-function toast(msg){
-  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2800);
-}
-document.querySelectorAll('.js-add').forEach(btn=>{
-  btn.addEventListener('click',function(e){
-    e.preventDefault();
-    const form=this.closest('form');
-    if(!form)return;
-    fetch(form.action,{method:'POST',body:new FormData(form),headers:{'X-Fetch':'1'}})
-    .then(r=>r.json()).then(d=>{
-      if(d.ok){
-        toast('✅ أُضيف للسلة!');
-        document.querySelectorAll('.cart-badge').forEach(b=>b.textContent=d.count);
-        if(d.count>0&&!document.querySelector('.cart-badge')){
+  <script>
+    // ── Mobile menu ──────────────────────────────────────
+    (function () {
+      const btn  = document.getElementById('hamBtn');
+      const drop = document.getElementById('mobDrop');
+
+      btn.addEventListener('click', function () {
+        btn.classList.toggle('open');
+        drop.classList.toggle('open');
+      });
+
+      document.addEventListener('click', function (e) {
+        if (drop.classList.contains('open') &&
+            !drop.contains(e.target) &&
+            !btn.contains(e.target)) {
+          btn.classList.remove('open');
+          drop.classList.remove('open');
+        }
+      });
+    })();
+
+    // ── Toast helper ─────────────────────────────────────
+    function toast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 2800);
+    }
+
+    // ── AJAX add-to-cart ─────────────────────────────────
+    document.querySelectorAll('.js-add').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        const form = this.closest('form');
+        if (!form) return;
+
+        fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { 'X-Fetch': '1' },
+        })
+          .then(r => r.json())
+          .then(function (d) {
+            if (!d.ok) return;
+            toast('✅ أُضيف للسلة!');
+            document.querySelectorAll('.cart-badge').forEach(b => { b.textContent = d.count; });
+            if (d.count > 0 && !document.querySelector('.cart-badge')) {
+              const cartBtn = document.querySelector('.cart-btn');
+              if (cartBtn) {
+                const badge = document.createElement('span');
+                badge.className   = 'cart-badge';
+                badge.textContent = d.count;
+                cartBtn.appendChild(badge);
+              }
+            }
+          })
+          .catch(() => toast('❌ حدث خطأ، حاول مرة أخرى'));
+      });
+    });
+  </script>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

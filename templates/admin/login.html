@@ -1,59 +1,156 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>تسجيل الدخول | سلافة أدمن</title>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Tajawal',sans-serif;background:linear-gradient(135deg,#1a3a1a 0%,#2d6b2d 55%,#3d8b3d 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}
-.box{background:#fff;border-radius:20px;padding:2.5rem;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
-.logo{text-align:center;margin-bottom:2rem}
-.logo-mark{font-size:3.5rem;margin-bottom:.5rem}
-.logo-name{font-size:2rem;font-weight:900;color:#1a3a1a}
-.logo-sub{font-size:.8rem;color:#5a7a5a;letter-spacing:2px;text-transform:uppercase}
-h2{font-size:1.2rem;font-weight:800;color:#1a3a1a;margin-bottom:1.5rem;text-align:center}
-.field{margin-bottom:1rem}
-.field label{display:block;font-size:.87rem;font-weight:700;color:#2d6b2d;margin-bottom:.4rem}
-.field input{width:100%;padding:12px 15px;border:2px solid #e0ead0;border-radius:10px;font-family:inherit;font-size:.95rem;outline:none;transition:.2s}
-.field input:focus{border-color:#3d8b3d;box-shadow:0 0 0 3px rgba(61,139,61,.1)}
-.submit-btn{width:100%;padding:13px;border:none;border-radius:10px;background:linear-gradient(135deg,#1a3a1a,#2d6b2d);color:#fff;font-family:inherit;font-size:1rem;font-weight:800;cursor:pointer;margin-top:.5rem;transition:.2s}
-.submit-btn:hover{background:linear-gradient(135deg,#2d6b2d,#3d8b3d);transform:translateY(-1px)}
-.error{background:#ffebee;color:#c0392b;border:1.5px solid #ef9a9a;border-radius:10px;padding:10px 15px;font-size:.88rem;font-weight:600;margin-bottom:1rem;text-align:center}
-.back{text-align:center;margin-top:1.25rem;font-size:.85rem;color:#5a7a5a}
-.back a{color:#2d6b2d;font-weight:700}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>تسجيل الدخول | سلافة أدمن</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── Reset ── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --dark-green:  #1a3a1a;
+      --mid-green:   #2d6b2d;
+      --bright-green:#3d8b3d;
+      --light-green: #e8f5e9;
+      --border:      #e0ead0;
+      --muted:       #5a7a5a;
+      --red:         #c0392b;
+    }
+
+    body {
+      font-family: 'Tajawal', sans-serif;
+      background: linear-gradient(135deg, var(--dark-green) 0%, var(--mid-green) 55%, var(--bright-green) 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    /* ── Card ── */
+    .box {
+      background: #fff;
+      border-radius: 20px;
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.3);
+    }
+
+    /* ── Logo ── */
+    .logo        { text-align: center; margin-bottom: 2rem; }
+    .logo-mark   { font-size: 3.5rem; margin-bottom: .5rem; }
+    .logo-name   { font-size: 2rem; font-weight: 900; color: var(--dark-green); }
+    .logo-sub    { font-size: .8rem; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-top: .2rem; }
+
+    /* ── Heading ── */
+    h2 { font-size: 1.2rem; font-weight: 800; color: var(--dark-green); margin-bottom: 1.5rem; text-align: center; }
+
+    /* ── Fields ── */
+    .field         { margin-bottom: 1rem; }
+    .field label   { display: block; font-size: .87rem; font-weight: 700; color: var(--mid-green); margin-bottom: .4rem; }
+    .field input   { width: 100%; padding: 12px 15px; border: 2px solid var(--border); border-radius: 10px; font-family: inherit; font-size: .95rem; color: var(--dark-green); outline: none; transition: .2s; }
+    .field input:focus { border-color: var(--bright-green); box-shadow: 0 0 0 3px rgba(61,139,61,.1); }
+
+    /* ── Submit button ── */
+    .submit-btn {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--dark-green), var(--mid-green));
+      color: #fff;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: .5rem;
+      transition: .2s;
+    }
+    .submit-btn:hover { background: linear-gradient(135deg, var(--mid-green), var(--bright-green)); transform: translateY(-1px); }
+
+    /* ── Error alert ── */
+    .error {
+      background: #ffebee;
+      color: var(--red);
+      border: 1.5px solid #ef9a9a;
+      border-radius: 10px;
+      padding: 10px 15px;
+      font-size: .88rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    /* ── Back link ── */
+    .back { text-align: center; margin-top: 1.25rem; }
+    .back a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      font-size: .85rem;
+      font-weight: 700;
+      padding: 8px 18px;
+      border-radius: 50px;
+      border: 1.5px solid var(--border);
+      transition: .2s;
+    }
+    .back a:hover { background: var(--light-green); color: var(--dark-green); border-color: var(--bright-green); }
+  </style>
 </head>
 <body>
-<div class="box">
-  <div class="logo">
-    <div class="logo-mark"></div>
-    <div class="logo-name">سلافة</div>
-    <div class="logo-sub">Admin Panel</div>
+
+  <div class="box">
+
+    <!-- Logo -->
+    <div class="logo">
+      <div class="logo-mark">🫒</div>
+      <div class="logo-name">سلافة</div>
+      <div class="logo-sub">Admin Panel</div>
+    </div>
+
+    <h2>تسجيل دخول المسؤول</h2>
+
+    <!-- Error messages -->
+    {% if error %}
+      <div class="error">❌ اسم المستخدم أو كلمة المرور غلط</div>
+    {% endif %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for cat, msg in messages %}
+        <div class="error">{{ msg }}</div>
+      {% endfor %}
+    {% endwith %}
+
+    <!-- Login form -->
+    <form method="POST" action="{{ url_for('admin_login') }}">
+      <div class="field">
+        <label for="username">اسم المستخدم</label>
+        <input type="text" id="username" name="username"
+               value="{{ request.form.get('username', '') }}"
+               required autofocus autocomplete="username">
+      </div>
+
+      <div class="field">
+        <label for="password">كلمة المرور</label>
+        <input type="password" id="password" name="password"
+               required autocomplete="current-password">
+      </div>
+
+      <button type="submit" class="submit-btn">🔐 دخول</button>
+    </form>
+
+    <!-- Back to site -->
+    <div class="back">
+      <a href="{{ url_for('index') }}">🏠 العودة للموقع</a>
+    </div>
+
   </div>
-  <h2>تسجيل دخول المسؤول</h2>
-  {% if error %}
-  <div class="error"> اسم المستخدم أو كلمة المرور غلط</div>
-  {% endif %}
-  {% with messages = get_flashed_messages(with_categories=true) %}
-  {% for cat, msg in messages %}
-  <div class="error">{{ msg }}</div>
-  {% endfor %}
-{% endwith %}
-  <form method="POST">
-    
-    <div class="field">
-      <label>اسم المستخدم</label>
-      <input type="text" name="username" value="{{ request.form.get('username', '') }}" required autofocus>
-    </div>
-    <div class="field">
-      <label>كلمة المرور</label>
-      <input type="password" name="password" required>
-    </div>
-    <button type="submit" class="submit-btn"> دخول</button>
-  </form>
-  <div class="back"><a href="{{ url_for('index') }}">← العودة للموقع</a></div>
-</div>
+
 </body>
 </html>
