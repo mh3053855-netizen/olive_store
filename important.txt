@@ -31,4 +31,4 @@ add to githup  // اول مره
 add to server online 
 1-cd ~/olive_store
 
-2-git pull -u origin main
+2-git pull origin main
