@@ -72,6 +72,12 @@
     </div>
     <div class="or"><span>الحالة</span><span style="color:var(--mid-green)"> مؤكد</span></div>
     <div class="ord-items">
+      {% set ns = namespace(sub=0) %}
+      {% for item in items %}
+      {% set ns.sub = ns.sub + (item['price'] * item['quantity']) %}
+      {% endfor %}
+      {% set free_thresh = s.free_shipping_threshold|default(500)|float %}
+      {% set ship_cost = s.shipping_cost|default(50)|float %}
       {% for item in items %}
       <div class="oi">
         <span>{{ item['name'] }} ×{{ item['quantity'] }}</span>
@@ -85,8 +91,13 @@
       </div>
       {% else %}
       <div class="oi">
+
+
         <span> الشحن</span>
-        <span style="color:var(--mid-green);font-weight:800">مجاني 🎉</span>
+        <span class="{% if ns.sub >= free_thresh %}free{% endif %}">
+          {% if ns.sub >= free_thresh %}{{ s.free_ship_text_ar or "مجانى 🎉" }}{% else %}{{ ship_cost|int }} جنيه{% endif %}
+        </span>
+
       </div>
       {% endif %}
       <div class="oi"><span>الإجمالى</span><span>{{ order['grand_total']|int }} جنيه</span></div>

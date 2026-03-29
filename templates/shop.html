@@ -86,7 +86,7 @@
 
 {% block body %}
 <div class="page-head">
-  <h1>المتجر</h1>
+  <h1>{{ s.shop_title_ar or "المتجر" }}</h1>
   <p>اختار من أجود زيوت الزيتون</p>
 </div>
 <div class="wrap">
@@ -100,8 +100,8 @@
         </form>
       </div>
       <div class="sb-box">
-        <h4>الأصناف</h4>
-        <a href="{{ url_for('shop') }}{% if q %}?q={{ q }}{% endif %}" class="cat-btn {% if not sel_cat %}on{% endif %}">الكل</a>
+        <h4>{{ s.sidebar_cats_ar or "الأصناف" }}</h4>
+        <a href="{{ url_for('shop') }}{% if q %}?q={{ q }}{% endif %}" class="cat-btn {% if not sel_cat %}on{% endif %}">{{ s.filter_all_ar or "الكل" }}</a>
         {% for cat in cats_ar %}
         <a href="{{ url_for('shop') }}?cat={{ cat[0] }}&q={{ q or '' }}"
            class="cat-btn {% if sel_cat == cat[0] %}on{% endif %}">{{ cat[0] }}</a>
@@ -156,7 +156,7 @@
               <form action="{{ url_for('cart_add') }}" method="POST">
                 <input type="hidden" name="pid" value="{{ p['id'] }}">
                 <input type="hidden" name="qty" value="1">
-                <button type="submit" class="add-btn js-add">أضف</button>
+                <button type="submit" class="add-btn js-add">{{ s.btn_add_ar or "أضف" }}</button>
               </form>
             </div>
           </div>
@@ -185,7 +185,7 @@
             <form action="{{ url_for('cart_add') }}" method="POST">
               <input type="hidden" name="pid" id="pv-pid" value="">
               <input type="hidden" name="qty" value="1">
-              <button type="submit" class="add-btn-pv">أضف للسلة</button>
+              <button type="submit" class="add-btn-pv">{{ s.btn_add_ar or "أضف للسلة" }}</button>
             </form>
           </div>
         </div>

@@ -101,11 +101,11 @@
 <!-- TRUST BAR -->
 <div class="trust-bar">
   <div class="trust-inner">
-    <div class="trust-item"><span class="trust-icon">🌿</span>100% طبيعى</div>
+    <div class="trust-item"><span class="trust-icon">{{ s.trust1_icon or "🌿" }}</span>{{ s.trust1_ar or "100% طبيعى" }}</div>
     <div class="trust-dot"></div>
-    <div class="trust-item"><span class="trust-icon">🫒</span>معصور على البارد</div>
+    <div class="trust-item"><span class="trust-icon">{{ s.trust2_icon or "🫒" }}</span>{{ s.trust2_ar or "معصور على البارد" }}</div>
     <div class="trust-dot"></div>
-    <div class="trust-item"><span class="trust-icon">🚚</span>شحن مجانى فوق 500 جنيه</div>
+    <div class="trust-item"><span class="trust-icon">{{ s.trust3_icon or "🚚" }}</span>{{ s.trust3_ar or "شحن مجانى فوق 500 جنيه" }}</div>
   </div>
 </div>
 
@@ -173,7 +173,7 @@
   <div class="wrap">
     <div class="benefits-inner">
       <div class="benefits-text">
-        <h2>اكتشف فوائد زيوت سلافة</h2>
+        <h2>{{ s.benefits_title_ar or "اكتشف فوائد زيوت سلافة" }}</h2>
         <div class="benefit-item">
           <div class="benefit-check">✓</div>
           <span>{{ s.benefit1_ar }}</span>
@@ -206,12 +206,12 @@
 <div class="newsletter">
   <div class="nl-inner">
     <div class="nl-text">
-      <h3>{{ s.newsletter_title_ar }}</h3>
-      <p>{{ s.newsletter_sub_ar }}</p>
+      <h3>{{ s.newsletter_title_ar or "انضم لنشرتنا البريدية" }}</h3>
+      <p>{{ s.newsletter_sub_ar or "اشترك للحصول على عروض حصرية" }}</p>
     </div>
     <div class="nl-form">
       <input class="nl-input" type="email" placeholder="أدخل بريدك الإلكترونى">
-      <button class="nl-btn" onclick="toast('تم الاشتراك بنجاح! ✅')">اشترك</button>
+      <button class="nl-btn" onclick="toast('✅ تم الاشتراك!')">{{ s.newsletter_btn_ar or 'اشترك' }}</button>
     </div>
   </div>
 </div>
