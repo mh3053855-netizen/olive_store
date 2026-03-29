@@ -1,0 +1,548 @@
+{% extends "base.html" %}
+{% block title %}تتبع طلبك | {{ s.site_name_ar }}{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ══════════════════════════════════════════
+   SULAFA — صفحة تتبع الطلب
+   ══════════════════════════════════════════ */
+
+.trk-hero{
+  background:linear-gradient(135deg,var(--dark-green) 0%,var(--mid-green) 60%,#3a7a3a 100%);
+  padding:3.5rem 0 2rem;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.trk-hero::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.trk-hero h1{
+  font-size:2rem;
+  font-weight:900;
+  color:#fff;
+  position:relative;
+  margin-bottom:.4rem;
+}
+.trk-hero p{
+  color:rgba(255,255,255,.75);
+  font-size:.95rem;
+  position:relative;
+}
+
+/* ── search box ── */
+.trk-search-wrap{
+  max-width:560px;
+  margin:-1.5rem auto 2.5rem;
+  background:#fff;
+  border-radius:var(--r-lg);
+  box-shadow:0 12px 40px rgba(0,0,0,.14);
+  padding:2rem;
+  position:relative;
+  z-index:2;
+}
+.trk-search-wrap h2{
+  font-size:1rem;
+  font-weight:800;
+  color:var(--dark-green);
+  margin-bottom:1.2rem;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.trk-field{margin-bottom:1rem}
+.trk-field label{
+  display:block;
+  font-size:.82rem;
+  font-weight:700;
+  color:var(--muted);
+  margin-bottom:.4rem;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+}
+.trk-field input{
+  width:100%;
+  padding:.75rem 1rem;
+  border:1.5px solid var(--border);
+  border-radius:var(--r-lg);
+  font-family:inherit;
+  font-size:.95rem;
+  transition:.2s;
+  direction:ltr;
+  text-align:center;
+  letter-spacing:1px;
+}
+.trk-field input:focus{
+  outline:none;
+  border-color:var(--dark-green);
+  box-shadow:0 0 0 3px rgba(45,107,45,.12);
+}
+.trk-btn{
+  width:100%;
+  padding:.9rem;
+  background:linear-gradient(135deg,var(--dark-green),var(--mid-green));
+  color:#fff;
+  border:none;
+  border-radius:var(--r-lg);
+  font-family:inherit;
+  font-size:1rem;
+  font-weight:800;
+  cursor:pointer;
+  transition:.22s;
+  box-shadow:0 5px 18px rgba(45,107,45,.3);
+  margin-top:.5rem;
+}
+.trk-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 25px rgba(45,107,45,.4);
+}
+
+/* ── error ── */
+.trk-error{
+  max-width:560px;
+  margin:0 auto 2rem;
+  background:linear-gradient(135deg,#fff5f5,#fff);
+  border:1.5px solid #f87171;
+  border-radius:var(--r-lg);
+  padding:1.2rem 1.5rem;
+  text-align:center;
+  color:#b91c1c;
+  font-weight:700;
+  font-size:.92rem;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:.6rem;
+}
+
+/* ── result card ── */
+.trk-result{
+  max-width:680px;
+  margin:0 auto 3rem;
+}
+
+.trk-header-card{
+  background:linear-gradient(135deg,var(--dark-green),var(--mid-green));
+  border-radius:var(--r-lg) var(--r-lg) 0 0;
+  padding:1.5rem 2rem;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:1rem;
+}
+.trk-order-num{
+  font-size:1.3rem;
+  font-weight:900;
+  letter-spacing:1px;
+}
+.trk-order-date{
+  font-size:.82rem;
+  color:rgba(255,255,255,.7);
+  margin-top:.2rem;
+}
+.trk-status-badge{
+  padding:.45rem 1.1rem;
+  border-radius:50px;
+  font-size:.82rem;
+  font-weight:800;
+  border:2px solid rgba(255,255,255,.4);
+  color:#fff;
+  background:rgba(255,255,255,.15);
+  white-space:nowrap;
+}
+.trk-status-badge.cancelled{
+  background:rgba(239,68,68,.25);
+  border-color:rgba(239,68,68,.5);
+}
+.trk-status-badge.delivered{
+  background:rgba(245,208,48,.25);
+  border-color:rgba(245,208,48,.5);
+}
+
+/* ── timeline ── */
+.trk-timeline-card{
+  background:#fff;
+  border:1.5px solid var(--border);
+  border-top:none;
+  padding:2rem;
+}
+
+.trk-timeline{
+  position:relative;
+  padding-right:1rem;
+}
+
+.trk-step{
+  display:flex;
+  align-items:flex-start;
+  gap:1.2rem;
+  position:relative;
+  padding-bottom:2rem;
+}
+.trk-step:last-child{padding-bottom:0}
+
+/* vertical line */
+.trk-step:not(:last-child)::after{
+  content:'';
+  position:absolute;
+  right:19px;
+  top:42px;
+  bottom:0;
+  width:2px;
+  background:var(--border);
+  z-index:0;
+}
+.trk-step.done:not(:last-child)::after{
+  background:linear-gradient(to bottom,var(--mid-green),var(--border));
+}
+.trk-step.active:not(:last-child)::after{
+  background:linear-gradient(to bottom,var(--mid-green),var(--border));
+}
+
+/* icon circle */
+.trk-ic{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.1rem;
+  flex-shrink:0;
+  position:relative;
+  z-index:1;
+  border:2px solid var(--border);
+  background:#f9f9f9;
+  transition:.3s;
+}
+.trk-step.done .trk-ic{
+  background:linear-gradient(135deg,var(--bright-green),var(--mid-green));
+  border-color:var(--mid-green);
+  box-shadow:0 4px 12px rgba(45,107,45,.25);
+}
+.trk-step.active .trk-ic{
+  background:linear-gradient(135deg,var(--gold),var(--gold-bright));
+  border-color:var(--gold);
+  box-shadow:0 4px 16px rgba(200,150,12,.35);
+  animation:pulse-ic 1.8s ease-in-out infinite;
+}
+.trk-step.cancelled-step .trk-ic{
+  background:linear-gradient(135deg,#fecaca,#f87171);
+  border-color:#f87171;
+}
+@keyframes pulse-ic{
+  0%,100%{box-shadow:0 4px 16px rgba(200,150,12,.35)}
+  50%{box-shadow:0 4px 24px rgba(200,150,12,.6),0 0 0 6px rgba(200,150,12,.12)}
+}
+
+.trk-info{flex:1;padding-top:.3rem}
+.trk-info h4{
+  font-size:.95rem;
+  font-weight:800;
+  color:var(--text);
+  margin-bottom:.2rem;
+}
+.trk-step.done .trk-info h4{color:var(--dark-green)}
+.trk-step.active .trk-info h4{color:#92400e}
+.trk-step.pending-step .trk-info h4{color:var(--muted)}
+.trk-info p{
+  font-size:.82rem;
+  color:var(--muted);
+  line-height:1.5;
+}
+.trk-step.active .trk-info p{color:#b45309}
+
+.trk-time{
+  font-size:.75rem;
+  color:var(--muted);
+  margin-top:.3rem;
+  direction:ltr;
+  text-align:right;
+}
+
+/* ── ETA bar ── */
+.trk-eta{
+  background:linear-gradient(135deg,#fffbeb,#fef3c7);
+  border:1.5px solid #f59e0b;
+  border-radius:0 0 var(--r-lg) var(--r-lg);
+  padding:1rem 2rem;
+  display:flex;
+  align-items:center;
+  gap:1rem;
+}
+.trk-eta-icon{font-size:1.8rem;flex-shrink:0}
+.trk-eta-text strong{
+  display:block;
+  font-size:.9rem;
+  color:#92400e;
+  font-weight:800;
+}
+.trk-eta-text span{
+  font-size:.82rem;
+  color:#b45309;
+}
+.trk-eta.delivered-eta{
+  background:linear-gradient(135deg,#f0faf0,#dcfce7);
+  border-color:var(--mid-green);
+}
+.trk-eta.delivered-eta .trk-eta-text strong{color:var(--dark-green)}
+.trk-eta.delivered-eta .trk-eta-text span{color:var(--mid-green)}
+.trk-eta.cancelled-eta{
+  background:linear-gradient(135deg,#fff5f5,#fee2e2);
+  border-color:#f87171;
+}
+.trk-eta.cancelled-eta .trk-eta-text strong{color:#b91c1c}
+.trk-eta.cancelled-eta .trk-eta-text span{color:#ef4444}
+
+/* ── order details mini ── */
+.trk-details-card{
+  background:#fff;
+  border:1.5px solid var(--border);
+  border-radius:var(--r-lg);
+  padding:1.5rem;
+  margin-top:1.2rem;
+}
+.trk-details-card h3{
+  font-size:.9rem;
+  font-weight:800;
+  color:var(--dark-green);
+  margin-bottom:1rem;
+  padding-bottom:.7rem;
+  border-bottom:1.5px solid var(--border);
+}
+.trk-row{
+  display:flex;
+  justify-content:space-between;
+  font-size:.88rem;
+  padding:.45rem 0;
+  border-bottom:1px dashed var(--border);
+}
+.trk-row:last-child{border-bottom:none}
+.trk-row span:first-child{color:var(--muted)}
+.trk-row span:last-child{font-weight:700}
+
+/* ── help ── */
+.trk-help{
+  max-width:680px;
+  margin:0 auto 3rem;
+  text-align:center;
+}
+.trk-help p{
+  font-size:.87rem;
+  color:var(--muted);
+}
+.trk-help a{
+  color:var(--dark-green);
+  font-weight:700;
+  text-decoration:none;
+}
+.trk-help a:hover{text-decoration:underline}
+
+@media(max-width:600px){
+  .trk-header-card{flex-direction:column;align-items:flex-start}
+  .trk-timeline-card{padding:1.2rem}
+  .trk-eta{padding:.9rem 1.2rem}
+}
+</style>
+{% endblock %}
+
+{% block body %}
+
+<!-- hero -->
+<div class="trk-hero">
+  <div class="wrap">
+    <h1> تتبع طلبك</h1>
+    <p>ادخل رقم طلبك ورقم موبايلك وتابع وصول طلبك لحظة بلحظة</p>
+  </div>
+</div>
+
+<div class="co-pg" style="padding-top:2.5rem">
+<div class="wrap">
+
+  <!-- ── بحث ── -->
+  <div class="trk-search-wrap">
+    <h2> ابحث عن طلبك</h2>
+    <form method="GET" action="{{ url_for('track') }}">
+      <div class="trk-field">
+        <label>رقم الطلب</label>
+        <input type="text" name="order_number" placeholder="SLF-250101-XXXXXX"
+               value="{{ request.args.get('order_number','') }}" required autocomplete="off">
+      </div>
+      <div class="trk-field">
+        <label>رقم الموبايل</label>
+        <input type="tel" name="phone" placeholder="01XXXXXXXXX"
+               value="{{ request.args.get('phone','') }}" required maxlength="11" minlength="11">
+      </div>
+      <button type="submit" class="trk-btn"> ابحث عن طلبي</button>
+    </form>
+  </div>
+
+  <!-- ── خطأ ── -->
+  {% if error %}
+  <div class="trk-error">
+     مفيش طلب بالبيانات دي — تأكد من رقم الطلب ورقم موبايلك
+  </div>
+  {% endif %}
+
+  <!-- ── نتيجة ── -->
+  {% if order %}
+
+  {% set st = order['status'] %}
+
+  {# ترتيب المراحل #}
+  {% set stage_order = ['confirmed','packed','shipped','delivered'] %}
+  {% set current_idx = stage_order.index(st) if st in stage_order else -1 %}
+
+  <div class="trk-result">
+
+    <!-- header -->
+    <div class="trk-header-card">
+      <div>
+        <div class="trk-order-num">{{ order['order_number'] }}</div>
+        <div class="trk-order-date"> {{ order['created_at'][:10] }}</div>
+      </div>
+      <div class="trk-status-badge {% if st=='cancelled' %}cancelled{% elif st=='delivered' %}delivered{% endif %}">
+        {% if st=='confirmed' %} تم استلام الطلب
+        {% elif st=='packed' %} جارى التغليف
+        {% elif st=='shipped' %} فى الطريق إليك
+        {% elif st=='delivered' %} تم التسليم
+        {% elif st=='cancelled' %} ملغى
+        {% else %}{{ st }}{% endif %}
+      </div>
+    </div>
+
+    <!-- timeline -->
+    <div class="trk-timeline-card">
+      <div class="trk-timeline">
+
+        {% if st == 'cancelled' %}
+        <!-- ملغى -->
+        <div class="trk-step cancelled-step">
+          <div class="trk-ic"></div>
+          <div class="trk-info">
+            <h4>تم إلغاء الطلب</h4>
+            <p>تم إلغاء طلبك — تواصل معنا لأى استفسار.</p>
+          </div>
+        </div>
+
+        {% else %}
+
+        {# المرحلة 1: استلام الطلب #}
+        {% set s1 = 'done' if current_idx >= 0 else 'pending-step' %}
+        {% set s1 = 'active' if current_idx == 0 else s1 %}
+        <div class="trk-step {{ s1 }}">
+          <div class="trk-ic">
+            {% if current_idx > 0 %}{% else %}{% if current_idx == 0 %}{% else %}⏳{% endif %}{% endif %}
+            {% if current_idx > 0 %}✅{% elif current_idx == 0 %}📋{% else %}⏳{% endif %}
+          </div>
+          <div class="trk-info">
+            <h4>تم استلام الطلب</h4>
+            <p>وصلنا طلبك وبنراجع بياناته دلوقتي.</p>
+            {% if current_idx >= 0 %}
+            <div class="trk-time">{{ order['created_at'][:16]|replace('T',' ') }}</div>
+            {% endif %}
+          </div>
+        </div>
+
+        {# المرحلة 2: تغليف #}
+        {% set s2 = 'done' if current_idx > 1 else ('active' if current_idx == 1 else 'pending-step') %}
+        <div class="trk-step {{ s2 }}">
+          <div class="trk-ic">
+            {% if current_idx > 1 %}✅{% elif current_idx == 1 %}📦{% else %}⏳{% endif %}
+          </div>
+          <div class="trk-info">
+            <h4>جارى التغليف</h4>
+            <p>بنجهز طلبك بعناية ونغلفه بشكل احترافى.</p>
+          </div>
+        </div>
+
+        {# المرحلة 3: شحن #}
+        {% set s3 = 'done' if current_idx > 2 else ('active' if current_idx == 2 else 'pending-step') %}
+        <div class="trk-step {{ s3 }}">
+          <div class="trk-ic">
+            {% if current_idx > 2 %}✅{% elif current_idx == 2 %}🚚{% else %}⏳{% endif %}
+          </div>
+          <div class="trk-info">
+            <h4>فى الطريق إليك</h4>
+            <p>طلبك خرج من المستودع وفى الطريق لعنوانك.</p>
+          </div>
+        </div>
+
+        {# المرحلة 4: تسليم #}
+        {% set s4 = 'done' if current_idx >= 3 else 'pending-step' %}
+        <div class="trk-step {{ s4 }}">
+          <div class="trk-ic">
+            {% if current_idx >= 3 %}✅{% else %}⏳{% endif %}
+          </div>
+          <div class="trk-info">
+            <h4>تم التسليم</h4>
+            <p>تم تسليم طلبك بنجاح.</p>
+          </div>
+        </div>
+
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- ETA bar -->
+    {% if st == 'cancelled' %}
+    <div class="trk-eta cancelled-eta">
+      <div class="trk-eta-icon"></div>
+      <div class="trk-eta-text">
+        <strong>الطلب ملغى</strong>
+        <span>تواصل معنا على واتساب لو عندك أى استفسار</span>
+      </div>
+    </div>
+    {% elif st == 'delivered' %}
+    <div class="trk-eta delivered-eta">
+      <div class="trk-eta-icon"></div>
+      <div class="trk-eta-text">
+        <strong>تم التسليم بنجاح!</strong>
+        <span>نتمنى تكون استمتعت بزيت سلافة الأصيل</span>
+      </div>
+    </div>
+    {% else %}
+    <div class="trk-eta">
+      <div class="trk-eta-icon"></div>
+      <div class="trk-eta-text">
+        <strong>وقت التوصيل المتوقع: ٢–٤ أيام عمل</strong>
+        <span>بنشتغل كل يوم عشان طلبك يوصل بأسرع وقت</span>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- تفاصيل الطلب -->
+    <div class="trk-details-card">
+      <h3> تفاصيل الطلب</h3>
+      <div class="trk-row"><span>الاسم</span><span>{{ order['full_name'] }}</span></div>
+      <div class="trk-row"><span>رقم الموبايل</span><span>{{ order['phone'] }}</span></div>
+      <div class="trk-row"><span>عنوان التوصيل</span><span>{{ order['city'] }} — {{ order['address'] }}</span></div>
+      <div class="trk-row">
+        <span>طريقة الدفع</span>
+        <span>{% if order['payment_method']=='cod' %}كاش عند الاستلام{% else %}Visa ****{{ order['card_last4'] }}{% endif %}</span>
+      </div>
+      <div class="trk-row"><span>المجموع الكلى</span><span>{{ order['grand_total']|int }} جنيه</span></div>
+    </div>
+
+  </div><!-- /trk-result -->
+
+  {% endif %}
+
+  <!-- ── مساعدة ── -->
+  <div class="trk-help">
+    <p>
+      محتاج مساعدة؟
+      <a href="https://wa.me/{{ s.whatsapp }}" target="_blank"> تواصل معنا على واتساب</a>
+      أو
+      <a href="{{ url_for('contact') }}"> ابعتلنا إيميل</a>
+    </p>
+  </div>
+
+</div>
+</div>
+{% endblock %}
