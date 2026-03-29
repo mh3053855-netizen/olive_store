@@ -35,6 +35,16 @@
   <h1>تم استلام طلبك!</h1>
   <p style="color:var(--muted);margin-top:.5rem">رقم الطلب: <strong style="color:var(--dark-green)">{{ order['order_number'] }}</strong></p>
 
+  <div style="background:linear-gradient(135deg,#fffbeb,#fef3c7);border:1.5px solid #f59e0b;border-radius:var(--r-lg);padding:1rem 1.4rem;max-width:520px;margin:.9rem auto 0;display:flex;align-items:flex-start;gap:.8rem;text-align:right">
+    <span style="font-size:1.5rem;flex-shrink:0;margin-top:.1rem">📌</span>
+    <div>
+      <strong style="display:block;font-size:.88rem;color:#92400e;font-weight:800;margin-bottom:.25rem">الرجاء الاحتفاظ برقم الطلب ورقم الموبايل</strong>
+      <span style="font-size:.8rem;color:#b45309;line-height:1.6">هتحتاجهم للاستعلام عن حالة طلبك فى أى وقت —
+        <a href="{{ url_for('track') }}?order_number={{ order['order_number'] }}&phone={{ order['phone'] }}" style="color:#92400e;font-weight:800;text-decoration:underline">🔍 تتبع طلبك الآن</a>
+      </span>
+    </div>
+  </div>
+
   {% if order['payment_method']=='cod' %}
   <div class="cod-notice">
     <div class="cod-notice-icon"></div>
@@ -48,6 +58,7 @@
   <div class="ord-card">
     <div class="or"><span>رقم الطلب</span><span>{{ order['order_number'] }}</span></div>
     <div class="or"><span>الاسم</span><span>{{ order['full_name'] }}</span></div>
+    <div class="or"><span>رقم الموبايل</span><span>{{ order['phone'] }}</span></div>
     <div class="or"><span>التوصيل</span><span>{{ order['city'] }} — {{ order['address'] }}</span></div>
     <div class="or">
       <span>طريقة الدفع</span>
@@ -67,6 +78,17 @@
         <span>{{ (item['price']*item['quantity'])|int }} جنيه</span>
       </div>
       {% endfor %}
+      {% if order['shipping'] and order['shipping'] > 0 %}
+      <div class="oi">
+        <span> تكلفة الشحن</span>
+        <span>{{ order['shipping']|int }} جنيه</span>
+      </div>
+      {% else %}
+      <div class="oi">
+        <span> الشحن</span>
+        <span style="color:var(--mid-green);font-weight:800">مجاني 🎉</span>
+      </div>
+      {% endif %}
       <div class="oi"><span>الإجمالى</span><span>{{ order['grand_total']|int }} جنيه</span></div>
     </div>
   </div>

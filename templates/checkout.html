@@ -71,10 +71,10 @@
     <div class="co-box">
       <h3> بيانات التوصيل</h3>
       <div class="field-row">
-        <div class="field"><label>الاسم الكامل *</label><input type="text" name="full_name" required></div>
-        <div class="field"><label>رقم الهاتف *</label><input type="tel" name="phone" required></div>
+        <div class="field"><label>الاسم بالكامل *</label><input type="text" name="full_name" minlength="13" required placeholder="ادخل الاسم ثلاثى"></div>
+        <div class="field"><label>رقم الموبيل *</label><input type="tel" name="phone" maxlength="11" minlength="11" pattern="\d{11}" required placeholder="اخل رقم الموبيل كامل"></div>
       </div>
-      <div class="field"><label>العنوان *</label><input type="text" name="address" required></div>
+      <div class="field"><label>العنوان بالتفصيل *</label><input type="text" name="address" required></div>
       <div class="field-row">
         <div class="field">
           <label>المحافظة *</label>
@@ -91,7 +91,7 @@
             <option>شمال سيناء</option><option>جنوب سيناء</option><option>الوادي الجديد</option>
           </select>
         </div>
-        <div class="field"><label>الرمز البريدى</label><input type="text" name="postal"></div>
+        <div class="field"><label>الرمز البريدى</label><input type="text" name="postal" placeholder="اختيارى" maxlength="5"></div>
       </div>
     </div>
 
@@ -121,11 +121,11 @@
           </div>
         </div>
         <div class="card-fields">
-          <div class="field"><label>رقم البطاقة</label><input type="text" name="card_number" id="in_card" placeholder="0000 0000 0000 0000" maxlength="19" required></div>
-          <div class="field"><label>الاسم على البطاقة</label><input type="text" name="card_name" id="inm" placeholder="AHMED MOHAMED" required></div>
+          <div class="field"><label>رقم البطاقة</label><input type="text" name="card_number" id="in_card" placeholder="0000 0000 0000 0000"  required></div>
+          <div class="field"><label>الاسم على البطاقة</label><input type="text" name="card_name" id="inm" placeholder="مثلا mohamed ahmed" required></div>
           <div class="field-row">
             <div class="field"><label>تاريخ الانتهاء</label><input type="text" name="expiry" id="iex" placeholder="MM/YY" maxlength="5" required></div>
-            <div class="field"><label>CVV</label><input type="password" name="cvv" id="cvvInput" placeholder="•••" maxlength="4" required></div>
+            <div class="field"><label>CVV</label><input type="password" name="cvv" id="cvvInput" inputmode="numeric" pattern="[0-9]{3}" placeholder="•••" maxlength="3" minlength="3" required></div>
           </div>
         </div>
         <div class="sec-badges">
@@ -177,7 +177,7 @@
       </div>
       <div class="ot grand"><span>الإجمالى</span><span>{{ total }} جنيه</span></div>
     </div>
-    <button type="submit" class="pay-btn" id="submitBtn"> ادفع وأكّد الطلب</button>
+    <button type="submit" class="pay-btn" id="submitBtn"> ادفع وأكد الطلب</button>
     <p style="text-align:center;font-size:.77rem;color:var(--muted);margin-top:.6rem"> بياناتك محمية ومشفرة</p>
   </div>
 </div>
@@ -191,7 +191,7 @@ function switchPayment(method){
   document.getElementById('codSection').style.display  = isCard?'none':'block';
   document.getElementById('tabCard').classList.toggle('active',isCard);
   document.getElementById('tabCod').classList.toggle('active',!isCard);
-  document.getElementById('submitBtn').textContent = isCard?' ادفع وأكّد الطلب':' أكّد الطلب (كاش)';
+  document.getElementById('submitBtn').textContent = isCard?' ادفع وأكد الطلب':' أكد الطلب (كاش)';
   ['in_card','inm','iex','cvvInput'].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.required=isCard;

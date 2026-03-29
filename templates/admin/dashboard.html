@@ -35,7 +35,7 @@
 .mini-table tr:last-child td{border-bottom:none}
 .mini-table tr:hover td{background:#fafdf8}
 .badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:.67rem;font-weight:700}
-.badge-confirmed{background:#e8f5ee;color:var(--olive-dark)}.badge-pending{background:#fef9e7;color:#b7950b}.badge-shipped{background:#e8f4fd;color:#1a5276}.badge-cancelled{background:#fdedec;color:var(--red)}
+.badge-confirmed{background:#e8f5ee;color:var(--olive-dark)}.badge-pending{background:#fef9e7;color:#b7950b}.badge-packed{background:#fdf3e7;color:#9a5c0a}.badge-shipped{background:#e8f4fd;color:#1a5276}.badge-delivered{background:#e3f9e5;color:#1a6630}.badge-cancelled{background:#fdedec;color:var(--red)}
 .prod-row{display:flex;align-items:center;gap:.8rem;padding:.65rem 0;border-bottom:1px solid #f4f4f4}
 .prod-row:last-child{border-bottom:none}
 .prod-emoji{font-size:1.5rem;width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:#f7faf5;border-radius:10px;flex-shrink:0}
@@ -84,8 +84,8 @@
   <div class="chart-card">
     <div class="card-title"><span> حالة الطلبات</span></div>
     <div class="donut-wrap">
-      {% set colors = ['#4a7c59','#c9a84c','#2980b9','#c0392b'] %}
-      {% set statuses = [('confirmed','مؤكد'),('pending','انتظار'),('shipped','مشحون'),('cancelled','ملغى')] %}
+      {% set colors = ['#4a7c59','#e67e22','#2980b9','#27ae60','#c0392b'] %}
+      {% set statuses = [('confirmed','مؤكد'),('packed','تغليف'),('shipped','شحن'),('delivered','تم التسليم'),('cancelled','ملغى')] %}
       {% set total_o = namespace(v=0) %}
       {% for k,l in statuses %}{% set total_o.v = total_o.v + (status_counts.get(k,0) if status_counts else 0) %}{% endfor %}
       <svg viewBox="0 0 42 42" width="130" height="130">
@@ -131,7 +131,7 @@
           <td>{{ o['full_name'] }}</td>
           <td>{{ o['city'] }}</td>
           <td><strong>{{ o['grand_total']|int }} جنيه</strong></td>
-          <td><span class="badge badge-{{ o['status'] }}">{% if o['status']=='confirmed' %}مؤكد{% elif o['status']=='pending' %}انتظار{% elif o['status']=='shipped' %}مشحون{% elif o['status']=='cancelled' %}ملغى{% else %}{{ o['status'] }}{% endif %}</span></td>
+          <td><span class="badge badge-{{ o['status'] }}">{% if o['status']=='confirmed' %}✅ مؤكد{% elif o['status']=='pending' %}⏳ انتظار{% elif o['status']=='packed' %}📦 تغليف{% elif o['status']=='shipped' %}🚚 شحن{% elif o['status']=='delivered' %}🏠 تم التسليم{% elif o['status']=='cancelled' %}❌ ملغى{% else %}{{ o['status'] }}{% endif %}</span></td>
           <td style="color:var(--muted);font-size:.7rem">{{ o['created_at'][:10] }}</td>
         </tr>
         {% endfor %}

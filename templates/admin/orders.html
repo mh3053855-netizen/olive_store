@@ -16,6 +16,10 @@
 .pay-badge{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .6rem;border-radius:20px;font-size:.72rem;font-weight:700}
 .pay-card{background:rgba(59,130,246,.15);color:#60a5fa}
 .pay-cod{background:rgba(234,179,8,.15);color:#ca8a04}
+.badge-orange{background:rgba(230,126,34,.2);color:#a04000}
+.badge-blue{background:rgba(41,128,185,.2);color:#1a5276}
+.badge-teal{background:rgba(39,174,96,.2);color:#1a6630}
+.badge-gray{background:rgba(122,138,122,.15);color:#5a6a5a}
 </style>
 {% endblock %}
 
@@ -55,21 +59,29 @@
           </td>
           <td>{{ o['created_at'][:10] }}</td>
           <td>
-            <span class="badge {% if o['status']=='confirmed' %}badge-green{% elif o['status']=='shipped' %}badge-gold{% elif o['status']=='pending' %}badge-gold{% else %}badge-red{% endif %}">
-              {% if o['status']=='confirmed' %} مؤكد
-              {% elif o['status']=='pending' %} انتظار
-              {% elif o['status']=='shipped' %} مشحون
-              {% elif o['status']=='cancelled' %} ملغى
-              {% else %}{{ o['status'] }}{% endif %}
+            <span class="badge
+              {%- if o['status']=='confirmed' %} badge-green
+              {%- elif o['status']=='packed'    %} badge-orange
+              {%- elif o['status']=='shipped'   %} badge-blue
+              {%- elif o['status']=='delivered' %} badge-teal
+              {%- elif o['status']=='cancelled' %} badge-red
+              {%- else %} badge-gray{%- endif %}">
+              {%- if o['status']=='confirmed' %}✅ مؤكد
+              {%- elif o['status']=='packed'    %}📦 تغليف
+              {%- elif o['status']=='shipped'   %}🚚 شحن
+              {%- elif o['status']=='delivered' %}🏠 تم التسليم
+              {%- elif o['status']=='cancelled' %}❌ ملغى
+              {%- else %}{{ o['status'] }}{%- endif %}
             </span>
           </td>
           <td>
             <form action="{{ url_for('admin_order_status', oid=o['id']) }}" method="POST">
               <select name="status" class="status-sel" onchange="this.form.submit()">
-                <option value="confirmed" {% if o['status']=='confirmed' %}selected{% endif %}> مؤكد</option>
-                <option value="pending"   {% if o['status']=='pending'   %}selected{% endif %}> انتظار</option>
-                <option value="shipped"   {% if o['status']=='shipped'   %}selected{% endif %}> مشحون</option>
-                <option value="cancelled" {% if o['status']=='cancelled' %}selected{% endif %}> ملغى</option>
+                <option value="confirmed"  {% if o['status']=='confirmed'  %}selected{% endif %}>✅ مؤكد</option>
+                <option value="packed"     {% if o['status']=='packed'     %}selected{% endif %}>📦 جارى التغليف</option>
+                <option value="shipped"    {% if o['status']=='shipped'    %}selected{% endif %}>🚚 تم الشحن</option>
+                <option value="delivered"  {% if o['status']=='delivered'  %}selected{% endif %}>🏠 تم التسليم</option>
+                <option value="cancelled"  {% if o['status']=='cancelled'  %}selected{% endif %}>❌ ملغى</option>
               </select>
             </form>
           </td>

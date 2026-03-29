@@ -205,6 +205,7 @@
         <a href="{{ url_for('index') }}"   {% if request.endpoint == 'index'                    %}class="on"{% endif %}>الرئيسية</a>
         <a href="{{ url_for('shop') }}"    {% if request.endpoint in ['shop','product']          %}class="on"{% endif %}>المتجر</a>
         <a href="{{ url_for('about') }}"   {% if request.endpoint == 'about'                    %}class="on"{% endif %}>عن سلافة</a>
+        <a href="{{ url_for('track') }}"   {% if request.endpoint == 'track'                    %}class="on"{% endif %}>🔍 تتبع الطلب</a>
         <a href="{{ url_for('contact') }}" {% if request.endpoint == 'contact'                  %}class="on"{% endif %}>تواصل معنا</a>
       </div>
 
@@ -223,6 +224,7 @@
       <a href="{{ url_for('index') }}"   {% if request.endpoint == 'index'           %}class="on"{% endif %}>الرئيسية</a>
       <a href="{{ url_for('shop') }}"    {% if request.endpoint in ['shop','product'] %}class="on"{% endif %}>المتجر</a>
       <a href="{{ url_for('about') }}"   {% if request.endpoint == 'about'           %}class="on"{% endif %}>عن سلافة</a>
+      <a href="{{ url_for('track') }}"   {% if request.endpoint == 'track'           %}class="on"{% endif %}>🔍 تتبع الطلب</a>
       <a href="{{ url_for('contact') }}" {% if request.endpoint == 'contact'         %}class="on"{% endif %}>تواصل معنا</a>
     </div>
   </nav>
@@ -296,11 +298,14 @@
 
   <script>
     // ── Mobile menu ──────────────────────────────────────
-    (function () {
-      const btn  = document.getElementById('hamBtn');
-      const drop = document.getElementById('mobDrop');
+    document.addEventListener('DOMContentLoaded', function () {
+      var btn  = document.getElementById('hamBtn');
+      var drop = document.getElementById('mobDrop');
 
-      btn.addEventListener('click', function () {
+      if (!btn || !drop) return;
+
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
         btn.classList.toggle('open');
         drop.classList.toggle('open');
       });
@@ -313,48 +318,49 @@
           drop.classList.remove('open');
         }
       });
-    })();
+    });
 
     // ── Toast helper ─────────────────────────────────────
     function toast(msg) {
-      const el = document.getElementById('toast');
+      var el = document.getElementById('toast');
       el.textContent = msg;
       el.classList.add('show');
-      setTimeout(() => el.classList.remove('show'), 2800);
+      setTimeout(function () { el.classList.remove('show'); }, 2800);
     }
 
     // ── AJAX add-to-cart ─────────────────────────────────
-    document.querySelectorAll('.js-add').forEach(function (btn) {
-      btn.addEventListener('click', function (e) {
-        e.preventDefault();
-        const form = this.closest('form');
-        if (!form) return;
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('.js-add').forEach(function (addBtn) {
+        addBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          var form = this.closest('form');
+          if (!form) return;
 
-        fetch(form.action, {
-          method: 'POST',
-          body: new FormData(form),
-          headers: { 'X-Fetch': '1' },
-        })
-          .then(r => r.json())
-          .then(function (d) {
-            if (!d.ok) return;
-            toast('✅ أُضيف للسلة!');
-            document.querySelectorAll('.cart-badge').forEach(b => { b.textContent = d.count; });
-            if (d.count > 0 && !document.querySelector('.cart-badge')) {
-              const cartBtn = document.querySelector('.cart-btn');
-              if (cartBtn) {
-                const badge = document.createElement('span');
-                badge.className   = 'cart-badge';
-                badge.textContent = d.count;
-                cartBtn.appendChild(badge);
-              }
-            }
+          fetch(form.action, {
+            method: 'POST',
+            body: new FormData(form),
+            headers: { 'X-Fetch': '1' },
           })
-          .catch(() => toast('❌ حدث خطأ، حاول مرة أخرى'));
+            .then(function (r) { return r.json(); })
+            .then(function (d) {
+              if (!d.ok) return;
+              toast('✅ أُضيف للسلة!');
+              document.querySelectorAll('.cart-badge').forEach(function (b) { b.textContent = d.count; });
+              if (d.count > 0 && !document.querySelector('.cart-badge')) {
+                var cartBtn = document.querySelector('.cart-btn');
+                if (cartBtn) {
+                  var badge = document.createElement('span');
+                  badge.className   = 'cart-badge';
+                  badge.textContent = d.count;
+                  cartBtn.appendChild(badge);
+                }
+              }
+            })
+            .catch(function () {});
+        });
       });
     });
   </script>
 
-  {% block extra_js %}{% endblock %}
 </body>
 </html>
