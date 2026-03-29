@@ -8,7 +8,7 @@ pass:Admin123@
 
 
 
-
+لسحب التحديثات من الجيت هب   :git pull origin main --rebase
 
 add to githup  //فى حاله لورفعت قبل كدا 
 
