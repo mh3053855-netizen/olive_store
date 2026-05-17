@@ -433,58 +433,65 @@
         {% if st == 'cancelled' %}
         <!-- ملغى -->
         <div class="trk-step cancelled-step">
-          <div class="trk-ic">❌</div>
+          <div class="trk-ic"></div>
           <div class="trk-info">
             <h4>تم إلغاء الطلب</h4>
             <p>تم إلغاء طلبك — تواصل معنا لأى استفسار.</p>
-            {% if history.get('cancelled') %}<div class="trk-time">{{ history['cancelled'] }}</div>{% endif %}
           </div>
         </div>
 
         {% else %}
 
         {# المرحلة 1: استلام الطلب #}
-        {% set s1 = 'done' if current_idx > 0 else ('active' if current_idx == 0 else 'pending-step') %}
+        {% set s1 = 'done' if current_idx >= 0 else 'pending-step' %}
+        {% set s1 = 'active' if current_idx == 0 else s1 %}
         <div class="trk-step {{ s1 }}">
-          <div class="trk-ic">{% if current_idx > 0 %}✅{% elif current_idx == 0 %}📋{% else %}⏳{% endif %}</div>
+          <div class="trk-ic">
+            {% if current_idx > 0 %}{% else %}{% if current_idx == 0 %}{% else %}⏳{% endif %}{% endif %}
+            {% if current_idx > 0 %}✅{% elif current_idx == 0 %}📋{% else %}⏳{% endif %}
+          </div>
           <div class="trk-info">
             <h4>تم استلام الطلب</h4>
             <p>وصلنا طلبك وبنراجع بياناته دلوقتي.</p>
-            {% if history.get('confirmed') %}<div class="trk-time">{{ history['confirmed'] }}</div>
-            {% elif current_idx >= 0 %}<div class="trk-time">{{ order['created_at'][:16]|replace('T',' ') }}</div>{% endif %}
+            {% if current_idx >= 0 %}
+            <div class="trk-time">{{ order['created_at'][:16]|replace('T',' ') }}</div>
+            {% endif %}
           </div>
         </div>
 
         {# المرحلة 2: تغليف #}
         {% set s2 = 'done' if current_idx > 1 else ('active' if current_idx == 1 else 'pending-step') %}
         <div class="trk-step {{ s2 }}">
-          <div class="trk-ic">{% if current_idx > 1 %}✅{% elif current_idx == 1 %}📦{% else %}⏳{% endif %}</div>
+          <div class="trk-ic">
+            {% if current_idx > 1 %}✅{% elif current_idx == 1 %}📦{% else %}⏳{% endif %}
+          </div>
           <div class="trk-info">
             <h4>جارى التغليف</h4>
             <p>بنجهز طلبك بعناية ونغلفه بشكل احترافى.</p>
-            {% if history.get('packed') %}<div class="trk-time">{{ history['packed'] }}</div>{% endif %}
           </div>
         </div>
 
         {# المرحلة 3: شحن #}
         {% set s3 = 'done' if current_idx > 2 else ('active' if current_idx == 2 else 'pending-step') %}
         <div class="trk-step {{ s3 }}">
-          <div class="trk-ic">{% if current_idx > 2 %}✅{% elif current_idx == 2 %}🚚{% else %}⏳{% endif %}</div>
+          <div class="trk-ic">
+            {% if current_idx > 2 %}✅{% elif current_idx == 2 %}🚚{% else %}⏳{% endif %}
+          </div>
           <div class="trk-info">
             <h4>فى الطريق إليك</h4>
             <p>طلبك خرج من المستودع وفى الطريق لعنوانك.</p>
-            {% if history.get('shipped') %}<div class="trk-time">{{ history['shipped'] }}</div>{% endif %}
           </div>
         </div>
 
         {# المرحلة 4: تسليم #}
         {% set s4 = 'done' if current_idx >= 3 else 'pending-step' %}
         <div class="trk-step {{ s4 }}">
-          <div class="trk-ic">{% if current_idx >= 3 %}✅{% else %}⏳{% endif %}</div>
+          <div class="trk-ic">
+            {% if current_idx >= 3 %}✅{% else %}⏳{% endif %}
+          </div>
           <div class="trk-info">
             <h4>تم التسليم</h4>
             <p>تم تسليم طلبك بنجاح.</p>
-            {% if history.get('delivered') %}<div class="trk-time">{{ history['delivered'] }}</div>{% endif %}
           </div>
         </div>
 

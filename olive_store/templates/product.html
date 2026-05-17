@@ -76,6 +76,7 @@
         <div class="spec"><label>المخزون</label><span>✅ {{ p['stock'] }}</span></div>
       </div>
       <form action="{{ url_for('cart_add') }}" method="POST" id="pf">
+        
         <input type="hidden" name="pid" value="{{ p['id'] }}">
         <input type="hidden" name="qty" value="1" id="qi">
         <div class="qty-row">
@@ -98,7 +99,6 @@
       </div>
     </div>
   </div>
-
   {% if rel %}
   <div style="margin-top:4rem">
     <div class="s-head"><h2>منتجات مشابهة</h2><div class="line"></div></div>
@@ -119,8 +119,8 @@
           <div class="card-foot" style="margin-top:.75rem">
             <div class="price-now">{{ r['price'] }} جنيه</div>
             <form action="{{ url_for('cart_add') }}" method="POST">
-              <input type="hidden" name="pid" value="{{ r['id'] }}">
-              <input type="hidden" name="qty" value="1">
+              
+              <input type="hidden" name="pid" value="{{ r['id'] }}"><input type="hidden" name="qty" value="1">
               <button type="submit" class="add-btn js-add">أضف</button>
             </form>
           </div>
@@ -130,22 +130,17 @@
     </div>
   </div>
   {% endif %}
-
-  <script>
-    let qv = 1;
-    function chQ(d) {
-      qv = Math.max(1, qv + d);
-      document.getElementById('qval').textContent = qv;
-      document.getElementById('qi').value = qv;
-    }
-    document.getElementById('buynow').addEventListener('click', function(e) {
-      e.preventDefault();
-      fetch('{{ url_for("cart_add") }}', {
-        method: 'POST',
-        body: new FormData(document.getElementById('pf'))
-      }).then(() => window.location = '{{ url_for("checkout") }}');
-    });
-  </script>
-
 </div></div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let qv=1;
+function chQ(d){qv=Math.max(1,qv+d);document.getElementById('qval').textContent=qv;document.getElementById('qi').value=qv;}
+document.getElementById('buynow').addEventListener('click',function(e){
+  e.preventDefault();
+  document.getElementById('pf').submit();
+  setTimeout(()=>window.location='{{ url_for("checkout") }}',300);
+});
+</script>
 {% endblock %}

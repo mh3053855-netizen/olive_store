@@ -38,16 +38,12 @@
       </a>
     </div>
     <div class="about-img">
-      {% if s.about_video %}
-        <video src="{{ s.about_video }}" style="width:100%;height:100%;object-fit:cover;border-radius:var(--r-lg)"
-         autoplay muted loop playsinline></video>
-      {% elif s.about_image %}
+      {% if s.about_image %}
         <img src="{{ s.about_image }}" alt="{{ s.about_title_ar or 'عن سلافة' }}"
-       style="width:100%;height:100%;object-fit:cover;border-radius:var(--r-lg)">
+             style="width:100%;height:100%;object-fit:cover;border-radius:var(--r-lg)">
       {% else %}
         <span style="font-size:11rem">🫒</span>
       {% endif %}
-
     </div>
   </div>
   <div class="stats-grid">

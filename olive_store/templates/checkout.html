@@ -7,7 +7,8 @@
 .co-grid{display:grid;grid-template-columns:1fr 360px;gap:2rem;align-items:start}
 .co-box{background:#fff;border-radius:var(--r-lg);padding:1.8rem;border:1.5px solid var(--border);margin-bottom:1.5rem}
 .co-box h3{font-size:1rem;font-weight:800;color:var(--dark-green);margin-bottom:1.3rem;padding-bottom:.8rem;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:8px}
-.pay-tabs{display:grid;grid-template-columns:{% if s.card_payment_enabled == '1' %}1fr 1fr{% else %}1fr{% endif %};gap:.75rem;margin-bottom:1.5rem}
+/* ── payment tabs ── */
+.pay-tabs{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1.5rem}
 .pay-tab{border:2px solid var(--border);border-radius:var(--r-lg);padding:1rem 1.2rem;cursor:pointer;transition:.2s;background:#fff;display:flex;align-items:center;gap:.75rem;user-select:none}
 .pay-tab:hover{border-color:var(--dark-green)}
 .pay-tab.active{border-color:var(--dark-green);background:linear-gradient(135deg,#f0faf0,#fff)}
@@ -15,6 +16,7 @@
 .pay-tab-info strong{display:block;font-size:.9rem;font-weight:800;color:var(--text)}
 .pay-tab-info span{font-size:.75rem;color:var(--muted)}
 .pay-tab.active .pay-tab-info strong{color:var(--dark-green)}
+/* ── card ── */
 .card-section{background:linear-gradient(135deg,#0f2010,#1a3a1a 50%,#2a6b2a);border-radius:var(--r-lg);padding:2rem;margin-bottom:1.5rem}
 .card-preview{background:linear-gradient(135deg,#b8892a,#d4a843 40%,#f5c030 70%,#d4a843);border-radius:16px;padding:1.5rem 1.7rem;margin-bottom:1.5rem;position:relative;min-height:185px;box-shadow:0 12px 35px rgba(0,0,0,.35)}
 .card-preview::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 20%,rgba(255,255,255,.25),transparent 55%);border-radius:16px}
@@ -30,6 +32,7 @@
 .card-fields .field label{color:rgba(255,255,255,.8)}
 .sec-badges{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.75rem}
 .sb{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);padding:5px 12px;border-radius:50px;font-size:.77rem;font-weight:600}
+/* ── COD ── */
 .cod-box{background:linear-gradient(135deg,#f0faf0,#fff);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:2rem;margin-bottom:1.5rem;text-align:center}
 .cod-icon{font-size:3.5rem;margin-bottom:.75rem}
 .cod-box h3{font-size:1.1rem;font-weight:900;color:var(--dark-green);margin-bottom:.5rem}
@@ -37,6 +40,7 @@
 .cod-steps{display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;margin-top:1rem}
 .cod-step{display:flex;flex-direction:column;align-items:center;gap:.3rem;font-size:.78rem;color:var(--muted);font-weight:600}
 .cod-step-num{width:28px;height:28px;border-radius:50%;background:var(--dark-green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800}
+/* ── summary ── */
 .ord-sum{background:#fff;border-radius:var(--r-lg);padding:1.6rem;border:1.5px solid var(--border);position:sticky;top:90px}
 .ord-sum h3{font-size:1rem;font-weight:800;color:var(--dark-green);margin-bottom:1.1rem}
 .os-item{display:flex;align-items:center;gap:.8rem;padding:.75rem 0;border-bottom:1px solid var(--border)}
@@ -50,60 +54,32 @@
 .ot.grand{font-size:1.1rem;font-weight:900;color:var(--dark-green);margin-top:.5rem;padding-top:.6rem;border-top:2px solid var(--border)}
 .pay-btn{width:100%;padding:14px;border:none;border-radius:var(--r-lg);background:linear-gradient(135deg,var(--gold),var(--gold-bright));color:var(--dark-green);font-family:inherit;font-size:1.05rem;font-weight:900;cursor:pointer;margin-top:1.2rem;transition:.22s;box-shadow:0 5px 18px rgba(200,150,12,.35)}
 .pay-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(200,150,12,.45)}
-.ship-badge{display:inline-flex;align-items:center;gap:.3rem;font-size:.8rem;font-weight:700;padding:.2rem .6rem;border-radius:20px;background:rgba(26,58,26,.1);color:var(--dark-green)}
 @media(max-width:900px){.co-grid{grid-template-columns:1fr}.ord-sum{position:static}}
 @media(max-width:600px){.pay-tabs{grid-template-columns:1fr}}
 </style>
 {% endblock %}
 
 {% block body %}
-
-{# ── بيانات شحن المحافظات تتحول لـ JSON للـ JS ── #}
-<script>
-var GOV_SHIPPING = {
-  {%- set govs = ['القاهرة','الجيزة','الإسكندرية','الشرقية','المنوفية','القليوبية',
-    'الغربية','الدقهلية','الفيوم','أسيوط','سوهاج','قنا',
-    'الأقصر','أسوان','البحيرة','المنيا','بني سويف','دمياط',
-    'بورسعيد','السويس','الإسماعيلية','كفر الشيخ','البحر الأحمر','مطروح',
-    'شمال سيناء','جنوب سيناء','الوادي الجديد'] -%}
-  {%- for gov in govs -%}
-  "{{ gov }}": {{ s['ship_gov_' ~ gov] or s.shipping_cost or 50 }}{% if not loop.last %},{% endif %}
-  {%- endfor %}
-};
-var DEFAULT_SHIP   = {{ s.shipping_cost or 50 }};
-var FREE_THRESHOLD = {{ s.free_shipping_threshold or 500 }};
-var BASE_SUB       = {{ sub }};
-var BASE_TAX       = {{ tax }};
-</script>
-
-<div class="page-head"><h1>إتمام الطلب</h1></div>
+<div class="page-head"><h1> إتمام الطلب</h1></div>
 <div class="co-pg"><div class="wrap">
 <form action="{{ url_for('pay') }}" method="POST" id="checkoutForm">
-  <input type="hidden" name="payment_method" id="paymentMethodInput"
-         value="{{ 'card' if s.card_payment_enabled == '1' else 'cod' }}">
-  <input type="hidden" name="shipping_cost_actual" id="shippingActual" value="{{ ship_cost }}">
+<input type="hidden" name="payment_method" id="paymentMethodInput" value="card">
 
 <div class="co-grid">
   <div>
     <!-- بيانات التوصيل -->
     <div class="co-box">
-      <h3>📦 بيانات التوصيل</h3>
+      <h3> بيانات التوصيل</h3>
       <div class="field-row">
-        <div class="field"><label>الاسم بالكامل *</label>
-          <input type="text" name="full_name" minlength="13" required placeholder="ادخل الاسم ثلاثى">
-        </div>
-        <div class="field"><label>رقم الموبيل *</label>
-          <input type="tel" name="phone" maxlength="11" minlength="11" pattern="\d{11}" required placeholder="رقم الموبيل كامل">
-        </div>
+        <div class="field"><label>الاسم بالكامل *</label><input type="text" name="full_name" minlength="13" required placeholder="ادخل الاسم ثلاثى"></div>
+        <div class="field"><label>رقم الموبيل *</label><input type="tel" name="phone" maxlength="11" minlength="11" pattern="\d{11}" required placeholder="اخل رقم الموبيل كامل"></div>
       </div>
-      <div class="field"><label>العنوان بالتفصيل *</label>
-        <input type="text" name="address" required>
-      </div>
+      <div class="field"><label>العنوان بالتفصيل *</label><input type="text" name="address" required></div>
       <div class="field-row">
         <div class="field">
           <label>المحافظة *</label>
-          <select name="city" id="citySelect" required onchange="updateShipping(this.value)">
-            <option value="">اختر المحافظة...</option>
+          <select name="city" required>
+            <option value="">اختر...</option>
             <option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option>
             <option>الشرقية</option><option>المنوفية</option><option>القليوبية</option>
             <option>الغربية</option><option>الدقهلية</option><option>الفيوم</option>
@@ -115,35 +91,25 @@ var BASE_TAX       = {{ tax }};
             <option>شمال سيناء</option><option>جنوب سيناء</option><option>الوادي الجديد</option>
           </select>
         </div>
-        <div class="field"><label>الرمز البريدى</label>
-          <input type="text" name="postal" inputmode="numeric" pattern="[0-9]*" placeholder="اختيارى" maxlength="5">
-        </div>
+<div class="field"><label>الرمز البريدى</label><input type="text" name="postal" inputmode="numeric" pattern="[0-9]*" placeholder="اختيارى" maxlength="5"></div>
       </div>
     </div>
 
     <!-- طريقة الدفع -->
     <div class="co-box">
-      <h3>💳 طريقة الدفع</h3>
+      <h3> طريقة الدفع</h3>
       <div class="pay-tabs">
-        {% if s.card_payment_enabled == '1' %}
         <div class="pay-tab active" id="tabCard" onclick="switchPayment('card')">
           <span class="pay-tab-icon">💳</span>
-          <div class="pay-tab-info">
-            <strong>بطاقة ائتمان</strong><span>Visa / Mastercard</span>
-          </div>
+          <div class="pay-tab-info"><strong>بطاقة ائتمان</strong><span>Visa / Mastercard</span></div>
         </div>
-        {% endif %}
-        <div class="pay-tab {% if s.card_payment_enabled != '1' %}active{% endif %}"
-             id="tabCod" onclick="switchPayment('cod')">
+        <div class="pay-tab" id="tabCod" onclick="switchPayment('cod')">
           <span class="pay-tab-icon">💵</span>
-          <div class="pay-tab-info">
-            <strong>كاش عند الاستلام</strong><span>ادفع لما الطلب يوصل</span>
-          </div>
+          <div class="pay-tab-info"><strong>كاش عند الاستلام</strong><span>ادفع لما الطلب يوصل</span></div>
         </div>
       </div>
 
-      {# ── قسم البطاقة — يُعرض فقط لو card_payment_enabled == '1' ── #}
-      {% if s.card_payment_enabled == '1' %}
+      <!-- قسم البطاقة -->
       <div id="cardSection" class="card-section">
         <div class="card-preview">
           <div class="c-logo">VISA</div>
@@ -155,37 +121,20 @@ var BASE_TAX       = {{ tax }};
           </div>
         </div>
         <div class="card-fields">
-          <div class="field">
-            <label>رقم البطاقة</label>
-            <input type="text" name="card_number" id="in_card" placeholder="0000 0000 0000 0000" required>
-          </div>
-          <div class="field">
-            <label>الاسم على البطاقة</label>
-            <input type="text" name="card_name" id="inm" placeholder="مثلا Mohamed Ahmed" required>
-          </div>
+          <div class="field"><label>رقم البطاقة</label><input type="text" name="card_number" id="in_card" placeholder="0000 0000 0000 0000"  required></div>
+          <div class="field"><label>الاسم على البطاقة</label><input type="text" name="card_name" id="inm" placeholder="مثلا mohamed ahmed" required></div>
           <div class="field-row">
-            <div class="field">
-              <label>تاريخ الانتهاء</label>
-              <input type="text" name="expiry" id="iex" placeholder="MM/YY" maxlength="5" required>
-            </div>
-            <div class="field">
-              <label>CVV</label>
-              <input type="password" name="cvv" id="cvvInput" inputmode="numeric"
-                     pattern="[0-9]{3}" placeholder="•••" maxlength="3" minlength="3" required>
-            </div>
+            <div class="field"><label>تاريخ الانتهاء</label><input type="text" name="expiry" id="iex" placeholder="MM/YY" maxlength="5" required></div>
+            <div class="field"><label>CVV</label><input type="password" name="cvv" id="cvvInput" inputmode="numeric" pattern="[0-9]{3}" placeholder="•••" maxlength="3" minlength="3" required></div>
           </div>
         </div>
         <div class="sec-badges">
-          <span class="sb">🔒 SSL</span>
-          <span class="sb">✅ Visa Verified</span>
-          <span class="sb">🛡️ 3D Secure</span>
+          <span class="sb"> SSL</span><span class="sb"> Visa Verified</span><span class="sb">️ 3D Secure</span>
         </div>
       </div>
-      {% endif %}
 
-      {# ── قسم الكاش ── #}
-      <div id="codSection" class="cod-box"
-           {% if s.card_payment_enabled == '1' %}style="display:none"{% endif %}>
+      <!-- قسم الكاش -->
+      <div id="codSection" class="cod-box" style="display:none">
         <div class="cod-icon">💵</div>
         <h3>الدفع كاش عند الاستلام</h3>
         <p>استلم طلبك وادفع للمندوب نقداً<br>بدون أى رسوم إضافية</p>
@@ -205,9 +154,7 @@ var BASE_TAX       = {{ tax }};
     <div class="os-item">
       <div class="os-emoji" style="background:#f0f4f0;border-radius:8px;overflow:hidden">
         {% if item["photo"] %}
-          <img src="{{ item['photo'] }}" alt="{{ item['name_ar'] }}"
-               style="width:44px;height:44px;object-fit:cover;display:block"
-               onerror="this.parentElement.style.background='#e8ede8';this.remove()">
+          <img src="{{ item['photo'] }}" alt="{{ item['name_ar'] }}" style="width:44px;height:44px;object-fit:cover;display:block" onerror="this.parentElement.style.background='#e8ede8';this.remove()">
         {% else %}
           <div style="width:44px;height:44px"></div>
         {% endif %}
@@ -219,108 +166,50 @@ var BASE_TAX       = {{ tax }};
       <div class="os-pr">{{ (item["price"]*item["quantity"])|int }} جنيه</div>
     </div>
     {% endfor %}
-
     <div class="os-totals">
-      <div class="ot">
-        <span>المجموع</span><span>{{ sub|int }} جنيه</span>
-      </div>
-      <div class="ot">
-        <span>ضريبة {{ tax_rate }}%</span><span>{{ tax|int }} جنيه</span>
-      </div>
+      <div class="ot"><span>المجموع</span><span>{{ sub }} جنيه</span></div>
+      <div class="ot"><span>ضريبة {{ tax_rate }}%</span><span>{{ tax }} جنيه</span></div>
       <div class="ot">
         <span>الشحن</span>
-        <span id="shipDisplay">
-          {% if sub >= free_thresh %}
-            <span style="color:var(--mid-green);font-weight:800">مجانى 🎉</span>
-          {% else %}
-            <span class="ship-badge">🚚 اختر المحافظة</span>
-          {% endif %}
+        <span style="{% if sub >= free_thresh %}color:var(--mid-green);font-weight:800{% endif %}">
+          {% if sub >= free_thresh %}مجانى {% else %}{{ ship_cost|int }} جنيه{% endif %}
         </span>
       </div>
-      <div class="ot grand">
-        <span>الإجمالى</span>
-        <span id="grandDisplay">{{ (sub + tax)|int }} جنيه</span>
-      </div>
+      <div class="ot grand"><span>الإجمالى</span><span>{{ total }} جنيه</span></div>
     </div>
-
-    <button type="submit" class="pay-btn" id="submitBtn">
-      {% if s.card_payment_enabled == '1' %}💳 ادفع وأكد الطلب
-      {% else %}✅ أكد الطلب (كاش){% endif %}
-    </button>
-    <p style="text-align:center;font-size:.77rem;color:var(--muted);margin-top:.6rem">
-      🔒 بياناتك محمية ومشفرة
-    </p>
+    <button type="submit" class="pay-btn" id="submitBtn"> ادفع وأكد الطلب</button>
+    <p style="text-align:center;font-size:.77rem;color:var(--muted);margin-top:.6rem"> بياناتك محمية ومشفرة</p>
   </div>
 </div>
 </form>
 </div></div>
-
 <script>
-/* ══════════════════════════════════
-   شحن ديناميكى حسب المحافظة
-══════════════════════════════════ */
-function updateShipping(city) {
-  var isFree = BASE_SUB >= FREE_THRESHOLD;
-  var shipCost = (city && GOV_SHIPPING[city] !== undefined)
-                 ? parseFloat(GOV_SHIPPING[city])
-                 : DEFAULT_SHIP;
-  var actualShip = isFree ? 0 : shipCost;
-  var grand = BASE_SUB + BASE_TAX + actualShip;
-
-  document.getElementById('shippingActual').value = actualShip;
-
-  var shipEl = document.getElementById('shipDisplay');
-  if (isFree) {
-    shipEl.innerHTML = '<span style="color:var(--mid-green);font-weight:800">مجانى 🎉</span>';
-  } else if (!city) {
-    shipEl.innerHTML = '<span class="ship-badge">🚚 اختر المحافظة</span>';
-  } else {
-    shipEl.innerHTML = '<strong>' + actualShip + ' جنيه</strong>';
-  }
-
-  document.getElementById('grandDisplay').textContent =
-    (!city && !isFree) ? '—' : (Math.round(grand) + ' جنيه');
-}
-
-{% if s.card_payment_enabled == '1' %}
-/* ══════════════════════════════════
-   تبديل طريقة الدفع (بطاقة / كاش)
-══════════════════════════════════ */
-function switchPayment(method) {
-  var isCard = method === 'card';
+function switchPayment(method){
+  const isCard = method==='card';
   document.getElementById('paymentMethodInput').value = method;
-  document.getElementById('cardSection').style.display = isCard ? 'block' : 'none';
-  document.getElementById('codSection').style.display  = isCard ? 'none'  : 'block';
-  document.getElementById('tabCard').classList.toggle('active',  isCard);
-  document.getElementById('tabCod').classList.toggle('active', !isCard);
-  document.getElementById('submitBtn').textContent =
-    isCard ? '💳 ادفع وأكد الطلب' : '✅ أكد الطلب (كاش)';
-  ['in_card','inm','iex','cvvInput'].forEach(function(id){
-    var el = document.getElementById(id);
-    if (el) el.required = isCard;
+  document.getElementById('cardSection').style.display = isCard?'block':'none';
+  document.getElementById('codSection').style.display  = isCard?'none':'block';
+  document.getElementById('tabCard').classList.toggle('active',isCard);
+  document.getElementById('tabCod').classList.toggle('active',!isCard);
+  document.getElementById('submitBtn').textContent = isCard?' ادفع وأكد الطلب':' أكد الطلب (كاش)';
+  ['in_card','inm','iex','cvvInput'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.required=isCard;
   });
 }
-
-/* ══ معاينة البطاقة ══ */
-var n=document.getElementById('in_card'), nm=document.getElementById('inm'),
-    ex=document.getElementById('iex'),   dn=document.getElementById('dn'),
-    dnm=document.getElementById('dnm'),  dex=document.getElementById('dex');
-
+const n=document.getElementById('in_card'),nm=document.getElementById('inm'),ex=document.getElementById('iex');
+const dn=document.getElementById('dn'),dnm=document.getElementById('dnm'),dex=document.getElementById('dex');
 n.addEventListener('input',function(){
-  var v=this.value.replace(/\D/g,'').substring(0,16);
+  let v=this.value.replace(/\D/g,'').substring(0,16);
   this.value=v.replace(/(.{4})/g,'$1 ').trim();
-  var d=''; for(var i=0;i<16;i++){if(i>0&&i%4===0)d+=' '; d+=i<v.length?v[i]:'•';}
+  let d='';for(let i=0;i<16;i++){if(i>0&&i%4===0)d+=' ';d+=i<v.length?v[i]:'•';}
   dn.textContent=d;
 });
-nm.addEventListener('input',function(){ dnm.textContent=this.value.toUpperCase()||'FULL NAME'; });
+nm.addEventListener('input',function(){dnm.textContent=this.value.toUpperCase()||'FULL NAME';});
 ex.addEventListener('input',function(){
-  var v=this.value.replace(/\D/g,'').substring(0,4);
-  if(v.length>=3) v=v.substring(0,2)+'/'+v.substring(2);
-  this.value=v; dex.textContent=v||'MM/YY';
+  let v=this.value.replace(/\D/g,'').substring(0,4);
+  if(v.length>=3)v=v.substring(0,2)+'/'+v.substring(2);
+  this.value=v;dex.textContent=v||'MM/YY';
 });
-{% else %}
-/* كاش فقط — لا بطاقة */
-function switchPayment(){}
-{% endif %}
 </script>
 {% endblock %}

@@ -38,16 +38,7 @@
 .img-dz .dl{color:var(--gold);text-decoration:underline}
 .img-dz .dh{font-size:.7rem;color:var(--muted);pointer-events:none}
 .img-dz .dp{max-width:100%;max-height:86px;border-radius:6px;object-fit:contain;pointer-events:none}
-.img-dz .dv{max-width:100%;max-height:86px;border-radius:6px;object-fit:contain;pointer-events:none}
 @media(max-width:600px){.img-box-grid{grid-template-columns:1fr}}
-/* ── media type badge ── */
-.media-badge{display:inline-flex;align-items:center;gap:.3rem;font-size:.68rem;font-weight:700;padding:.25rem .6rem;border-radius:20px;margin-top:.4rem}
-.media-badge.img{background:rgba(201,168,76,.15);color:var(--gold);border:1px solid rgba(201,168,76,.3)}
-.media-badge.vid{background:rgba(99,179,237,.15);color:#63b3ed;border:1px solid rgba(99,179,237,.3)}
-.img-cur-vid{width:120px;height:96px;border-radius:8px;border:1px solid var(--border);display:block;object-fit:cover}
-.media-type-select{display:flex;gap:.5rem;margin-bottom:.8rem}
-.mtype-btn{flex:1;padding:.45rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--muted);font-size:.8rem;font-weight:700;cursor:pointer;transition:.18s;text-align:center}
-.mtype-btn.active{border-color:var(--gold);background:rgba(201,168,76,.12);color:var(--gold)}
 </style>
 {% endblock %}
 {% block content %}
@@ -461,65 +452,8 @@
     <div class="field"><label>أقصى كمية فى الطلب</label><input type="number" name="max_qty" value="{{ s.max_qty or 10 }}" min="1"></div>
   </div>
 </div>
-
-<div class="s-card" style="max-width:600px">
-  <h3>💳 طرق الدفع</h3>
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem 1.2rem;background:var(--bg);border-radius:10px;border:1px solid var(--border)">
-    <div>
-      <div style="font-size:.92rem;font-weight:700;color:var(--text)">💳 الدفع بالبطاقة (Visa / Mastercard)</div>
-      <div style="font-size:.78rem;color:var(--muted);margin-top:.25rem">تفعيل أو إيقاف خيار الدفع بالبطاقة في صفحة الدفع</div>
-    </div>
-    <label style="position:relative;display:inline-block;width:52px;height:28px;flex-shrink:0;margin-right:1rem">
-      <input type="checkbox" name="card_payment_enabled" value="1"
-             id="cardToggle"
-             {% if s.card_payment_enabled == '1' %}checked{% endif %}
-             style="opacity:0;width:0;height:0">
-      <span id="cardToggleTrack" style="position:absolute;cursor:pointer;inset:0;background:{{ '#1a3a1a' if s.card_payment_enabled == '1' else '#ccc' }};border-radius:28px;transition:.3s">
-        <span id="cardToggleThumb" style="position:absolute;height:22px;width:22px;right:{{ '3px' if s.card_payment_enabled == '1' else '27px' }};bottom:3px;background:#fff;border-radius:50%;transition:.3s;box-shadow:0 1px 4px rgba(0,0,0,.2)"></span>
-      </span>
-    </label>
-  </div>
-  <p style="font-size:.77rem;color:var(--muted);margin-top:.75rem;padding:.6rem .8rem;background:rgba(201,168,76,.08);border-radius:8px;border:1px solid rgba(201,168,76,.2)">
-    💡 لو أوقفت الدفع بالبطاقة، هيظهر للعميل كاش عند الاستلام فقط
-  </p>
-</div>
 </div>
 
-
-<!-- ══ قسم شحن المحافظات ══ -->
-<div class="s-card" style="max-width:700px">
-  <h3>🗺️ تكلفة الشحن لكل محافظة</h3>
-  <p style="font-size:.82rem;color:var(--muted);margin-bottom:1.2rem">
-    حدد تكلفة شحن مخصصة لكل محافظة — إذا تركتها فارغة سيُطبَّق سعر الشحن الافتراضى أعلاه.
-  </p>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem">
-    {% set govs = [
-      'القاهرة','الجيزة','الإسكندرية','الشرقية','المنوفية','القليوبية',
-      'الغربية','الدقهلية','الفيوم','أسيوط','سوهاج','قنا',
-      'الأقصر','أسوان','البحيرة','المنيا','بني سويف','دمياط',
-      'بورسعيد','السويس','الإسماعيلية','كفر الشيخ','البحر الأحمر','مطروح',
-      'شمال سيناء','جنوب سيناء','الوادي الجديد'
-    ] %}
-    {% for gov in govs %}
-    {% set key = 'ship_gov_' ~ loop.index %}
-    <div style="display:flex;align-items:center;gap:.5rem;background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:.5rem .8rem">
-      <label style="font-size:.82rem;font-weight:700;color:var(--text);flex:1;margin:0">{{ gov }}</label>
-      <div style="display:flex;align-items:center;gap:.3rem">
-        <input type="number" name="ship_gov_{{ gov }}"
-               value="{{ s['ship_gov_' ~ gov] or '' }}"
-               placeholder="{{ s.shipping_cost or 50 }}"
-               min="0" style="width:80px;text-align:center;padding:.3rem .4rem;font-size:.85rem;
-                              border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--text)">
-        <span style="font-size:.75rem;color:var(--muted)">جنيه</span>
-      </div>
-    </div>
-    {% endfor %}
-  </div>
-  <p style="font-size:.76rem;color:var(--muted);margin-top:1rem;padding:.6rem .8rem;background:rgba(201,168,76,.08);border-radius:8px;border:1px solid rgba(201,168,76,.2)">
-    💡 القيمة الفارغة = سعر الشحن الافتراضى ({{ s.shipping_cost or 50 }} جنيه)
-  </p>
-</div>
-</div>
 
 <!-- ══ TAB: IMAGES ══ -->
 <div class="s-section" id="tab-images">
@@ -529,187 +463,80 @@
     ارفع صورة لكل موضع — تظهر في الموقع بدل الأيقونة تلقائياً.
   </p>
 
-  <!-- صورة/فيديو Hero -->
+  <!-- صورة Hero -->
   <div class="img-box">
-    <div class="img-box-lbl">صورة أو فيديو الصفحة الرئيسية (Hero)</div>
-    <p class="img-box-hint">تظهر على يمين العنوان الكبير في الصفحة الرئيسية — يمكن رفع صورة أو فيديو</p>
-    <!-- اختيار النوع -->
-    <div class="media-type-select" id="mtype-hero">
-      <button type="button" class="mtype-btn active" onclick="setMediaType('hero','image',this)">🖼️ صورة</button>
-      <button type="button" class="mtype-btn" onclick="setMediaType('hero','video',this)">🎬 فيديو</button>
-    </div>
+    <div class="img-box-lbl">صورة الصفحة الرئيسية (Hero)</div>
+    <p class="img-box-hint">تظهر على يمين العنوان الكبير في الصفحة الرئيسية</p>
     <div class="img-box-grid">
       <div>
-        {% if s.hero_video %}
-          <video src="{{ s.hero_video }}" class="img-cur-vid" muted loop autoplay playsinline></video>
-          <div class="media-badge vid">🎬 فيديو</div>
-        {% elif s.hero_image %}<img src="{{ s.hero_image }}" class="img-cur" alt="">
-          <div class="media-badge img">🖼️ صورة</div>
-        {% else %}<div class="img-empty">لا يوجد<br>ميديا</div>{% endif %}
+        {% if s.hero_image %}<img src="{{ s.hero_image }}" class="img-cur" alt="">
+        <div style="font-size:.65rem;color:var(--muted);text-align:center;margin-top:.3rem">الحالية</div>
+        {% else %}<div class="img-empty">لا توجد<br>صورة</div>{% endif %}
       </div>
-      <!-- منطقة رفع الصورة -->
       <label class="img-dz" id="dz-hero"
         ondragover="event.preventDefault();this.classList.add('drag')"
         ondragleave="this.classList.remove('drag')"
-        ondrop="dzDropMedia(event,'dz-hero','inp-hero','pv-hero','pvv-hero')">
+        ondrop="dzDrop(event,'dz-hero','inp-hero','pv-hero')">
         <input type="file" name="hero_image_file" id="inp-hero" accept="image/*" style="display:none"
-               onchange="dzShowMedia(this,'dz-hero','pv-hero','pvv-hero')">
-        <span class="di">🖼️</span>
+               onchange="dzShow(this,'dz-hero','pv-hero')">
+        <span class="di">📁</span>
         <span class="dt">اسحب الصورة هنا أو <span class="dl">اختر من الجهاز</span></span>
         <span class="dh">PNG · JPG · WEBP — حد أقصى 5MB</span>
         <img id="pv-hero" class="dp" src="" style="display:none" alt="">
-        <video id="pvv-hero" class="dv" style="display:none" muted loop autoplay playsinline></video>
-      </label>
-      <!-- منطقة رفع الفيديو (مخفية في البداية) -->
-      <label class="img-dz" id="dz-hero-vid" style="display:none"
-        ondragover="event.preventDefault();this.classList.add('drag')"
-        ondragleave="this.classList.remove('drag')"
-        ondrop="dzDropMedia(event,'dz-hero-vid','inp-hero-vid','pv-hero-vid2','pvv-hero-vid')">
-        <input type="file" name="hero_video_file" id="inp-hero-vid" accept="video/mp4,video/webm,video/ogg" style="display:none"
-               onchange="dzShowMedia(this,'dz-hero-vid','pv-hero-vid2','pvv-hero-vid')">
-        <span class="di">🎬</span>
-        <span class="dt">اسحب الفيديو هنا أو <span class="dl">اختر من الجهاز</span></span>
-        <span class="dh">MP4 · WEBM — حد أقصى 50MB</span>
-        <img id="pv-hero-vid2" class="dp" src="" style="display:none" alt="">
-        <video id="pvv-hero-vid" class="dv" style="display:none" muted loop autoplay playsinline></video>
       </label>
     </div>
   </div>
 
-  <!-- صورة/فيديو about -->
+  <!-- صورة about -->
   <div class="img-box">
-    <div class="img-box-lbl">صورة أو فيديو صفحة "عن سلافة"</div>
+    <div class="img-box-lbl">صورة صفحة "عن سلافة"</div>
     <p class="img-box-hint">تظهر بجانب النص في صفحة "عن سلافة"</p>
-    <div class="media-type-select" id="mtype-about">
-      <button type="button" class="mtype-btn active" onclick="setMediaType('about','image',this)">🖼️ صورة</button>
-      <button type="button" class="mtype-btn" onclick="setMediaType('about','video',this)">🎬 فيديو</button>
-    </div>
     <div class="img-box-grid">
       <div>
-        {% if s.about_video %}
-          <video src="{{ s.about_video }}" class="img-cur-vid" muted loop autoplay playsinline></video>
-          <div class="media-badge vid">🎬 فيديو</div>
-        {% elif s.about_image %}<img src="{{ s.about_image }}" class="img-cur" alt="">
-          <div class="media-badge img">🖼️ صورة</div>
-        {% else %}<div class="img-empty">لا يوجد<br>ميديا</div>{% endif %}
+        {% if s.about_image %}<img src="{{ s.about_image }}" class="img-cur" alt="">
+        <div style="font-size:.65rem;color:var(--muted);text-align:center;margin-top:.3rem">الحالية</div>
+        {% else %}<div class="img-empty">لا توجد<br>صورة</div>{% endif %}
       </div>
       <label class="img-dz" id="dz-about"
         ondragover="event.preventDefault();this.classList.add('drag')"
         ondragleave="this.classList.remove('drag')"
-        ondrop="dzDropMedia(event,'dz-about','inp-about','pv-about','pvv-about')">
+        ondrop="dzDrop(event,'dz-about','inp-about','pv-about')">
         <input type="file" name="about_image_file" id="inp-about" accept="image/*" style="display:none"
-               onchange="dzShowMedia(this,'dz-about','pv-about','pvv-about')">
-        <span class="di">🖼️</span>
+               onchange="dzShow(this,'dz-about','pv-about')">
+        <span class="di">📁</span>
         <span class="dt">اسحب الصورة هنا أو <span class="dl">اختر من الجهاز</span></span>
         <span class="dh">PNG · JPG · WEBP — حد أقصى 5MB</span>
         <img id="pv-about" class="dp" src="" style="display:none" alt="">
-        <video id="pvv-about" class="dv" style="display:none" muted loop autoplay playsinline></video>
-      </label>
-      <label class="img-dz" id="dz-about-vid" style="display:none"
-        ondragover="event.preventDefault();this.classList.add('drag')"
-        ondragleave="this.classList.remove('drag')"
-        ondrop="dzDropMedia(event,'dz-about-vid','inp-about-vid','pv-about-vid2','pvv-about-vid')">
-        <input type="file" name="about_video_file" id="inp-about-vid" accept="video/mp4,video/webm,video/ogg" style="display:none"
-               onchange="dzShowMedia(this,'dz-about-vid','pv-about-vid2','pvv-about-vid')">
-        <span class="di">🎬</span>
-        <span class="dt">اسحب الفيديو هنا أو <span class="dl">اختر من الجهاز</span></span>
-        <span class="dh">MP4 · WEBM — حد أقصى 50MB</span>
-        <img id="pv-about-vid2" class="dp" src="" style="display:none" alt="">
-        <video id="pvv-about-vid" class="dv" style="display:none" muted loop autoplay playsinline></video>
       </label>
     </div>
   </div>
 
-  <!-- صورة/فيديو benefits -->
+  <!-- صورة benefits -->
   <div class="img-box">
-    <div class="img-box-lbl">صورة أو فيديو قسم الفوائد (الصفحة الرئيسية)</div>
+    <div class="img-box-lbl">صورة قسم الفوائد (الصفحة الرئيسية)</div>
     <p class="img-box-hint">تظهر في قسم "اكتشف فوائد زيوت سلافة"</p>
-    <div class="media-type-select" id="mtype-ben">
-      <button type="button" class="mtype-btn active" onclick="setMediaType('ben','image',this)">🖼️ صورة</button>
-      <button type="button" class="mtype-btn" onclick="setMediaType('ben','video',this)">🎬 فيديو</button>
-    </div>
     <div class="img-box-grid">
       <div>
-        {% if s.benefits_video %}
-          <video src="{{ s.benefits_video }}" class="img-cur-vid" muted loop autoplay playsinline></video>
-          <div class="media-badge vid">🎬 فيديو</div>
-        {% elif s.benefits_image %}<img src="{{ s.benefits_image }}" class="img-cur" alt="">
-          <div class="media-badge img">🖼️ صورة</div>
-        {% else %}<div class="img-empty">لا يوجد<br>ميديا</div>{% endif %}
+        {% if s.benefits_image %}<img src="{{ s.benefits_image }}" class="img-cur" alt="">
+        <div style="font-size:.65rem;color:var(--muted);text-align:center;margin-top:.3rem">الحالية</div>
+        {% else %}<div class="img-empty">لا توجد<br>صورة</div>{% endif %}
       </div>
       <label class="img-dz" id="dz-ben"
         ondragover="event.preventDefault();this.classList.add('drag')"
         ondragleave="this.classList.remove('drag')"
-        ondrop="dzDropMedia(event,'dz-ben','inp-ben','pv-ben','pvv-ben')">
+        ondrop="dzDrop(event,'dz-ben','inp-ben','pv-ben')">
         <input type="file" name="benefits_image_file" id="inp-ben" accept="image/*" style="display:none"
-               onchange="dzShowMedia(this,'dz-ben','pv-ben','pvv-ben')">
-        <span class="di">🖼️</span>
+               onchange="dzShow(this,'dz-ben','pv-ben')">
+        <span class="di">📁</span>
         <span class="dt">اسحب الصورة هنا أو <span class="dl">اختر من الجهاز</span></span>
         <span class="dh">PNG · JPG · WEBP — حد أقصى 5MB</span>
         <img id="pv-ben" class="dp" src="" style="display:none" alt="">
-        <video id="pvv-ben" class="dv" style="display:none" muted loop autoplay playsinline></video>
-      </label>
-      <label class="img-dz" id="dz-ben-vid" style="display:none"
-        ondragover="event.preventDefault();this.classList.add('drag')"
-        ondragleave="this.classList.remove('drag')"
-        ondrop="dzDropMedia(event,'dz-ben-vid','inp-ben-vid','pv-ben-vid2','pvv-ben-vid')">
-        <input type="file" name="benefits_video_file" id="inp-ben-vid" accept="video/mp4,video/webm,video/ogg" style="display:none"
-               onchange="dzShowMedia(this,'dz-ben-vid','pv-ben-vid2','pvv-ben-vid')">
-        <span class="di">🎬</span>
-        <span class="dt">اسحب الفيديو هنا أو <span class="dl">اختر من الجهاز</span></span>
-        <span class="dh">MP4 · WEBM — حد أقصى 50MB</span>
-        <img id="pv-ben-vid2" class="dp" src="" style="display:none" alt="">
-        <video id="pvv-ben-vid" class="dv" style="display:none" muted loop autoplay playsinline></video>
       </label>
     </div>
   </div>
 
-  <!-- فيديو/صورة ترويجى (جديد) -->
-  <div class="img-box">
-    <div class="img-box-lbl">🆕 فيديو / صورة ترويجية (بروموشن)</div>
-    <p class="img-box-hint">يمكن استخدامه في قسم بروموشن أو بانر خاص داخل الموقع</p>
-    <div class="media-type-select" id="mtype-promo">
-      <button type="button" class="mtype-btn active" onclick="setMediaType('promo','image',this)">🖼️ صورة</button>
-      <button type="button" class="mtype-btn" onclick="setMediaType('promo','video',this)">🎬 فيديو</button>
-    </div>
-    <div class="img-box-grid">
-      <div>
-        {% if s.promo_video %}
-          <video src="{{ s.promo_video }}" class="img-cur-vid" muted loop autoplay playsinline></video>
-          <div class="media-badge vid">🎬 فيديو</div>
-        {% elif s.promo_image %}<img src="{{ s.promo_image }}" class="img-cur" alt="">
-          <div class="media-badge img">🖼️ صورة</div>
-        {% else %}<div class="img-empty">لا يوجد<br>ميديا</div>{% endif %}
-      </div>
-      <label class="img-dz" id="dz-promo"
-        ondragover="event.preventDefault();this.classList.add('drag')"
-        ondragleave="this.classList.remove('drag')"
-        ondrop="dzDropMedia(event,'dz-promo','inp-promo','pv-promo','pvv-promo')">
-        <input type="file" name="promo_image_file" id="inp-promo" accept="image/*" style="display:none"
-               onchange="dzShowMedia(this,'dz-promo','pv-promo','pvv-promo')">
-        <span class="di">🖼️</span>
-        <span class="dt">اسحب الصورة هنا أو <span class="dl">اختر من الجهاز</span></span>
-        <span class="dh">PNG · JPG · WEBP — حد أقصى 5MB</span>
-        <img id="pv-promo" class="dp" src="" style="display:none" alt="">
-        <video id="pvv-promo" class="dv" style="display:none" muted loop autoplay playsinline></video>
-      </label>
-      <label class="img-dz" id="dz-promo-vid" style="display:none"
-        ondragover="event.preventDefault();this.classList.add('drag')"
-        ondragleave="this.classList.remove('drag')"
-        ondrop="dzDropMedia(event,'dz-promo-vid','inp-promo-vid','pv-promo-vid2','pvv-promo-vid')">
-        <input type="file" name="promo_video_file" id="inp-promo-vid" accept="video/mp4,video/webm,video/ogg" style="display:none"
-               onchange="dzShowMedia(this,'dz-promo-vid','pv-promo-vid2','pvv-promo-vid')">
-        <span class="di">🎬</span>
-        <span class="dt">اسحب الفيديو هنا أو <span class="dl">اختر من الجهاز</span></span>
-        <span class="dh">MP4 · WEBM — حد أقصى 50MB</span>
-        <img id="pv-promo-vid2" class="dp" src="" style="display:none" alt="">
-        <video id="pvv-promo-vid" class="dv" style="display:none" muted loop autoplay playsinline></video>
-      </label>
-    </div>
-  </div>
-
-</div><!-- end s-card -->
-</div><!-- end tab-images -->
+</div>
+</div>
 
 <div class="save-bar">
   <p>💡 كل التغييرات ستظهر فى الموقع فوراً بعد الحفظ</p>
@@ -745,55 +572,24 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-/* ── media upload (image + video) ── */
-function dzShowMedia(inp, dzId, pvImgId, pvVidId) {
-  var f = inp.files[0]; if (!f) return;
-  var isVideo = f.type.startsWith('video/');
-  var maxSize = isVideo ? 50 * 1024 * 1024 : 5 * 1024 * 1024;
-  var maxLabel = isVideo ? '50MB' : '5MB';
-  if (f.size > maxSize) { alert('الملف أكبر من ' + maxLabel); inp.value = ''; return; }
-  var dz = document.getElementById(dzId);
-  dz.querySelectorAll('.di,.dt,.dh').forEach(function(el) { el.style.display = 'none'; });
-  if (isVideo) {
-    var pv = document.getElementById(pvImgId); if(pv) pv.style.display = 'none';
-    var pvv = document.getElementById(pvVidId);
-    if (pvv) { pvv.src = URL.createObjectURL(f); pvv.style.display = 'block'; pvv.load(); pvv.play(); }
-  } else {
-    var pvv2 = document.getElementById(pvVidId); if(pvv2) pvv2.style.display = 'none';
-    var r = new FileReader();
-    r.onload = function(e) {
-      var pv2 = document.getElementById(pvImgId); if(pv2) { pv2.src = e.target.result; pv2.style.display = 'block'; }
-    };
-    r.readAsDataURL(f);
-  }
+/* ── image upload ── */
+function dzShow(inp,dzId,pvId){
+  var f=inp.files[0]; if(!f)return;
+  if(f.size>5*1024*1024){alert('الصورة أكبر من 5MB');inp.value='';return;}
+  var r=new FileReader();
+  r.onload=function(e){
+    var dz=document.getElementById(dzId);
+    dz.querySelectorAll('.di,.dt,.dh').forEach(function(el){el.style.display='none';});
+    var pv=document.getElementById(pvId); pv.src=e.target.result; pv.style.display='block';
+  };
+  r.readAsDataURL(f);
 }
-function dzDropMedia(e, dzId, inpId, pvImgId, pvVidId) {
+function dzDrop(e,dzId,inpId,pvId){
   e.preventDefault(); document.getElementById(dzId).classList.remove('drag');
-  var files = e.dataTransfer.files; if (!files.length) return;
-  var inp = document.getElementById(inpId);
-  try { var dt = new DataTransfer(); dt.items.add(files[0]); inp.files = dt.files; } catch(ex) {}
-  dzShowMedia(inp, dzId, pvImgId, pvVidId);
-}
-/* ── keep old dzShow/dzDrop for backward compat ── */
-function dzShow(inp,dzId,pvId){ dzShowMedia(inp,dzId,pvId,null); }
-function dzDrop(e,dzId,inpId,pvId){ dzDropMedia(e,dzId,inpId,pvId,null); }
-
-/* ── media type switcher ── */
-function setMediaType(key, type, btn) {
-  // update buttons
-  var container = btn.closest('.media-type-select');
-  container.querySelectorAll('.mtype-btn').forEach(function(b) { b.classList.remove('active'); });
-  btn.classList.add('active');
-  // show/hide the right drop zone
-  var imgDz = document.getElementById('dz-' + key);
-  var vidDz = document.getElementById('dz-' + key + '-vid');
-  if (type === 'image') {
-    if (imgDz) imgDz.style.display = '';
-    if (vidDz) vidDz.style.display = 'none';
-  } else {
-    if (imgDz) imgDz.style.display = 'none';
-    if (vidDz) vidDz.style.display = '';
-  }
+  var files=e.dataTransfer.files; if(!files.length)return;
+  var inp=document.getElementById(inpId);
+  try{var dt=new DataTransfer();dt.items.add(files[0]);inp.files=dt.files;}catch(ex){}
+  dzShow(inp,dzId,pvId);
 }
 
 /* ── tabs ── */
@@ -837,22 +633,6 @@ function delCat(btn) {
     });
     catIdx = document.querySelectorAll('.cat-row').length;
   }, 200);
-}
-
-// toggle الدفع بالبطاقة
-const cardToggle = document.getElementById('cardToggle');
-if(cardToggle){
-  cardToggle.addEventListener('change', function(){
-    const track = document.getElementById('cardToggleTrack');
-    const thumb = document.getElementById('cardToggleThumb');
-    if(this.checked){
-      track.style.background = '#1a3a1a';
-      thumb.style.right = '3px';
-    } else {
-      track.style.background = '#ccc';
-      thumb.style.right = '27px';
-    }
-  });
 }
 </script>
 {% endblock %}

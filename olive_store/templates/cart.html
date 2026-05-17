@@ -44,10 +44,7 @@
         {% if item["photo"] %}
           <img src="{{ item['photo'] }}" alt="{{ item['name_ar'] }}"
                style="width:100%;height:100%;object-fit:cover;border-radius:10px"
-               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-          <span style="display:none;font-size:2.2rem;align-items:center;justify-content:center;width:100%;height:100%">{{ item["image"] or '🫒' }}</span>
-        {% else %}
-          {{ item["image"] or '🫒' }}
+               onerror="this.parentElement.style.background='#f0f4f0';this.remove()">
         {% endif %}
       </div>
       <div style="flex:1">
@@ -56,13 +53,13 @@
       </div>
       <div class="ci-ctrl">
         <form action="{{ url_for('cart_update') }}" method="POST" style="display:inline">
-          <input type="hidden" name="cid" value="{{ item["id"] }}" >
+          <input type="hidden" name="cid" value="{{ item["id"] }}">
           <input type="hidden" name="action" value="-">
           <button class="c-btn">−</button>
         </form>
         <span class="ci-qty">{{ item["quantity"] }}</span>
         <form action="{{ url_for('cart_update') }}" method="POST" style="display:inline">
-          <input type="hidden" name="cid" value="{{ item["id"] }}" >
+          <input type="hidden" name="cid" value="{{ item["id"] }}">
           <input type="hidden" name="action" value="+">
           <button class="c-btn">+</button>
         </form>
@@ -70,36 +67,30 @@
       <div class="ci-price">{{ (item["price"]*item["quantity"])|int }} جنيه</div>
       <form action="{{ url_for('cart_update') }}" method="POST" style="display:inline">
         
-        <input type="hidden" name="cid" value="{{ item["id"] }}" >
+        <input type="hidden" name="cid" value="{{ item["id"] }}">
         <input type="hidden" name="action" value="del">
-        <button class="ci-del" title="حذف">🗑️</button>
+        <button class="ci-del">️</button>
       </form>
     </div>
     {% endfor %}
   </div>
   <div class="sum-box">
     <h3>ملخص الطلب</h3>
-    <div class="sr"><span>المجموع</span><span>{{ sub|int }} جنيه</span></div>
-    <div class="sr"><span>ضريبة {{ tax_rate|default(14) }}%</span><span>{{ tax|int }} جنيه</span></div>
+    <div class="sr"><span>المجموع</span><span>{{ sub }} جنيه</span></div>
+    <div class="sr"><span>ضريبة {{ tax_rate|default(14) }}%</span><span>{{ tax }} جنيه</span></div>
     <div class="sr">
+
       <span>الشحن</span>
       <span class="{% if sub >= (free_thresh|default(500)) %}free{% endif %}">
-        {% if sub >= (free_thresh|default(500)) %}
-          {{ s.free_ship_text_ar or "مجانى 🎉" }}
-        {% else %}
-          <span style="font-size:.78rem;color:var(--muted);font-style:italic">يُحدَّد بالمحافظة 🚚</span>
-        {% endif %}
+        {% if sub >= (free_thresh|default(500)) %}{{ s.free_ship_text_ar or "مجانى 🎉" }}{% else %}{{ (ship_cost|default(50))|int }} جنيه{% endif %}
       </span>
+
+      
     </div>
     {% if sub < (free_thresh|default(500)) %}
-    <p style="font-size:.77rem;color:var(--muted);margin-bottom:.5rem">
-      أضف <strong>{{ ((free_thresh|default(500)) - sub)|int }} جنيه</strong> للشحن المجانى
-    </p>
+    <p style="font-size:.77rem;color:var(--muted)">أضف {{ ((free_thresh|default(500)) - sub)|int }} جنيه للشحن المجانى</p>
     {% endif %}
-    <div class="sr tot">
-      <span>الإجمالى (بدون شحن)</span>
-      <span>{{ (sub + tax)|int }} جنيه</span>
-    </div>
+    <div class="sr tot"><span>الإجمالى</span><span>{{ total }} جنيه</span></div>
     <a href="{{ url_for('checkout') }}" class="btn btn-gold" style="display:flex;justify-content:center;width:100%;margin-top:1.2rem;font-size:1rem">
        {{ s.btn_checkout_ar or "إتمام الشراء" }}
     </a>

@@ -11,6 +11,7 @@
 .a-table td{padding:.8rem 1rem;font-size:.85rem;border-bottom:1px solid rgba(42,46,42,.5);vertical-align:middle}
 .a-table tr:last-child td{border-bottom:none}
 .a-table tr:hover td{background:rgba(255,255,255,.025)}
+.a-table tr.selected-row td{background:rgba(192,57,43,.06)}
 .status-sel{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:.25rem .5rem;color:var(--text);font-family:Cairo,sans-serif;font-size:.75rem;cursor:pointer;outline:none}
 .status-sel:focus{border-color:var(--gold)}
 .pay-badge{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .6rem;border-radius:20px;font-size:.72rem;font-weight:700}
@@ -20,16 +21,75 @@
 .badge-blue{background:rgba(41,128,185,.2);color:#1a5276}
 .badge-teal{background:rgba(39,174,96,.2);color:#1a6630}
 .badge-gray{background:rgba(122,138,122,.15);color:#5a6a5a}
+
+/* ── Delete toolbar ── */
+.delete-toolbar{display:none;align-items:center;gap:.75rem;padding:.6rem 1rem;background:rgba(192,57,43,.08);border-bottom:1px solid rgba(192,57,43,.2)}
+.delete-toolbar.visible{display:flex}
+.delete-toolbar span{font-size:.8rem;color:#c0392b;font-weight:600}
+.btn-delete-sel{background:#c0392b;color:#fff;border:none;border-radius:8px;padding:.4rem .95rem;font-size:.78rem;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif;display:flex;align-items:center;gap:.35rem;transition:background .15s}
+.btn-delete-sel:hover{background:#a93226}
+.btn-cancel-sel{background:transparent;border:1px solid var(--border);border-radius:8px;padding:.4rem .8rem;font-size:.78rem;cursor:pointer;color:var(--muted);font-family:Cairo,sans-serif;transition:background .15s}
+.btn-cancel-sel:hover{background:rgba(255,255,255,.06)}
+
+/* ── Checkbox styling ── */
+.order-check{width:15px;height:15px;cursor:pointer;accent-color:#c0392b}
+.check-all-wrap{display:flex;align-items:center;gap:.4rem}
+
+/* ── Confirm modal ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal-box{background:#1e2420;border:1px solid var(--border);border-radius:16px;padding:2rem;max-width:420px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.modal-icon{font-size:3rem;margin-bottom:.75rem}
+.modal-box h4{font-size:1rem;font-weight:700;color:#e74c3c;margin-bottom:.5rem}
+.modal-box p{font-size:.82rem;color:var(--muted);margin-bottom:1.4rem;line-height:1.6}
+.modal-box p strong{color:#e8d5b5}
+.modal-actions{display:flex;gap:.75rem;justify-content:center}
+.btn-confirm-del{background:#c0392b;color:#fff;border:none;border-radius:9px;padding:.55rem 1.4rem;font-size:.85rem;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif}
+.btn-confirm-del:hover{background:#a93226}
+.btn-modal-cancel{background:transparent;border:1px solid var(--border);border-radius:9px;padding:.55rem 1.2rem;font-size:.85rem;cursor:pointer;color:var(--muted);font-family:Cairo,sans-serif}
+.btn-modal-cancel:hover{background:rgba(255,255,255,.06)}
 </style>
 {% endblock %}
 
 {% block content %}
+
+<!-- Confirm Delete Modal -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal-box">
+    <div class="modal-icon">🗑️</div>
+    <h4>تأكيد الحذف النهائى</h4>
+    <p id="modalMsg">سيتم حذف الطلبات المحددة بشكل نهائى مع جميع بياناتها<br><strong>لا يمكن التراجع عن هذا الإجراء</strong></p>
+    <div class="modal-actions">
+      <button class="btn-confirm-del" id="confirmDelBtn"> تأكيد الحذف</button>
+      <button class="btn-modal-cancel" onclick="closeModal()"> إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<form id="bulkForm" action="{{ url_for('admin_orders_delete') }}" method="POST">
 <div class="a-card">
-  <div class="a-card-head"><h3>الطلبات ({{ orders|length }})</h3></div>
+  <div class="a-card-head">
+    <h3>الطلبات ({{ orders|length }})</h3>
+  </div>
+
+  <!-- Delete toolbar (appears when items selected) -->
+  <div class="delete-toolbar" id="deleteToolbar">
+    <span id="selCount">0 طلب محدد</span>
+    <button type="button" class="btn-delete-sel" onclick="openModal()">
+       حذف المحدد
+    </button>
+    <button type="button" class="btn-cancel-sel" onclick="clearSelection()"> إلغاء التحديد</button>
+  </div>
+
   <div style="padding:0">
     <table class="a-table">
       <thead>
         <tr>
+          <th>
+            <div class="check-all-wrap">
+              <input type="checkbox" class="order-check" id="checkAll" title="تحديد الكل">
+            </div>
+          </th>
           <th>رقم الطلب</th>
           <th>العميل</th>
           <th>الهاتف</th>
@@ -44,7 +104,10 @@
       </thead>
       <tbody>
         {% for o in orders %}
-        <tr>
+        <tr data-id="{{ o['id'] }}">
+          <td>
+            <input type="checkbox" class="order-check row-check" name="order_ids" value="{{ o['id'] }}">
+          </td>
           <td><strong>{{ o['order_number'] }}</strong></td>
           <td>{{ o['full_name'] }}</td>
           <td>{{ o['phone'] }}</td>
@@ -75,15 +138,15 @@
             </span>
           </td>
           <td>
-            <form action="{{ url_for('admin_order_status', oid=o['id']) }}" method="POST">
-              <select name="status" class="status-sel" onchange="this.form.submit()">
-                <option value="confirmed"  {% if o['status']=='confirmed'  %}selected{% endif %}>✅ مؤكد</option>
-                <option value="packed"     {% if o['status']=='packed'     %}selected{% endif %}>📦 جارى التغليف</option>
-                <option value="shipped"    {% if o['status']=='shipped'    %}selected{% endif %}>🚚 تم الشحن</option>
-                <option value="delivered"  {% if o['status']=='delivered'  %}selected{% endif %}>🏠 تم التسليم</option>
-                <option value="cancelled"  {% if o['status']=='cancelled'  %}selected{% endif %}>❌ ملغى</option>
-              </select>
-            </form>
+            <select class="status-sel"
+                    data-oid="{{ o['id'] }}"
+                    onchange="updateStatus(this)">
+              <option value="confirmed"  {% if o['status']=='confirmed'  %}selected{% endif %}>✅ مؤكد</option>
+              <option value="packed"     {% if o['status']=='packed'     %}selected{% endif %}>📦 جارى التغليف</option>
+              <option value="shipped"    {% if o['status']=='shipped'    %}selected{% endif %}>🚚 تم الشحن</option>
+              <option value="delivered"  {% if o['status']=='delivered'  %}selected{% endif %}>🏠 تم التسليم</option>
+              <option value="cancelled"  {% if o['status']=='cancelled'  %}selected{% endif %}>❌ ملغى</option>
+            </select>
           </td>
           <td>
             <a href="{{ url_for('admin_order_invoice', oid=o['id']) }}"
@@ -91,10 +154,99 @@
           </td>
         </tr>
         {% else %}
-        <tr><td colspan="10" style="text-align:center;color:#aaa;padding:3rem">لا توجد طلبات بعد</td></tr>
+        <tr><td colspan="11" style="text-align:center;color:#aaa;padding:3rem">لا توجد طلبات بعد</td></tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
 </div>
+</form>
+
+<script>
+// ── تغيير حالة الطلب بدون nested form ──
+function updateStatus(sel) {
+  const oid    = sel.dataset.oid;
+  const status = sel.value;
+  const fd     = new FormData();
+  fd.append('status', status);
+  fetch(`/admin/orders/status/${oid}`, { method: 'POST', body: fd })
+    .then(r => {
+      if (!r.ok) { alert('حدث خطأ، حاول مرة أخرى'); sel.value = sel.dataset.prev || sel.value; }
+      else { sel.dataset.prev = status; }
+    })
+    .catch(() => alert('تعذّر الاتصال بالسيرفر'));
+}
+// حفظ القيمة الحالية عند التحميل
+document.querySelectorAll('.status-sel[data-oid]').forEach(s => s.dataset.prev = s.value);
+
+const checkAll   = document.getElementById('checkAll');
+const toolbar    = document.getElementById('deleteToolbar');
+const selCount   = document.getElementById('selCount');
+const modal      = document.getElementById('deleteModal');
+const modalMsg   = document.getElementById('modalMsg');
+const confirmBtn = document.getElementById('confirmDelBtn');
+
+function getChecked() {
+  return [...document.querySelectorAll('.row-check:checked')];
+}
+
+function updateToolbar() {
+  const checked = getChecked();
+  const n = checked.length;
+  if (n > 0) {
+    toolbar.classList.add('visible');
+    selCount.textContent = n === 1 ? 'طلب واحد محدد' : `${n} طلبات محددة`;
+  } else {
+    toolbar.classList.remove('visible');
+  }
+  // highlight rows
+  document.querySelectorAll('.row-check').forEach(cb => {
+    cb.closest('tr').classList.toggle('selected-row', cb.checked);
+  });
+  // sync check-all state
+  const all = document.querySelectorAll('.row-check');
+  checkAll.indeterminate = n > 0 && n < all.length;
+  checkAll.checked = n > 0 && n === all.length;
+}
+
+// Check-all toggle
+checkAll.addEventListener('change', () => {
+  document.querySelectorAll('.row-check').forEach(cb => cb.checked = checkAll.checked);
+  updateToolbar();
+});
+
+// Individual checkbox
+document.querySelectorAll('.row-check').forEach(cb => {
+  cb.addEventListener('change', updateToolbar);
+});
+
+function clearSelection() {
+  document.querySelectorAll('.row-check').forEach(cb => cb.checked = false);
+  checkAll.checked = false;
+  updateToolbar();
+}
+
+function openModal() {
+  const n = getChecked().length;
+  if (n === 0) return;
+  modalMsg.innerHTML = n === 1
+    ? 'سيتم حذف هذا الطلب نهائياً مع جميع بياناته وعناصره<br><strong>لا يمكن التراجع عن هذا الإجراء</strong>'
+    : `سيتم حذف <strong>${n} طلبات</strong> نهائياً مع جميع بياناتها وعناصرها<br><strong>لا يمكن التراجع عن هذا الإجراء</strong>`;
+  modal.classList.add('open');
+}
+
+function closeModal() {
+  modal.classList.remove('open');
+}
+
+confirmBtn.addEventListener('click', () => {
+  document.getElementById('bulkForm').submit();
+});
+
+// Close modal on overlay click
+modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+
+// Close on Escape
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
 {% endblock %}
